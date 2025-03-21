@@ -1,0 +1,58 @@
+<resources>
+    <!-- Base application theme for Material Components -->
+    <style name="Theme.BanHangSo" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryVariant">@color/color_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary (accent) color -->
+        <item name="colorSecondary">@color/color_bold_sky</item>
+        <item name="colorSecondaryVariant">@color/color_bold_sky</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Error color -->
+        <item name="colorError">@color/color_warning</item>
+        <item name="colorOnError">@color/white</item>
+
+        <!-- Background and surface colors -->
+        <item name="android:colorBackground">@color/color_background</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <!-- Text color -->
+        <item name="android:textColor">@color/color_text_title</item>
+    </style>
+
+    <!-- Base application theme for Material3 -->
+    <style name="Base.Theme.BanHangSo" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary (accent) color -->
+        <item name="colorSecondary">@color/color_bold_sky</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Error color -->
+        <item name="colorError">@color/color_warning</item>
+
+        <!-- Background and surface colors -->
+        <!--        <item name="android:colorBackground">@color/color_background</item>-->
+        <!--        <item name="colorSurface">@color/white</item>-->
+        <!--        <item name="colorOnSurface">@color/black</item>-->
+
+        <!-- Text color -->
+        <item name="android:textColor">@color/color_text_title</item>
+    </style>
+
+    <!-- Other UI component styles -->
+    <style name="RoundedBorderShapeableImage">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="CircleImage">
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>
