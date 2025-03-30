@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.Product;
+import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.ProductRepository;
 import com.optlab.banhangso.data.model.SortOption;
 
@@ -17,31 +18,57 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class ProductListViewModel extends ViewModel {
+import javax.inject.Inject;
 
-    private final ProductRepository repository;
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+@HiltViewModel
+public class ProductListViewModel extends ViewModel {
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
     private final MediatorLiveData<List<Product>> listMediatorLiveData = new MediatorLiveData<>();
     private final MutableLiveData<SortOption<Product.SortField>> sortOptionLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Category> categoryLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<Category>> listCategoryLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Category> selectedCategoryLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> searchQueryLiveData = new MutableLiveData<>();
 
-    public ProductListViewModel(@NonNull ProductRepository repository) {
-        this.repository = repository;
+    @Inject
+    public ProductListViewModel(@NonNull ProductRepository productRepository,
+                                @NonNull CategoryRepository categoryRepository) {
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
 
-        listMediatorLiveData.addSource(repository.getProducts(), products -> updateProducts());
+        // Observe the categories change and update the list.
+        categoryRepository.getCategories().observeForever(categories -> {
+            listCategoryLiveData.setValue(categories);
+            updateProducts();
+        });
+
+        listMediatorLiveData.addSource(productRepository.getProducts(), products -> updateProducts());
         listMediatorLiveData.addSource(sortOptionLiveData, option -> updateProducts());
-        listMediatorLiveData.addSource(categoryLiveData, category -> updateProducts());
+        listMediatorLiveData.addSource(selectedCategoryLiveData, category -> updateProducts());
         listMediatorLiveData.addSource(searchQueryLiveData, query -> updateProducts());
+    }
+
+    @Override
+    protected void onCleared() {
+        categoryRepository.getCategories().removeObserver(listCategoryLiveData::setValue);
+        listMediatorLiveData.removeSource(productRepository.getProducts());
+        listMediatorLiveData.removeSource(sortOptionLiveData);
+        listMediatorLiveData.removeSource(selectedCategoryLiveData);
+        listMediatorLiveData.removeSource(searchQueryLiveData);
+
+        super.onCleared();
     }
 
     private void updateProducts() {
         List<Product> updatedList = Objects.requireNonNullElse(
-                repository.getProducts().getValue(),
+                productRepository.getProducts().getValue(),
                 Collections.emptyList()
         );
 
         // Filter by category if a category is selected.
-        Category selectedCategory = categoryLiveData.getValue();
+        Category selectedCategory = selectedCategoryLiveData.getValue();
         updatedList = filterByCategory(updatedList, selectedCategory);
 
         // Filter by search query if available.
@@ -86,14 +113,18 @@ public class ProductListViewModel extends ViewModel {
     }
 
     public void setCategory(@Nullable Category category) {
-        categoryLiveData.setValue(category);
+        selectedCategoryLiveData.setValue(category);
     }
 
-    public LiveData<Category> getCategory() {
-        return categoryLiveData;
+    public LiveData<Category> getSelectedCategory() {
+        return selectedCategoryLiveData;
     }
 
     public void setSearchQuery(@NonNull String query) {
         searchQueryLiveData.setValue(query);
+    }
+
+    public LiveData<List<Category>> getCategories() {
+        return listCategoryLiveData;
     }
 }

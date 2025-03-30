@@ -1,5 +1,6 @@
 package com.optlab.banhangso.ui.product.viewmodel;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -10,12 +11,17 @@ import com.optlab.banhangso.data.model.SortOption;
 
 import java.util.List;
 
-public class ProductSortSelectionViewModel extends ViewModel {
+import javax.inject.Inject;
 
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+@HiltViewModel
+public class ProductSortSelectionViewModel extends ViewModel {
     private final ProductSortOptionRepository repository;
     private final MutableLiveData<SortOption<Product.SortField>> sortOptionLiveData = new MutableLiveData<>();
 
-    public ProductSortSelectionViewModel(ProductSortOptionRepository repository) {
+    @Inject
+    public ProductSortSelectionViewModel(@NonNull ProductSortOptionRepository repository) {
         this.repository = repository;
     }
 

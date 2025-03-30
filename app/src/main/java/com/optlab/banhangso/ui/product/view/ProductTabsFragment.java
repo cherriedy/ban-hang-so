@@ -19,10 +19,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.optlab.banhangso.R;
+import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
 import com.optlab.banhangso.ui.adapter.ProductTabsAdapter;
 import com.optlab.banhangso.databinding.FragmentProductTabsBinding;
-import com.optlab.banhangso.factory.ProductListViewModelFactory;
-import com.optlab.banhangso.data.repository.ProductRepository;
 import com.optlab.banhangso.util.UserPreferenceManager;
 import com.optlab.banhangso.ui.product.viewmodel.ProductListViewModel;
 import com.optlab.banhangso.ui.product.viewmodel.ProductTabListViewModel;
@@ -53,8 +52,8 @@ public class ProductTabsFragment extends Fragment {
         NavController navController = NavHostFragment.findNavController(this);
         NavBackStackEntry backStackEntry = Objects.requireNonNull(navController.getCurrentBackStackEntry());
 
-        ProductRepository productRepository = ProductRepository.getInstance();
-        ProductListViewModelFactory productListViewModelFactory = new ProductListViewModelFactory(productRepository);
+        ProductRepositoryImpl productRepositoryImpl = ProductRepositoryImpl.getInstance();
+        ProductListViewModelFactory productListViewModelFactory = new ProductListViewModelFactory(productRepositoryImpl);
         ProductListViewModel productListViewModel = new ViewModelProvider(
                 backStackEntry,
                 productListViewModelFactory

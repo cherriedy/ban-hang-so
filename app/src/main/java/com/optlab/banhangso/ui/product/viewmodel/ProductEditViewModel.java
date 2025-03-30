@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
@@ -11,9 +12,14 @@ import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.ProductRepository;
+import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+@HiltViewModel
 public class ProductEditViewModel extends ViewModel {
-
     public static final String KEY_SELECTED_PRODUCT = "selected_product_id";
     private static final String KEY_FOCUSED_VIEW = "focused_view_id";
     private final SavedStateHandle savedStateHandle;
@@ -26,7 +32,9 @@ public class ProductEditViewModel extends ViewModel {
     private final MutableLiveData<Boolean> productDescriptionError = new MutableLiveData<>();
     private final MutableLiveData<Boolean> productNoteError = new MutableLiveData<>();
 
-    public ProductEditViewModel(SavedStateHandle savedStateHandle, ProductRepository repository) {
+    @Inject
+    public ProductEditViewModel(SavedStateHandle savedStateHandle,
+                                @NonNull ProductRepository repository) {
         this.savedStateHandle = savedStateHandle;
         this.repository = repository;
     }
@@ -34,10 +42,6 @@ public class ProductEditViewModel extends ViewModel {
     public Long getKeySelectedProduct() {
         return savedStateHandle.get(KEY_SELECTED_PRODUCT);
     }
-
-//    public void setKeySelectedProduct(long productId) {
-//        savedStateHandle.set(KEY_SELECTED_PRODUCT, productId);
-//    }
 
     public Integer getKeyFocusedView() {
         return savedStateHandle.get(KEY_FOCUSED_VIEW);
