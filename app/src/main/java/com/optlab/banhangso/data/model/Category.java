@@ -6,15 +6,26 @@ import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
 
-public class Category extends BaseObservable implements Cloneable {
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.ServerTimestamp;
 
-    private int id;
-    private String key;
+import java.util.Date;
+
+public class Category extends BaseObservable implements Cloneable {
+    @Exclude
+    private String id;
     private String name;
 
-    public Category(int id, String key, String name) {
+    @ServerTimestamp
+    private Date createdAt;
+    @ServerTimestamp
+    private Date updatedAt;
+
+    public Category() {
+    }
+
+    public Category(String id, String name) {
         this.id = id;
-        this.key = key;
         this.name = name;
     }
 
@@ -27,26 +38,21 @@ public class Category extends BaseObservable implements Cloneable {
     @Override
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof Category that) {
-            return this.id == that.id && this.key.equals(that.key);
+            if (this == that) return true;
+
+            return this.id.equals(that.id)
+                    && this.name.equals(that.name);
         } else {
-            throw new IllegalArgumentException("Not instance of Category");
+            throw new IllegalArgumentException("Not an instance of Category");
         }
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     @Bindable
@@ -57,5 +63,21 @@ public class Category extends BaseObservable implements Cloneable {
     public void setName(String name) {
         this.name = name;
         notifyPropertyChanged(BR.name);
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

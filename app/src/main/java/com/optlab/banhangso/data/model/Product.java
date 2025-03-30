@@ -5,11 +5,15 @@ import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
 
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
+import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.Comparator;
+import java.util.Date;
 
+@IgnoreExtraProperties
 public class Product extends BaseObservable implements Cloneable {
-
     public enum SortField {
         NAME("Tên A -> Z", "Tên Z -> A"),
         SELLING_PRICE("Giá từ thấp tới cao", "Giá từ cao tới thấp");
@@ -32,42 +36,45 @@ public class Product extends BaseObservable implements Cloneable {
             case NAME -> Comparator.comparing(Product::getName, String.CASE_INSENSITIVE_ORDER);
             case SELLING_PRICE -> Comparator.comparingDouble(Product::getSellingPrice);
         };
-
         return isAscending ? comparator : comparator.reversed();
     }
 
-    private final long id;
-    private String key;
+    @Exclude
+    private String id;
     private String barcode;
     private Category category;
     private Brand brand;
-
     private String name;
     private double purchasePrice;
     private double sellingPrice;
     private String avatarUrl;
     private int stockQuantity;
-    private int actualStockQuantity;
     private String description;
     private ProductStatus status;
     private double discountPrice;
     private String note;
 
-    private Product(Builder builder) {
+    @ServerTimestamp
+    private Date createdAt;
+    @ServerTimestamp
+    private Date updatedAt;
+
+    public Product() {
+    }
+
+    private Product(@NonNull Builder builder) {
         this.id = builder.id;
-        this.key = builder.key;
         this.barcode = builder.barcode;
         this.category = builder.category;
-        this.brand = builder.brandId;
+        this.brand = builder.brand;
         this.name = builder.name;
         this.purchasePrice = builder.purchasePrice;
         this.sellingPrice = builder.sellingPrice;
         this.avatarUrl = builder.avatarUrl;
         this.stockQuantity = builder.stockQuantity;
-        this.actualStockQuantity = builder.actualStockQuantity;
         this.description = builder.description;
         this.status = builder.status;
-        this.discountPrice = builder.discountPercentage;
+        this.discountPrice = builder.discountPrice;
         this.note = builder.note;
     }
 
@@ -77,16 +84,21 @@ public class Product extends BaseObservable implements Cloneable {
         return super.clone();
     }
 
-    public long getId() {
+    @Exclude
+    public String getId() {
         return id;
     }
 
-    public String getKey() {
-        return key;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getBarcode() {
         return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 
     @Bindable
@@ -98,7 +110,6 @@ public class Product extends BaseObservable implements Cloneable {
         this.category = category;
         notifyPropertyChanged(BR.category);
     }
-
 
     @Bindable
     public Brand getBrand() {
@@ -148,16 +159,6 @@ public class Product extends BaseObservable implements Cloneable {
     public void setStockQuantity(int stockQuantity) {
         this.stockQuantity = stockQuantity;
         notifyPropertyChanged(BR.stockQuantity);
-    }
-
-    @Bindable
-    public int getActualStockQuantity() {
-        return actualStockQuantity;
-    }
-
-    public void setActualStockQuantity(int actualStockQuantity) {
-        this.actualStockQuantity = actualStockQuantity;
-        notifyPropertyChanged(BR.actualStockQuantity);
     }
 
     @Bindable
@@ -211,58 +212,30 @@ public class Product extends BaseObservable implements Cloneable {
     }
 
     public enum ProductStatus {
-        IN_STOCK((byte) 1),
-        OUT_STOCK((byte) 0);
-
-        private final byte value;
-
-        ProductStatus(byte value) {
-            this.value = value;
-        }
-
-        public static ProductStatus fromValue(byte value) {
-            for (ProductStatus status : ProductStatus.values()) {
-                if (status.value == value) {
-                    return status;
-                }
-            }
-            throw new IllegalArgumentException("Invalid status value");
-        }
-
-        public byte getValue() {
-            return value;
-        }
+        IN_STOCK, OUT_STOCK
     }
 
     public static class Builder {
-        private final long id;
-        private String key = "";
+        private String id;
         private String barcode = "";
         private Category category;
-        private Brand brandId;
-
+        private Brand brand;
         private String name = "";
         private double purchasePrice;
         private double sellingPrice;
         private String avatarUrl = "";
         private int stockQuantity;
-        private int actualStockQuantity;
         private String description = "";
         private ProductStatus status = ProductStatus.OUT_STOCK;
-        private double discountPercentage;
+        private double discountPrice;
         private String note = "";
 
-        public Builder(long id) {
+        public Builder(String id) {
             this.id = id;
         }
 
-        public Builder key(String key) {
-            this.key = key != null ? key : "";
-            return this;
-        }
-
-        public Builder barcode(String barcode) {
-            this.barcode = barcode != null ? barcode : "";
+        public Builder name(String name) {
+            this.name = name;
             return this;
         }
 
@@ -271,13 +244,13 @@ public class Product extends BaseObservable implements Cloneable {
             return this;
         }
 
-        public Builder brand(Brand brand) {
-            this.brandId = brand;
+        public Builder barcode(String barcode) {
+            this.barcode = barcode;
             return this;
         }
 
-        public Builder name(String name) {
-            this.name = name != null ? name : "";
+        public Builder brand(Brand brand) {
+            this.brand = brand;
             return this;
         }
 
@@ -291,8 +264,8 @@ public class Product extends BaseObservable implements Cloneable {
             return this;
         }
 
-        public Builder avatarUrl(String avatarUrl) {
-            this.avatarUrl = avatarUrl != null ? avatarUrl : "";
+        public Builder discountPrice(double discountPrice) {
+            this.discountPrice = discountPrice;
             return this;
         }
 
@@ -301,28 +274,23 @@ public class Product extends BaseObservable implements Cloneable {
             return this;
         }
 
-        public Builder actualStockQuantity(int actualStockQuantity) {
-            this.actualStockQuantity = actualStockQuantity;
+        public Builder status(ProductStatus status) {
+            this.status = status;
             return this;
         }
 
         public Builder description(String description) {
-            this.description = description != null ? description : "";
-            return this;
-        }
-
-        public Builder status(ProductStatus status) {
-            this.status = status != null ? status : ProductStatus.OUT_STOCK;
-            return this;
-        }
-
-        public Builder discountPrice(double discountPrice) {
-            this.discountPercentage = discountPrice;
+            this.description = description;
             return this;
         }
 
         public Builder note(String note) {
-            this.note = note != null ? note : "";
+            this.note = note;
+            return this;
+        }
+
+        public Builder avatarUrl(String avatarUrl) {
+            this.avatarUrl = avatarUrl;
             return this;
         }
 

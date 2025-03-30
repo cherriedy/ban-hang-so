@@ -6,15 +6,26 @@ import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
 
-public class Brand extends BaseObservable implements Cloneable {
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.ServerTimestamp;
 
-    private int id;
-    private String key;
+import java.util.Date;
+
+public class Brand extends BaseObservable implements Cloneable {
+    @Exclude
+    private String id;
     private String name;
 
-    public Brand(int id, String key, String name) {
+    @ServerTimestamp
+    private Date createdAt;
+    @ServerTimestamp
+    private Date updatedAt;
+
+    public Brand() {
+    }
+
+    public Brand(String id, String name) {
         this.id = id;
-        this.key = key;
         this.name = name;
     }
 
@@ -26,32 +37,22 @@ public class Brand extends BaseObservable implements Cloneable {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        // If o is null or isn't instance of Brand, return false.
-        if (obj == null || !(obj instanceof Brand)) return false;
+        if (obj instanceof Brand that) {
+            if (this == that) return true;
 
-        // If the object is compared with itself, then return true.
-        if (obj == this) return true;
-
-        Brand brand = (Brand) obj;
-
-        // Return true, if and only if all attributes are the same.
-        return brand.id == id && brand.key.equals(key) && brand.name.equals(name);
+            return this.id.equals(that.id)
+                    && this.name.equals(that.name);
+        } else {
+            throw new IllegalArgumentException("Not an instance of Brand");
+        }
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     @Bindable
@@ -62,5 +63,21 @@ public class Brand extends BaseObservable implements Cloneable {
     public void setName(String name) {
         this.name = name;
         notifyPropertyChanged(BR.name);
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
