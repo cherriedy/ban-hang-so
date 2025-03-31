@@ -1,163 +1,140 @@
 package com.optlab.banhangso.ui.product.viewmodel;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
+import androidx.databinding.Observable;
+import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.ProductRepository;
-import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
+import com.optlab.banhangso.util.validator.ProductValidator;
+
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 @HiltViewModel
 public class ProductEditViewModel extends ViewModel {
-    public static final String KEY_SELECTED_PRODUCT = "selected_product_id";
-    private static final String KEY_FOCUSED_VIEW = "focused_view_id";
-    private final SavedStateHandle savedStateHandle;
-    private final ProductRepository repository;
-    private final MutableLiveData<Product> product = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> nameError = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> sellingPriceError = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> purchasePriceError = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> discountPercentageError = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> productDescriptionError = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> productNoteError = new MutableLiveData<>();
+  private final ProductRepository repository;
+  private final Validator validator;
+  private final MutableLiveData<Product> product = new MutableLiveData<>();
+  private final MutableLiveData<String> nameErrorLiveData = new MutableLiveData<>();
+  private final MutableLiveData<String> sellingPriceErrorLiveData = new MutableLiveData<>();
+  private final MutableLiveData<String> purchasePriceErrorLiveData = new MutableLiveData<>();
+  private final MutableLiveData<String> discountPriceErrorLiveData = new MutableLiveData<>();
+  private final MutableLiveData<String> descriptionErrorLiveData = new MutableLiveData<>();
+  private final MutableLiveData<String> noteErrorLiveData = new MutableLiveData<>();
 
-    @Inject
-    public ProductEditViewModel(SavedStateHandle savedStateHandle,
-                                @NonNull ProductRepository repository) {
-        this.savedStateHandle = savedStateHandle;
-        this.repository = repository;
+  @Inject
+  public ProductEditViewModel(@NonNull ProductRepository repository, @NonNull Validator validator) {
+    this.repository = repository;
+    this.validator = validator;
+  }
+
+  public void validateName(String name) {
+    Set<ConstraintViolation<Product>> violations =
+        validator.validateValue(Product.class, "name", name);
+    if (!violations.isEmpty()) {
+      nameErrorLiveData.setValue(violations.iterator().next().getMessage());
+    } else {
+      nameErrorLiveData.setValue(null);
     }
+  }
 
-    public Long getKeySelectedProduct() {
-        return savedStateHandle.get(KEY_SELECTED_PRODUCT);
+  public void validateSellingPrice(Double sellingPrice) {
+    Set<ConstraintViolation<Product>> violations =
+        validator.validateValue(Product.class, "sellingPrice", sellingPrice);
+    if (!violations.isEmpty()) {
+      sellingPriceErrorLiveData.setValue(violations.iterator().next().getMessage());
+    } else {
+      sellingPriceErrorLiveData.setValue(null);
     }
+  }
 
-    public Integer getKeyFocusedView() {
-        return savedStateHandle.get(KEY_FOCUSED_VIEW);
+  public void validatePurchasePrice(Double purchasePrice) {
+    Set<ConstraintViolation<Product>> violations =
+        validator.validateValue(Product.class, "purchasePrice", purchasePrice);
+    if (!violations.isEmpty()) {
+      purchasePriceErrorLiveData.setValue(violations.iterator().next().getMessage());
+    } else {
+      purchasePriceErrorLiveData.setValue(null);
     }
+  }
 
-    public void setKeyFocusedView(int viewId) {
-        savedStateHandle.set(KEY_FOCUSED_VIEW, viewId);
+  public void validateDiscountPrice(Double discountPrice) {
+    Set<ConstraintViolation<Product>> violations =
+        validator.validateValue(Product.class, "discountPrice", discountPrice);
+    if (!violations.isEmpty()) {
+      discountPriceErrorLiveData.setValue(violations.iterator().next().getMessage());
+    } else {
+      discountPriceErrorLiveData.setValue(null);
     }
+  }
 
-    public void loadProductById(long id) {
-        // Check whether `product` is null, preventing reloading new object
-        // if there's a configuration change which leads to lose the current
-        // changes in fields.
-        Product currentProduct = product.getValue();
-        Product fetchedProduct = repository.getProductById(id);
-        if (currentProduct == null) {
-            product.setValue(fetchedProduct);
-            savedStateHandle.set(KEY_SELECTED_PRODUCT, id);
-        }
+  public void validateDescription(String description) {
+    Set<ConstraintViolation<Product>> violations =
+        validator.validateValue(Product.class, "description", description);
+    if (!violations.isEmpty()) {
+      descriptionErrorLiveData.setValue(violations.iterator().next().getMessage());
+    } else {
+      descriptionErrorLiveData.setValue(null);
     }
+  }
 
-    public void saveProduct(Product updatedProduct) {
-        if (updatedProduct.getId() == 0L) {
-            repository.addProduct(updatedProduct);
-        } else {
-            repository.updateProduct(updatedProduct);
-        }
+  public void validateNote(String note) {
+    Set<ConstraintViolation<Product>> violations =
+        validator.validateValue(Product.class, "note", note);
+    if (!violations.isEmpty()) {
+      noteErrorLiveData.setValue(violations.iterator().next().getMessage());
+    } else {
+      noteErrorLiveData.setValue(null);
     }
+  }
 
-    public LiveData<Product> getProduct() {
-        return product;
+  public void loadProductById(String id) {
+    // Prevent reloading a new object if the current product has unsaved changes
+    Product currentProduct = product.getValue();
+    Product fetchedProduct = repository.getProductById(id);
+    if (currentProduct == null) {
+      product.setValue(fetchedProduct);
     }
+  }
 
-    public void setProduct(Product product) {
-        this.product.setValue(product);
-    }
+  public LiveData<Product> getProduct() {
+    return product;
+  }
 
-    public LiveData<Boolean> getNameError() {
-        return nameError;
-    }
+  public void setProduct(Product product) {
+    this.product.setValue(product);
+  }
 
-    public LiveData<Boolean> getSellingPriceError() {
-        return sellingPriceError;
-    }
+  public LiveData<String> getNameError() {
+    return nameErrorLiveData;
+  }
 
-    public LiveData<Boolean> getPurchasePriceError() {
-        return purchasePriceError;
-    }
+  public LiveData<String> getSellingPriceError() {
+    return sellingPriceErrorLiveData;
+  }
 
-    public LiveData<Boolean> getDiscountPercentageError() {
-        return discountPercentageError;
-    }
+  public LiveData<String> getPurchasePriceError() {
+    return purchasePriceErrorLiveData;
+  }
 
-    public LiveData<Boolean> getProductDescriptionError() {
-        return productDescriptionError;
-    }
+  public LiveData<String> getDiscountPriceError() {
+    return discountPriceErrorLiveData;
+  }
 
-    public LiveData<Boolean> getProductNoteError() {
-        return productNoteError;
-    }
+  public LiveData<String> getDescriptionError() {
+    return descriptionErrorLiveData;
+  }
 
-    public void validateName(String name) {
-        if (!TextUtils.isEmpty(name)) {
-            nameError.setValue(false);
-        } else {
-            nameError.setValue(true);
-        }
-    }
-
-    public void validateSellingPrice(double price) {
-        if (price == 0.0) {
-            sellingPriceError.setValue(true);
-        } else {
-            sellingPriceError.setValue(false);
-        }
-    }
-
-    public void validatePurchasePrice(double price) {
-        if (price == 0.0) {
-            purchasePriceError.setValue(true);
-        } else {
-            purchasePriceError.setValue(false);
-        }
-    }
-
-    public void validateDiscountPrice(double price) {
-        // Get the current instance of product.
-        Product currentProduct = product.getValue();
-
-        // Calculate the discount price to see if it is larger than the selling price.
-        if (price >= currentProduct.getSellingPrice()) {
-            final int discountPrice = ((int) price) / 10;
-
-            // Create a handler to create animation when deleting the last digit.
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (currentProduct != null) {
-                    currentProduct.setDiscountPrice(discountPrice);
-                    product.setValue(currentProduct); // Triggers UI update
-                }
-            }, 50);
-        }
-    }
-
-    public void validateNote(String note) {
-        if (TextUtils.isEmpty(note) && note.length() > 100) {
-            productNoteError.setValue(true);
-        } else {
-            productNoteError.setValue(false);
-        }
-    }
-
-    public void validateDescription(String description) {
-        if (TextUtils.isEmpty(description) && description.length() > 1000) {
-            productDescriptionError.setValue(true);
-        } else {
-            productDescriptionError.setValue(false);
-        }
-    }
+  public LiveData<String> getNoteError() {
+    return noteErrorLiveData;
+  }
 }
