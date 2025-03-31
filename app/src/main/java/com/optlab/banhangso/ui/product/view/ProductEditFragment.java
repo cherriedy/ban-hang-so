@@ -38,9 +38,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * Fragment for editing a product.
- *
- * <p>This Fragment handles displaying and updating product details. It initializes the ViewModels,
+ * This Fragment handles displaying and updating product details. It initializes the ViewModels,
  * binds data using View Binding, observes LiveData for product and brand updates, and configures
  * the UI accordingly.
  */
@@ -48,10 +46,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 @SuppressWarnings({"SimplifiableIfStatement", "FieldCanBeLocal"})
 public class ProductEditFragment extends Fragment {
   private FragmentProductEditBinding binding;
-  private ProductEditFragmentArgs fragmentArgs;
-  private NavController navController;
+  private ProductEditViewModel viewModel;
   private NavBackStackEntry navBackStackEntry;
-  private ProductEditViewModel productEditViewModel;
+  private ProductEditFragmentArgs productEditFragmentArgs;
   private Observable.OnPropertyChangedCallback productPropertyChangedCallback;
 
   @Inject protected BrandRepository brandRepository;
@@ -60,7 +57,7 @@ public class ProductEditFragment extends Fragment {
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    initViewModels();
+    viewModel = new ViewModelProvider(this).get(ProductEditViewModel.class);
   }
 
   @Override
@@ -68,101 +65,49 @@ public class ProductEditFragment extends Fragment {
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentProductEditBinding.inflate(inflater, container, false);
     binding.setLifecycleOwner(getViewLifecycleOwner());
-    binding.setViewModel(productEditViewModel);
+    binding.setViewModel(viewModel);
     return binding.getRoot();
   }
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
-    getNavControllerAndBackStack();
-
+    setupNavigation();
     setupBrandSelection();
     setupCategorySelection();
-
-    // Set up observers to handle changes in product properties and brand selection.
-    observeProductPropertyChanges();
+    observeProductChanges();
     observeBrandSelectionChanges();
     observeCategorySelectionChanges();
-
-    // Configure the delete button's visibility based on whether we're editing an existing
-    // product.
-    configureDeleteButtonVisibility();
   }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-
-    // Avoid memory leaks by releasing the binding.
     binding = null;
   }
 
-  private void initViewModels() {
-    productEditViewModel = new ViewModelProvider(this).get(ProductEditViewModel.class);
-  }
-
-  private void getNavControllerAndBackStack() {
-    navController = NavHostFragment.findNavController(this);
+  private void setupNavigation() {
+    // Set up the navigation controller and back stack entry for this fragment.
+    NavController navController = NavHostFragment.findNavController(this);
     navBackStackEntry = navController.getCurrentBackStackEntry();
-  }
 
-  /**
-   * Observes changes to product properties and validates corresponding fields.
-   *
-   * <p>This observer also manages a property change callback to update validation in real-time.
-   */
-  private void observeProductPropertyChanges() {
-    productEditViewModel
-        .getProduct()
-        .observe(
-            getViewLifecycleOwner(),
-            product -> {
-              // Remove any previously attached property callback to avoid duplicate
-              // updates.
-              if (productPropertyChangedCallback != null) {
-                product.removeOnPropertyChangedCallback(productPropertyChangedCallback);
-              }
+    // Retrieve the arguments passed to this fragment.
+    productEditFragmentArgs = ProductEditFragmentArgs.fromBundle(requireArguments());
 
-              // Create and attach a new property callback to handle changes.
-              productPropertyChangedCallback =
-                  new Observable.OnPropertyChangedCallback() {
-                    @Override
-                    public void onPropertyChanged(Observable sender, int propertyId) {
-                      // Ensure binding is still available before updating UI.
-                      if (binding != null) {
-                        Product observedProduct = (Product) sender;
-                        handleProductPropertyChange(observedProduct, propertyId);
-                      }
-                    }
-                  };
+    // Check if the fragment is in create mode or edit mode.
+    if (!productEditFragmentArgs.getIsCreateMode()) {
+      // Load the product details using the provided product ID.
+      viewModel.loadProductById(productEditFragmentArgs.getProductId());
 
-              product.addOnPropertyChangedCallback(productPropertyChangedCallback);
-
-              // Trigger initial validation for all product fields.
-              productEditViewModel.validateName(product.getName());
-              productEditViewModel.validateDiscountPrice(product.getDiscountPrice());
-              productEditViewModel.validatePurchasePrice(product.getPurchasePrice());
-              productEditViewModel.validateSellingPrice(product.getSellingPrice());
-              productEditViewModel.validateDescription(product.getDescription());
-              productEditViewModel.validateNote(product.getNote());
-            });
-  }
-
-  /**
-   * Configures the visibility of the delete button.
-   *
-   * <p>If the fragment is in edit mode (not creating a new product), display the delete option.
-   */
-  private void configureDeleteButtonVisibility() {
-    fragmentArgs = ProductEditFragmentArgs.fromBundle(requireArguments());
-    // If not creating a new product, load product data and show delete button.
-    if (!fragmentArgs.getIsCreate()) {
-      productEditViewModel.loadProductById(fragmentArgs.getProductId());
+      // Set up the delete button to remove the product.
       binding.viewDivider.setVisibility(View.VISIBLE);
       binding.btnDelete.setVisibility(View.VISIBLE);
     }
+  }
+
+  private void observeProductChanges() {
+    // Observe changes to the product data and update the UI accordingly.
+    viewModel.getProduct().observe(getViewLifecycleOwner(), this::onProductPropertyChanged);
   }
 
   /**
@@ -177,7 +122,7 @@ public class ProductEditFragment extends Fragment {
         v -> {
           // Retrieve the current product without creating a new observer, this is done to
           // avoid unnecessary UI updates.
-          Product product = productEditViewModel.getProduct().getValue();
+          Product product = viewModel.getProduct().getValue();
 
           // Get the brand id from the product, if it is null, set it to null.
           String brandId =
@@ -204,7 +149,7 @@ public class ProductEditFragment extends Fragment {
         v -> {
           // Retrieve the current product without creating a new observer, this is done to
           // avoid unnecessary UI updates.
-          Product product = productEditViewModel.getProduct().getValue();
+          Product product = viewModel.getProduct().getValue();
 
           // Get the category id from the product, if it is null, set it to null.
           String categoryId =
@@ -241,13 +186,13 @@ public class ProductEditFragment extends Fragment {
               if (pos == RecyclerView.NO_POSITION) return;
 
               // Get the current instance of product.
-              Product product = productEditViewModel.getProduct().getValue();
+              Product product = viewModel.getProduct().getValue();
               if (product == null) return;
 
               Brand checkedBrand = brandRepository.getBrandByPosition(pos);
               if (checkedBrand != null && !checkedBrand.equals(product.getBrand())) {
                 product.setBrand(checkedBrand);
-                productEditViewModel.setProduct(product);
+                viewModel.setProduct(product);
               }
             });
   }
@@ -267,51 +212,15 @@ public class ProductEditFragment extends Fragment {
 
               if (pos == RecyclerView.NO_POSITION) return;
 
-              Product product = productEditViewModel.getProduct().getValue();
+              Product product = viewModel.getProduct().getValue();
               if (product == null) return;
 
               Category checkedCategory = categoryRepository.getCategoryByPosition(pos);
               if (checkedCategory != null && !checkedCategory.equals(product.getBrand())) {
                 product.setCategory(checkedCategory);
-                productEditViewModel.setProduct(product);
+                viewModel.setProduct(product);
               }
             });
-  }
-
-  /**
-   * Handles individual product property changes.
-   *
-   * <p>This method validates the changed property based on its identifier. For example, if the name
-   * property changes, it triggers name validation in the ViewModel.
-   *
-   * @param product The product whose property has changed.
-   * @param propertyId The identifier of the changed property.
-   */
-  private void handleProductPropertyChange(Product product, int propertyId) {
-    switch (propertyId) {
-      case BR.name:
-        productEditViewModel.validateName(product.getName());
-        break;
-      case BR.sellingPrice:
-        productEditViewModel.validateSellingPrice(product.getSellingPrice());
-        break;
-      case BR.purchasePrice:
-        productEditViewModel.validatePurchasePrice(product.getPurchasePrice());
-        break;
-      case BR.discountPrice:
-        productEditViewModel.validateDiscountPrice(product.getDiscountPrice());
-        break;
-      case BR.status:
-        // Update UI elements based on stock status.
-        updateRadioButtonColors(product.getStatus() == Product.ProductStatus.IN_STOCK);
-        break;
-      case BR.description:
-        productEditViewModel.validateDescription(product.getDescription());
-        break;
-      case BR.note:
-        productEditViewModel.validateNote(product.getNote());
-        break;
-    }
   }
 
   /**
@@ -334,5 +243,54 @@ public class ProductEditFragment extends Fragment {
       binding.rbInStock.setTextColor(titleColor);
       binding.rbOutStock.setTextColor(warningColor);
     }
+  }
+
+  /**
+   * Sets up property change callback for a Product object.
+   *
+   * <p>This method adds a callback to the provided product that monitors changes to its properties.
+   * When a property changes, it calls the appropriate validation method on the view model or
+   * updates UI elements based on the specific property. Property changes are identified by their BR
+   * (Binding Resource) ID.
+   *
+   * <p>Properties handled include:
+   *
+   * <ul>
+   *   <li>name - Validates the product name
+   *   <li>sellingPrice - Validates the product's selling price
+   *   <li>purchasePrice - Validates the product's purchase price
+   *   <li>discountPrice - Validates the product's discount price
+   *   <li>description - Validates the product description
+   *   <li>note - Validates product notes
+   *   <li>status - Updates radio button colors based on stock status
+   * </ul>
+   *
+   * @param product The product to observe for property changes
+   * @throws IllegalStateException if an unexpected property ID is encountered
+   */
+  private void onProductPropertyChanged(Product product) {
+    if (productPropertyChangedCallback != null) {
+      product.removeOnPropertyChangedCallback(productPropertyChangedCallback);
+    }
+
+    productPropertyChangedCallback =
+        new Observable.OnPropertyChangedCallback() {
+          @Override
+          public void onPropertyChanged(Observable sender, int propertyId) {
+            switch (propertyId) {
+              case BR.name -> viewModel.validateName(product.getName());
+              case BR.sellingPrice -> viewModel.validateSellingPrice(product.getSellingPrice());
+              case BR.purchasePrice -> viewModel.validatePurchasePrice(product.getPurchasePrice());
+              case BR.discountPrice -> viewModel.validateDiscountPrice(product.getDiscountPrice());
+              case BR.description -> viewModel.validateDescription(product.getDescription());
+              case BR.note -> viewModel.validateNote(product.getNote());
+              case BR.status ->
+                  updateRadioButtonColors(product.getStatus() == Product.ProductStatus.IN_STOCK);
+              default -> throw new IllegalStateException("Unexpected value: " + propertyId);
+            }
+          }
+        };
+
+    product.addOnPropertyChangedCallback(productPropertyChangedCallback);
   }
 }
