@@ -2,6 +2,8 @@ package com.optlab.banhangso.util;
 
 import android.app.Application;
 
+import com.optlab.banhangso.util.timber.TimberUtils;
+
 import dagger.hilt.android.HiltAndroidApp;
 
 @HiltAndroidApp
