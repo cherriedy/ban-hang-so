@@ -27,8 +27,14 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
 
+/**
+ * Fragment that displays a selectable list of brands with search functionality. This fragment
+ * allows users to select a brand and passes the selection back to the previous fragment through the
+ * Navigation component's SavedStateHandle.
+ */
 @AndroidEntryPoint
 public class BrandSelectionFragment extends Fragment {
+  /** Key used for storing the selected brand position in SavedStateHandle */
   public static final String KEY_CHECKED_POSITION = "checked_brand_position_key";
 
   @Inject protected BrandRepository repository;
@@ -83,11 +89,9 @@ public class BrandSelectionFragment extends Fragment {
   }
 
   /**
-   * Initializes and binds the BrandSelectionAdapter to the RecyclerView.
-   *
-   * <p>This method retrieves the brand ID from the arguments passed to this fragment and sets up
-   * the adapter with the initial checked position. It also observes the brand list from the
-   * ViewModel and updates the adapter when the brand list changes.
+   * Sets up the RecyclerView adapter for displaying brands. Retrieves the brand ID from arguments,
+   * initializes the adapter with the correct selection, and observes the brand list from the
+   * ViewModel.
    */
   private void setupBrandListAdapter() {
     // Get the arguments passed to this fragment, specifically the brand ID.
