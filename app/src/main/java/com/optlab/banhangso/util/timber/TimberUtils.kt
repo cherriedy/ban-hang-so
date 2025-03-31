@@ -1,4 +1,4 @@
-package com.optlab.banhangso.util
+package com.optlab.banhangso.util.timber
 
 import com.optlab.banhangso.BuildConfig
 import timber.log.Timber

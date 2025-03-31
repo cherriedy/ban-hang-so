@@ -1,4 +1,4 @@
-package com.optlab.banhangso.util;
+package com.optlab.banhangso.util.timber;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
