@@ -56,10 +56,10 @@
 
         <argument
             android:name="productId"
-            app:argType="long" />
+            app:argType="string" />
 
         <argument
-            android:name="isCreate"
+            android:name="isCreateMode"
             app:argType="boolean" />
 
         <action
