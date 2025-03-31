@@ -26,8 +26,14 @@ import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import timber.log.Timber;
 
+/**
+ * Fragment that displays a selectable list of categories with search functionality. This fragment
+ * allows users to select a category and passes the selection back to the previous fragment through
+ * the Navigation component's SavedStateHandle.
+ */
 @HiltViewModel
 public class CategorySelectionFragment extends Fragment {
+  /** Key used for storing the selected category position in SavedStateHandle */
   public static final String KEY_CHECKED_POSITION = "checked_category_position_key";
 
   @Inject protected CategoryRepositoryImpl repository;
@@ -75,6 +81,11 @@ public class CategorySelectionFragment extends Fragment {
     }
   }
 
+  /**
+   * Sets up the RecyclerView adapter for displaying categories. Retrieves the category ID from
+   * arguments, initializes the adapter with the correct selection, and observes the category list
+   * from the ViewModel.
+   */
   private void setupCategoryListAdapter() {
     // Get the arguments passed to this fragment, specifically the category ID.
     CategorySelectionFragmentArgs args =
