@@ -183,8 +183,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:endIconMode="clear_text"
-                            app:hintEnabled="false"
-                            app:notNullError="@{viewModel.sellingPriceError}">
+                            app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/et_selling_price"
