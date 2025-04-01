@@ -17,34 +17,34 @@ import dagger.hilt.components.SingletonComponent;
 
 @Module
 @InstallIn(SingletonComponent.class)
-public class RepositoryModule {
-    @Provides
-    @Singleton
-    public FirebaseFirestore provideFirebaseFirestore() {
-        return FirebaseFirestore.getInstance();
-    }
+public abstract class RepositoryModule {
+  @Provides
+  @Singleton
+  public FirebaseFirestore provideFirebaseFirestore() {
+    return FirebaseFirestore.getInstance();
+  }
 
-    @Provides
-    @Singleton
-    public BrandRepository provideBrandRepository(FirebaseFirestore firestore) {
-        return new BrandRepositoryImpl(firestore);
-    }
+  @Provides
+  @Singleton
+  public BrandRepository provideBrandRepository(FirebaseFirestore firestore) {
+    return new BrandRepositoryImpl(firestore);
+  }
 
-    @Provides
-    @Singleton
-    public CategoryRepository provideCategoryRepository(FirebaseFirestore firestore) {
-        return new CategoryRepositoryImpl(firestore);
-    }
+  @Provides
+  @Singleton
+  public CategoryRepository provideCategoryRepository(FirebaseFirestore firestore) {
+    return new CategoryRepositoryImpl(firestore);
+  }
 
-    @Provides
-    @Singleton
-    public ProductRepositoryImpl provideProductRepository(FirebaseFirestore firestore) {
-        return new ProductRepositoryImpl(firestore);
-    }
+  @Provides
+  @Singleton
+  public ProductRepositoryImpl provideProductRepository(FirebaseFirestore firestore) {
+    return new ProductRepositoryImpl(firestore);
+  }
 
-    @Provides
-    @Singleton
-    public ProductSortOptionRepository provideProductSortOptionRepository() {
-        return new ProductSortOptionRepository();
-    }
+  @Provides
+  @Singleton
+  public ProductSortOptionRepository provideProductSortOptionRepository() {
+    return new ProductSortOptionRepository();
+  }
 }
