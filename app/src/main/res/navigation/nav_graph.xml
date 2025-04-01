@@ -84,7 +84,7 @@
 
     <fragment
         android:id="@+id/categorySelectionFragment"
-        android:name="com.optlab.banhangso.ui.category.viewmodel.CategorySelectionFragment"
+        android:name="com.optlab.banhangso.ui.category.view.CategorySelectionFragment"
         android:label="CategorySelectionFragment"
         tools:layout="@layout/fragment_option_selection">
 
