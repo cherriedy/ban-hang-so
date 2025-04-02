@@ -25,7 +25,6 @@ public class ProductRepositoryImpl implements ProductRepository {
     private final FirebaseFirestore firestore;
     private final MutableLiveData<List<Product>> products = new MutableLiveData<>();
 
-    @Inject
     public ProductRepositoryImpl(FirebaseFirestore firestore) {
         this.firestore = firestore;
         retrieveData();
@@ -44,6 +43,8 @@ public class ProductRepositoryImpl implements ProductRepository {
                                 .map(doc -> doc.toObject(Product.class))
                                 .collect(Collectors.toList());
                         products.setValue(productList);
+                    } else {
+                        Timber.d("No products found in the collection");
                     }
                 });
     }
