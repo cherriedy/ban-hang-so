@@ -22,7 +22,6 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     private final FirebaseFirestore firestore;
     private final MutableLiveData<List<Category>> categories = new MutableLiveData<>();
 
-    @Inject
     public CategoryRepositoryImpl(FirebaseFirestore firestore) {
         this.firestore = firestore;
         retrieveData();

@@ -23,7 +23,6 @@ public class BrandRepositoryImpl implements BrandRepository {
     private final FirebaseFirestore firestore;
     private final MutableLiveData<List<Brand>> brands = new MutableLiveData<>();
 
-    @Inject
     public BrandRepositoryImpl(FirebaseFirestore firestore) {
         this.firestore = firestore;
         retrieveData();
