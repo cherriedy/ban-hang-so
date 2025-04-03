@@ -16,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.optlab.banhangso.data.repository.BrandRepository;
+import com.optlab.banhangso.data.repository.impl.BrandRepositoryImpl;
 import com.optlab.banhangso.ui.adapter.BrandSelectionAdapter;
 import com.optlab.banhangso.databinding.FragmentOptionSelectionBinding;
 import com.optlab.banhangso.ui.brand.viewmodel.BrandSelectionViewModel;
