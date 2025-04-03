@@ -18,22 +18,24 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class ProductSortSelectionViewModel extends ViewModel {
     private final ProductSortOptionRepository repository;
-    private final MutableLiveData<SortOption<Product.SortField>> sortOptionLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<SortOption<Product.SortField>>> sortOptionsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<SortOption<Product.SortField>> selectedSortOptionLiveData = new MutableLiveData<>();
 
     @Inject
     public ProductSortSelectionViewModel(@NonNull ProductSortOptionRepository repository) {
         this.repository = repository;
+        sortOptionsLiveData.setValue(repository.getSortOptions());
     }
 
     public List<SortOption<Product.SortField>> getSortOptions() {
-        return repository.getSortOptions();
+        return sortOptionsLiveData.getValue();
     }
 
     public LiveData<SortOption<Product.SortField>> getSortOption() {
-        return sortOptionLiveData;
+        return selectedSortOptionLiveData;
     }
 
     public void setSortOption(SortOption<Product.SortField> sortOption) {
-        sortOptionLiveData.setValue(sortOption);
+        selectedSortOptionLiveData.setValue(sortOption);
     }
 }

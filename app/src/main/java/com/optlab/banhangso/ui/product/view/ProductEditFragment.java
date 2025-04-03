@@ -23,12 +23,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.data.repository.BrandRepository;
 import com.optlab.banhangso.data.repository.CategoryRepository;
+import com.optlab.banhangso.data.repository.impl.BrandRepositoryImpl;
+import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
 import com.optlab.banhangso.databinding.FragmentProductEditBinding;
 import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.ui.brand.view.BrandSelectionFragment;
-import com.optlab.banhangso.ui.category.viewmodel.CategorySelectionFragment;
+import com.optlab.banhangso.ui.category.view.CategorySelectionFragment;
 import com.optlab.banhangso.ui.product.viewmodel.ProductEditViewModel;
 
 import java.util.Optional;

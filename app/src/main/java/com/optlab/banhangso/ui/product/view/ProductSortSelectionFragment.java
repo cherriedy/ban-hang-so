@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.optlab.banhangso.R;
 import com.optlab.banhangso.ui.adapter.ProductSortSelectionAdapter;
 import com.optlab.banhangso.databinding.FragmentProductSortSelectionBinding;
 import com.optlab.banhangso.data.model.Product;
@@ -51,15 +52,19 @@ public class ProductSortSelectionFragment extends BottomSheetDialogFragment {
   }
 
   private void setupNavigation() {
-    NavController navController = NavHostFragment.findNavController(this);
-    // Get the previous back stack entry to retrieve the ViewModel.
-    NavBackStackEntry prevBackStackEntry = navController.getPreviousBackStackEntry();
-    if (prevBackStackEntry != null) {
-      viewModel =
-          new ViewModelProvider(prevBackStackEntry).get(ProductSortSelectionViewModel.class);
-    } else {
-      Timber.e("Previous back stack entry is null. Cannot retrieve ViewModel.");
-    }
+    // NavController navController = NavHostFragment.findNavController(this);
+    // // Get the previous back stack entry to retrieve the ViewModel.
+    // NavBackStackEntry prevBackStackEntry = navController.getPreviousBackStackEntry();
+    // if (prevBackStackEntry != null) {
+    //   viewModel =
+    //       new ViewModelProvider(prevBackStackEntry).get(ProductSortSelectionViewModel.class);
+    //   new ViewModelProvider(prevBackStackEntry).get(ProductSortSelectionViewModel.class);
+    // } else {
+    //   Timber.e("Previous back stack entry is null. Cannot retrieve ViewModel.");
+    // }
+
+    viewModel =
+            new ViewModelProvider(requireParentFragment()).get(ProductSortSelectionViewModel.class);
   }
 
   @Override

@@ -12,6 +12,8 @@ import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.ProductRepository;
 import com.optlab.banhangso.data.model.SortOption;
+import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
+import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import timber.log.Timber;
 
 @HiltViewModel
 public class ProductListViewModel extends ViewModel {
@@ -39,10 +42,7 @@ public class ProductListViewModel extends ViewModel {
         this.categoryRepository = categoryRepository;
 
         // Observe the categories change and update the list.
-        categoryRepository.getCategories().observeForever(categories -> {
-            listCategoryLiveData.setValue(categories);
-            updateProducts();
-        });
+        categoryRepository.getCategories().observeForever(this::observeCategories);
 
         listMediatorLiveData.addSource(productRepository.getProducts(), products -> updateProducts());
         listMediatorLiveData.addSource(sortOptionLiveData, option -> updateProducts());
@@ -52,7 +52,7 @@ public class ProductListViewModel extends ViewModel {
 
     @Override
     protected void onCleared() {
-        categoryRepository.getCategories().removeObserver(listCategoryLiveData::setValue);
+        categoryRepository.getCategories().removeObserver(this::observeCategories);
         listMediatorLiveData.removeSource(productRepository.getProducts());
         listMediatorLiveData.removeSource(sortOptionLiveData);
         listMediatorLiveData.removeSource(selectedCategoryLiveData);
@@ -61,11 +61,18 @@ public class ProductListViewModel extends ViewModel {
         super.onCleared();
     }
 
+    private void observeCategories(List<Category> categories) {
+        listCategoryLiveData.setValue(categories);
+        updateProducts();
+    }
+
     private void updateProducts() {
-        List<Product> updatedList = Objects.requireNonNullElse(
-                productRepository.getProducts().getValue(),
-                Collections.emptyList()
-        );
+        List<Product> updatedList = productRepository.getProducts().getValue();
+        if (updatedList == null) {
+            Timber.e("Product list is null in updateProducts method");
+            listMediatorLiveData.setValue(Collections.emptyList());
+            return;
+        }
 
         // Filter by category if a category is selected.
         Category selectedCategory = selectedCategoryLiveData.getValue();
@@ -78,8 +85,10 @@ public class ProductListViewModel extends ViewModel {
         }
 
         // Sort the list if sort option is set.
-        SortOption<Product.SortField> sortOption = Objects.requireNonNull(sortOptionLiveData.getValue());
-        updatedList.sort(Product.getComparator(sortOption.getSortField(), sortOption.isAscending()));
+        SortOption<Product.SortField> sortOption = sortOptionLiveData.getValue();
+        if (sortOption != null) {
+            updatedList.sort(Product.getComparator(sortOption.getSortField(), sortOption.isAscending()));
+        }
 
         listMediatorLiveData.setValue(updatedList);
     }
