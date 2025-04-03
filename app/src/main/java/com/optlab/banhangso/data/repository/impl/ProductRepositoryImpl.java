@@ -32,11 +32,17 @@ public class ProductRepositoryImpl implements ProductRepository {
         retrieveData();
     }
 
-    private Product docToProduct (DocumentSnapshot doc) {
+    /**
+     * Converts a DocumentSnapshot to a Product object.
+     *
+     * @param doc The DocumentSnapshot to convert.
+     * @return The converted Product object, or null if the conversion fails.
+     */
+    private Product docToProduct(DocumentSnapshot doc) {
         Product product = doc.toObject(Product.class);
         if (product == null) {
-           Timber.e("Document %s is null", doc.getId());
-           return null;
+            Timber.e("Document %s is null", doc.getId());
+            return null;
         } else {
             Timber.d("Document %s is not null", doc.getId());
             product.setId(doc.getId()); // Set the document ID to
@@ -55,8 +61,9 @@ public class ProductRepositoryImpl implements ProductRepository {
                     if (snapshots != null && !snapshots.isEmpty()) {
                         List<Product> productList = snapshots.getDocuments().stream()
                                 .map(this::docToProduct)
-                                .filter(Objects::nonNull) // Filter out null products, if
+                                .filter(Objects::nonNull) // Filter out null products, if any
                                 .collect(Collectors.toList());
+                        Timber.d("Products retrieved: %d", productList.size());
                         products.setValue(productList);
                     } else {
                         if (snapshots == null) {
