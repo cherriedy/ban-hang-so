@@ -4,10 +4,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.data.repository.BrandRepository;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.ProductRepository;
+import com.optlab.banhangso.data.repository.ProductSortOptionRepository;
 import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.BrandRepositoryImpl;
-import com.optlab.banhangso.data.repository.ProductSortOptionRepository;
+import com.optlab.banhangso.data.repository.impl.ProductSortOptionRepositoryImpl;
 
 import javax.inject.Singleton;
 
@@ -45,6 +46,6 @@ public class RepositoryModule {
   @Provides
   @Singleton
   public static ProductSortOptionRepository provideProductSortOptionRepository() {
-    return new ProductSortOptionRepository();
+    return new ProductSortOptionRepositoryImpl();
   }
 }
