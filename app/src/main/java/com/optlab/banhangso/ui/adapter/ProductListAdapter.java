@@ -18,81 +18,83 @@ import com.optlab.banhangso.data.model.Product;
 
 public class ProductListAdapter extends ListAdapter<Product, ProductListAdapter.ViewHolder> {
 
-    private static final DiffUtil.ItemCallback<Product> CALL_BACK = new DiffUtil.ItemCallback<Product>() {
+  private static final DiffUtil.ItemCallback<Product> CALL_BACK =
+      new DiffUtil.ItemCallback<Product>() {
         @Override
         public boolean areItemsTheSame(@NonNull Product oldItem, @NonNull Product newItem) {
-            return oldItem.getId() == newItem.getId();
+          return oldItem.getId() == newItem.getId();
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Product oldItem, @NonNull Product newItem) {
-            return oldItem.getName().equals(newItem.getName())
-//                    && oldItem.getBrand().getName().equals(newItem.getBrand().getName())
-//                    && oldItem.getCategory().getName().equals(newItem.getCategory().getName())
-                    && oldItem.getSellingPrice() == newItem.getSellingPrice();
+          return oldItem.getName().equals(newItem.getName())
+              //                    &&
+              // oldItem.getBrand().getName().equals(newItem.getBrand().getName())
+              //                    &&
+              // oldItem.getCategory().getName().equals(newItem.getCategory().getName())
+              && oldItem.getSellingPrice() == newItem.getSellingPrice();
         }
-    };
+      };
 
-    private final OnProductClickListener listener;
-    private int selectedPosition = RecyclerView.NO_POSITION;
-    private int itemLayoutRes = R.layout.list_item_horizontal_product;
+  private final OnProductClickListener listener;
+  private int selectedPosition = RecyclerView.NO_POSITION;
+  private int itemLayoutRes = R.layout.list_item_horizontal_product;
 
-    public ProductListAdapter(@NonNull final OnProductClickListener listener) {
-        super(CALL_BACK);
-        this.listener = listener;
-    }
+  public ProductListAdapter(@NonNull final OnProductClickListener listener) {
+    super(CALL_BACK);
+    this.listener = listener;
+  }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ViewDataBinding binding = DataBindingUtil.inflate(
-                inflater, viewType, parent, false
-        );
-        return new ViewHolder(binding);
-    }
+  @NonNull
+  @Override
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+    ViewDataBinding binding = DataBindingUtil.inflate(inflater, viewType, parent, false);
+    return new ViewHolder(binding);
+  }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position));
-    }
+  @Override
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    holder.bind(getItem(position));
+  }
 
-    @Override
-    public int getItemViewType(int position) {
-        return itemLayoutRes;
-    }
+  @Override
+  public int getItemViewType(int position) {
+    return itemLayoutRes;
+  }
 
-    /**
-     * Setter to update the layout resource dynamically.
-     */
-    @SuppressLint("NotifyDataSetChanged")
-    public void setItemLayoutRes(int itemLayoutRes) {
-        this.itemLayoutRes = itemLayoutRes;
-        notifyDataSetChanged();
-    }
+  /** Setter to update the layout resource dynamically. */
+  @SuppressLint("NotifyDataSetChanged")
+  public void setItemLayoutRes(int itemLayoutRes) {
+    this.itemLayoutRes = itemLayoutRes;
+    notifyDataSetChanged();
+  }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private final ViewDataBinding binding;
+  public class ViewHolder extends RecyclerView.ViewHolder {
+    private final ViewDataBinding binding;
 
-        public ViewHolder(@NonNull ViewDataBinding binding) {
-            super(binding.getRoot());
+    public ViewHolder(@NonNull ViewDataBinding binding) {
+      super(binding.getRoot());
 
-            this.binding = binding;
+      this.binding = binding;
 
-            binding.getRoot().setOnClickListener(v -> {
+      binding
+          .getRoot()
+          .setOnClickListener(
+              v -> {
                 // Get the selected position in RecyclerView.
                 selectedPosition = getBindingAdapterPosition();
 
                 // If the position is valid, triggering the listener to send the id of product.
                 if (selectedPosition != RecyclerView.NO_POSITION) {
-                    listener.onClick(getItem(selectedPosition).getId());
+                  listener.onClick(getItem(selectedPosition).getId());
                 }
-            });
-        }
-
-        public void bind(Product product) {
-            binding.setVariable(BR.product, product);
-            binding.executePendingBindings();
-        }
+              });
     }
+
+    public void bind(Product product) {
+      binding.setVariable(BR.product, product);
+      binding.executePendingBindings();
+    }
+  }
 }

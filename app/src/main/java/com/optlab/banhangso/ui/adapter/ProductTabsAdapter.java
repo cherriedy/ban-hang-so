@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.optlab.banhangso.ui.brand.view.BrandListFragment;
-import com.optlab.banhangso.ui.category.viewmodel.CategoryListFragment;
+import com.optlab.banhangso.ui.category.view.CategoryListFragment;
 import com.optlab.banhangso.ui.product.view.ProductListFragment;
 
 public class ProductTabsAdapter extends FragmentStateAdapter {
