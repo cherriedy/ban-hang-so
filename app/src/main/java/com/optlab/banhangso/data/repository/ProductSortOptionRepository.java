@@ -21,7 +21,6 @@ public class ProductSortOptionRepository {
           new SortOption<>(Product.SortField.SELLING_PRICE, true),
           new SortOption<>(Product.SortField.SELLING_PRICE, false));
 
-  @Inject
   public ProductSortOptionRepository() {}
 
   /** Get the list of sort options. */
