@@ -1,4 +1,4 @@
-package com.optlab.banhangso.ui.category.viewmodel;
+package com.optlab.banhangso.ui.category.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,28 +15,32 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.ui.adapter.CategorySelectionAdapter;
 import com.optlab.banhangso.databinding.FragmentOptionSelectionBinding;
 import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
+import com.optlab.banhangso.ui.category.viewmodel.CategorySelectionViewModel;
 
 import java.util.Collections;
 
 import javax.inject.Inject;
 
-import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
 
 /**
- * Fragment that displays a selectable list of categories with search functionality. This fragment
- * allows users to select a category and passes the selection back to the previous fragment through
- * the Navigation component's SavedStateHandle.
+ * Displays a list of categories for selection.
+ *
+ * <p>Fragment that displays a selectable list of categories with search functionality. This
+ * fragment allows users to select a category and passes the selection back to the previous fragment
+ * through the Navigation component's SavedStateHandle.
  */
-@HiltViewModel
+@AndroidEntryPoint
 public class CategorySelectionFragment extends Fragment {
   /** Key used for storing the selected category position in SavedStateHandle */
   public static final String KEY_CHECKED_POSITION = "checked_category_position_key";
 
-  @Inject protected CategoryRepositoryImpl repository;
+  @Inject protected CategoryRepository repository;
 
   private FragmentOptionSelectionBinding binding;
   private CategorySelectionViewModel viewModel;

@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.model.Category;
+import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
 
 import java.util.List;
@@ -22,13 +23,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class CategorySelectionViewModel extends ViewModel {
-  private final CategoryRepositoryImpl repository;
+  private final CategoryRepository repository;
   private final MutableLiveData<List<Category>> categoriesSourceLiveData = new MutableLiveData<>();
   private final MutableLiveData<String> searchQueryLiveData = new MutableLiveData<>("");
   private final MediatorLiveData<List<Category>> categoriesLiveData = new MediatorLiveData<>();
 
   @Inject
-  public CategorySelectionViewModel(@NonNull CategoryRepositoryImpl repository) {
+  public CategorySelectionViewModel(@NonNull CategoryRepository repository) {
     this.repository = repository;
     // Observe the brands change from repository and update the list.
     repository.getCategories().observeForever(categoriesSourceLiveData::setValue);

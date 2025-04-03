@@ -1,4 +1,4 @@
-package com.optlab.banhangso.ui.category.viewmodel;
+package com.optlab.banhangso.ui.category.view;
 
 import android.os.Bundle;
 
