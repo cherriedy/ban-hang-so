@@ -9,16 +9,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.ProductRepository;
-import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
-import com.optlab.banhangso.util.validator.ProductValidator;
-
-import java.util.Set;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 
 @HiltViewModel
 public class ProductEditViewModel extends ViewModel {

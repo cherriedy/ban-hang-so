@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.ProductSortOptionRepository;
+import com.optlab.banhangso.data.repository.impl.ProductSortOptionRepositoryImpl;
 import com.optlab.banhangso.data.model.SortOption;
 
 import java.util.List;
