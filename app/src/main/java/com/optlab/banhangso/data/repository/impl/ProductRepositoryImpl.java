@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.ProductRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -30,6 +32,18 @@ public class ProductRepositoryImpl implements ProductRepository {
         retrieveData();
     }
 
+    private Product docToProduct (DocumentSnapshot doc) {
+        Product product = doc.toObject(Product.class);
+        if (product == null) {
+           Timber.e("Document %s is null", doc.getId());
+           return null;
+        } else {
+            Timber.d("Document %s is not null", doc.getId());
+            product.setId(doc.getId()); // Set the document ID to
+            return product;
+        }
+    }
+
     private void retrieveData() {
         firestore.collection("products")
                 .addSnapshotListener((snapshots, error) -> {
@@ -38,13 +52,18 @@ public class ProductRepositoryImpl implements ProductRepository {
                         return;
                     }
 
-                    if (snapshots != null && snapshots.isEmpty()) {
+                    if (snapshots != null && !snapshots.isEmpty()) {
                         List<Product> productList = snapshots.getDocuments().stream()
-                                .map(doc -> doc.toObject(Product.class))
+                                .map(this::docToProduct)
+                                .filter(Objects::nonNull) // Filter out null products, if
                                 .collect(Collectors.toList());
                         products.setValue(productList);
                     } else {
-                        Timber.d("No products found in the collection");
+                        if (snapshots == null) {
+                            Timber.e("Snapshot is null");
+                        } else {
+                            Timber.d("Snapshot is not null but empty");
+                        }
                     }
                 });
     }
