@@ -3,19 +3,19 @@ package com.optlab.banhangso.data.repository.impl;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.repository.BrandRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import hilt_aggregated_deps._com_optlab_banhangso_di_RepositoryModule;
 import timber.log.Timber;
 
 @Singleton
@@ -28,6 +28,27 @@ public class BrandRepositoryImpl implements BrandRepository {
         retrieveData();
     }
 
+    /**
+     * Converts a DocumentSnapshot to a Brand object.
+     *
+     * @param doc The DocumentSnapshot to convert.
+     * @return The converted Brand object, or null if the conversion fails.
+     */
+    private Brand docToBrand(DocumentSnapshot doc) {
+        Brand brand = doc.toObject(Brand.class);
+        if (brand == null) {
+            Timber.e("Document %s is null", doc.getId());
+            return null;
+        } else {
+            Timber.d("Document %s is not null", doc.getId());
+            brand.setId(doc.getId());
+            return brand;
+        }
+    }
+
+    /**
+     * Retrieves data from Firestore and updates the brands LiveData.
+     */
     private void retrieveData() {
         firestore.collection("brands")
                 .addSnapshotListener((snapshots, error) -> {
@@ -38,7 +59,8 @@ public class BrandRepositoryImpl implements BrandRepository {
 
                     if (snapshots != null && !snapshots.isEmpty()) {
                         List<Brand> brandList = snapshots.getDocuments().stream()
-                                .map(doc -> doc.toObject(Brand.class))
+                                .map(this::docToBrand)
+                                .filter(Objects::nonNull) // Filter out null brands if any
                                 .collect(Collectors.toList());
                         brands.setValue(brandList);
                     }
