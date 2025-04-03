@@ -5,19 +5,16 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.optlab.banhangso.R;
+import com.optlab.banhangso.data.repository.ProductSortOptionRepository;
 import com.optlab.banhangso.ui.adapter.ProductSortSelectionAdapter;
 import com.optlab.banhangso.databinding.FragmentProductSortSelectionBinding;
 import com.optlab.banhangso.data.model.Product;
-import com.optlab.banhangso.data.repository.ProductSortOptionRepository;
+import com.optlab.banhangso.data.repository.impl.ProductSortOptionRepositoryImpl;
 import com.optlab.banhangso.data.model.SortOption;
 import com.optlab.banhangso.util.UserPreferenceManager;
 import com.optlab.banhangso.ui.product.viewmodel.ProductSortSelectionViewModel;
@@ -28,7 +25,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import timber.log.Timber;
 
 /**
  * Display a selectable list of product sort options.
