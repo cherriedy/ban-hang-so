@@ -3,16 +3,17 @@ package com.optlab.banhangso.data.repository.impl;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import timber.log.Timber;
@@ -27,6 +28,24 @@ public class CategoryRepositoryImpl implements CategoryRepository {
         retrieveData();
     }
 
+    /**
+     * Converts a DocumentSnapshot to a Category object.
+     *
+     * @param doc The DocumentSnapshot to convert.
+     * @return The converted Category object, or null if the conversion fails.
+     */
+    private Category docToCategory(DocumentSnapshot doc) {
+        Category category = doc.toObject(Category.class);
+        if (category == null) {
+            Timber.e("Category is null for document: %s", doc.getId());
+            return null;
+        } else {
+            Timber.d("Document %s is not null", doc.getId());
+            category.setId(doc.getId());
+            return category;
+        }
+    }
+
     private void retrieveData() {
         firestore.collection("categories")
                 .addSnapshotListener((snapshots, error) -> {
@@ -37,7 +56,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
                     if (snapshots != null && !snapshots.isEmpty()) {
                         List<Category> categoryList = snapshots.getDocuments().stream()
-                                .map(doc -> doc.toObject(Category.class))
+                                .map(this::docToCategory)
+                                .filter(Objects::nonNull) // Filter out null objects, if any
                                 .collect(Collectors.toList());
                         categories.setValue(categoryList);
                     }
