@@ -7,6 +7,7 @@ import androidx.databinding.library.baseAdapters.BR;
 
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
+import com.google.firebase.firestore.PropertyName;
 import com.google.firebase.firestore.ServerTimestamp;
 import com.optlab.banhangso.util.validator.ValidDiscountPrice;
 
@@ -22,7 +23,6 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 @IgnoreExtraProperties
-@ValidDiscountPrice
 public class Product extends BaseObservable implements Cloneable {
   public enum SortField {
     NAME("Tên A -> Z", "Tên Z -> A"),
@@ -54,34 +54,18 @@ public class Product extends BaseObservable implements Cloneable {
   private String barcode;
   private Category category;
   private Brand brand;
-
-  @NotBlank(message = "{NotBlank.product.name}")
-  @Size(max = 50, message = "{Size.product.name}")
   private String name;
-
-  @Positive(message = "{Positive.product.purchasePrice}")
   private double purchasePrice;
-
-  @Positive(message = "{Positive.product.sellingPrice}")
   private double sellingPrice;
-
   private String avatarUrl;
 
-  @Min(value = 0, message = "{Min.product.stockQuantity}")
+  @PropertyName("stock")
   private int stockQuantity;
 
-  @Size(max = 1000, message = "{Size.product.description}")
   private String description;
-
   private ProductStatus status;
-
-  @PositiveOrZero(message = "{PositiveOrZero.product.discountPrice}")
-  @Max(value = 999999, message = "{Max.product.discountPrice}")
   private double discountPrice;
-
-  @Size(max = 100, message = "{Size.product.note}")
   private String note;
-
   @ServerTimestamp private Date createdAt;
   @ServerTimestamp private Date updatedAt;
 
