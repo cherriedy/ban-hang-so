@@ -56,10 +56,21 @@ public class TextViewBindingAdapter {
         });
     }
 
-    @BindingAdapter("notNullError")
-    public static void setNotNullError(@NonNull TextInputLayout view, boolean isError) {
-        String error = ContextCompat.getString(view.getContext(), R.string.error_field_is_not_nullable);
-        view.setError(isError ? error : null);
+    /**
+     * Sets the error message for a TextInputLayout.
+     *
+     * @param view  The TextInputLayout to set the error message for.
+     * @param error The error message to set. If null or empty, the error will be cleared.
+     */
+    @BindingAdapter("error")
+    public static void setError(@NonNull TextInputLayout view, String error) {
+        if (error == null || error.isEmpty()) {
+            view.setError(null);
+            view.setErrorEnabled(false);
+        } else {
+            view.setError(error);
+            view.setErrorEnabled(true);
+        }
     }
 
     // Helper method to walk up the view hierarchy and return the first TextInputLayout
