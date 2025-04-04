@@ -640,7 +640,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@color/color_primary"
                     android:padding="16dp"
-                    android:text="@string/finish"
+                    android:text="@string/update"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:cornerRadius="5dp" />

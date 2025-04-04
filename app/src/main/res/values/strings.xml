@@ -82,7 +82,7 @@
     <string name="value_out_stock">Hết hàng</string>
 
     <string name="delete">Xóa</string>
-    <string name="finish">Hoàn tất</string>
+    <string name="update">Cập nhật</string>
 
     <string name="error_field_is_not_nullable">Thông tin bắt buộc</string>
     <string name="asterisk">*</string>
