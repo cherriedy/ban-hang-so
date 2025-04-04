@@ -15,31 +15,40 @@ import com.optlab.banhangso.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class TextViewBindingAdapter {
-
+    /**
+     * Sets the text color of a TextView based on the focus state of an EditText.
+     *
+     * @param view     The TextView to set the color for.
+     * @param editText The EditText whose focus state is used to determine the color.
+     */
     @BindingAdapter("syncFocusColor")
-    public static void setSyncFocusColor(@NonNull final TextView view, @NonNull final EditText editText) {
-
+    public static void setSyncFocusColor(@NonNull final TextView view,
+                                         @NonNull final EditText editText) {
+        // Runnable to update the color of the TextView based on the EditText's focus state.
         Runnable updateColor = () -> {
+            // Find the parent TextInputLayout of the EditText.
             TextInputLayout layout = findTextInputLayout(editText);
-            // If the TextInputLayout has an error set, use the error focusColor.
-            // Otherwise, use primary when focused; default when not.
+
             int focusColor;
             if (layout != null && layout.getError() != null) {
+                // If the TextInputLayout has an error, set the color to warning.
                 focusColor = ContextCompat.getColor(view.getContext(), R.color.color_warning);
             } else {
                 if (editText.hasFocus()) {
+                    // If the EditText has focus, set the color to primary.
                     focusColor = ContextCompat.getColor(view.getContext(), R.color.color_primary);
                 } else {
+                    // If the EditText does not have focus, set the color to title.
                     focusColor = ContextCompat.getColor(view.getContext(), R.color.color_text_title);
                 }
             }
             view.setTextColor(focusColor);
         };
 
-        // Set up the focus listener.
+        // Update the color when the EditText gains or loses focus.
         editText.setOnFocusChangeListener((v, hasFocus) -> updateColor.run());
 
-        // Also update the color when the text changes.
+        // Update the color when the TextInputLayout has an error.
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -73,7 +82,12 @@ public class TextViewBindingAdapter {
         }
     }
 
-    // Helper method to walk up the view hierarchy and return the first TextInputLayout
+    /**
+     * Finds the TextInputLayout that contains the given EditText.
+     *
+     * @param editText The EditText whose parent TextInputLayout is to be found.
+     * @return The TextInputLayout that contains the EditText, or null if not found.
+     */
     private static TextInputLayout findTextInputLayout(EditText editText) {
         ViewParent parent = editText.getParent();
         while (parent instanceof View) {
