@@ -3,13 +3,11 @@ package com.optlab.banhangso.data.repository.impl;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.ProductRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,7 +15,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import timber.log.Timber;
