@@ -125,6 +125,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:endIconMode="clear_text"
+                        app:error="@{viewModel.nameError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -183,6 +184,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:endIconMode="clear_text"
+                            app:error="@{viewModel.sellingPriceError}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -221,6 +223,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:endIconMode="clear_text"
+                            app:error="@{viewModel.purchasePriceError}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -257,6 +260,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:endIconMode="clear_text"
+                        app:error="@{viewModel.discountPriceError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -537,6 +541,7 @@
                         app:counterEnabled="true"
                         app:counterMaxLength="120"
                         app:endIconMode="clear_text"
+                        app:error="@{viewModel.descriptionError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -551,6 +556,7 @@
                             android:inputType="textMultiLine"
                             android:lineSpacingExtra="4dp"
                             android:scrollbars="vertical"
+                            android:text="@={viewModel.product.description}"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                             app:endIconMode="clear_text" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -567,7 +573,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:inputType="textMultiLine"
                         android:text="@string/attr_product_note"
                         android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                         android:textColor="@color/color_text_title"
@@ -581,6 +586,7 @@
                         app:counterEnabled="true"
                         app:counterMaxLength="50"
                         app:endIconMode="clear_text"
+                        app:error="@{viewModel.noteError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -591,6 +597,7 @@
                             android:focusableInTouchMode="true"
                             android:gravity="top|start"
                             android:imeOptions="flagNoEnterAction"
+                            android:text="@={viewModel.product.note}"
                             android:inputType="textMultiLine" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
