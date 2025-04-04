@@ -12,12 +12,9 @@ import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.ProductRepository;
 import com.optlab.banhangso.data.model.SortOption;
-import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
-import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -44,10 +41,10 @@ public class ProductListViewModel extends ViewModel {
         // Observe the categories change and update the list.
         categoryRepository.getCategories().observeForever(this::observeCategories);
 
-        listMediatorLiveData.addSource(productRepository.getProducts(), products -> updateProducts());
-        listMediatorLiveData.addSource(sortOptionLiveData, option -> updateProducts());
-        listMediatorLiveData.addSource(selectedCategoryLiveData, category -> updateProducts());
-        listMediatorLiveData.addSource(searchQueryLiveData, query -> updateProducts());
+        listMediatorLiveData.addSource(productRepository.getProducts(), unused -> updateProducts());
+        listMediatorLiveData.addSource(sortOptionLiveData, unused -> updateProducts());
+        listMediatorLiveData.addSource(selectedCategoryLiveData, unused -> updateProducts());
+        listMediatorLiveData.addSource(searchQueryLiveData, unused -> updateProducts());
     }
 
     @Override
@@ -72,15 +69,19 @@ public class ProductListViewModel extends ViewModel {
             Timber.e("Product list is null in updateProducts method");
             listMediatorLiveData.setValue(Collections.emptyList());
             return;
+        } else {
+            Timber.d("Product list size in updateProducts method is %d", updatedList.size());
         }
 
         // Filter by category if a category is selected.
         Category selectedCategory = selectedCategoryLiveData.getValue();
+        Timber.d("Selected category: %s", selectedCategory);
         updatedList = filterByCategory(updatedList, selectedCategory);
 
         // Filter by search query if available.
         String query = searchQueryLiveData.getValue();
         if (query != null && !query.trim().isEmpty()) {
+            Timber.d("Search query: %s", query);
             updatedList = filterByQuery(updatedList, query);
         }
 
@@ -90,6 +91,7 @@ public class ProductListViewModel extends ViewModel {
             updatedList.sort(Product.getComparator(sortOption.getSortField(), sortOption.isAscending()));
         }
 
+        updatedList.forEach(product -> Timber.d("Product: %s", product));
         listMediatorLiveData.setValue(updatedList);
     }
 
