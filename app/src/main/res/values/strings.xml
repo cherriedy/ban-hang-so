@@ -94,4 +94,17 @@
     <string name="tab_title_brand">Thương hiệu</string>
 
     <string name="currency_unit">VND</string>
+    <string name="alert_product_name_non_null">Tên sản phẩm không được để trống</string>
+    <string name="alter_product_name_max_chars">Tên sản phẩm không được quá 100 ký tự</string>
+    <string name="alert_product_name_min_chars">Tên sản phẩm phải có ít nhất 10 ký tự</string>
+    <string name="alert_product_price_non_null">Giá không được để trống</string>
+    <string name="alert_product_price_invalid">Giá không hợp lệ</string>
+    <string name="alert_product_discount_price_invalid">Giá giảm không được lớn hơn giá bán</string>
+    <string name="alert_product_description_max_chars">Mô tả không được quá 120 ký tự</string>
+    <string name="alert_product_note_max_chars">Ghi chú không được quá 50 ký tự</string>
+    <string name="alert_product_purchase_price_invalid">Giá nhập không được lớn hơn giá bán</string>
+    <string name="alert_exit_without_saving">Thoát không lưu?</string>
+    <string name="alert_confirm_again">Có muốn chắc chắn thực hiện</string>
+    <string name="agree">Đồng ý</string>
+    <string name="refuse">Từ chối</string>
 </resources>
