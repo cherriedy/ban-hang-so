@@ -1,6 +1,10 @@
 package com.optlab.banhangso.ui.product.view;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,151 +17,135 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.optlab.banhangso.R;
-import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
-import com.optlab.banhangso.ui.adapter.ProductTabsAdapter;
 import com.optlab.banhangso.databinding.FragmentProductTabsBinding;
-import com.optlab.banhangso.util.UserPreferenceManager;
+import com.optlab.banhangso.ui.adapter.ProductTabsAdapter;
 import com.optlab.banhangso.ui.product.viewmodel.ProductListViewModel;
 import com.optlab.banhangso.ui.product.viewmodel.ProductTabListViewModel;
-import com.google.android.material.tabs.TabLayoutMediator;
+import com.optlab.banhangso.util.UserPreferenceManager;
 
 import java.util.Objects;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import timber.log.Timber;
 
 @AndroidEntryPoint
 public class ProductTabsFragment extends Fragment {
-  private FragmentProductTabsBinding binding;
-  private ProductListViewModel productListViewModel;
+    private FragmentProductTabsBinding binding;
+    private ProductListViewModel productListViewModel;
 
-  @Override
-  public View onCreateView(
-      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    binding = FragmentProductTabsBinding.inflate(inflater, container, false);
-    return binding.getRoot();
-  }
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentProductTabsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    initViewPagerAdapter();
-    initToolBar();
-    setupTabLayout();
-    setUpQueryHintText();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViewPagerAdapter();
+        initToolBar();
+        setupTabLayout();
+        setUpQueryHintText();
 
-    binding.viewPager.setUserInputEnabled(false);
+        binding.viewPager.setUserInputEnabled(false);
 
-    // NavController navController = NavHostFragment.findNavController(this);
-    // NavBackStackEntry backStackEntry = navController.getCurrentBackStackEntry();
-    //
-    // if (backStackEntry != null) {
-    //   productListViewModel = new
-    // ViewModelProvider(backStackEntry).get(ProductListViewModel.class);
-    // } else {
-    //   Timber.e("NavBackStackEntry is null");
-    // }
-    productListViewModel = new ViewModelProvider(this).get(ProductListViewModel.class);
+        productListViewModel = new ViewModelProvider(this).get(ProductListViewModel.class);
 
-    binding.searchView.setOnQueryTextListener(
-        new SearchView.OnQueryTextListener() {
-          @Override
-          public boolean onQueryTextSubmit(String query) {
-            return false;
-          }
+        binding.searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
 
-          @Override
-          public boolean onQueryTextChange(String newText) {
-            productListViewModel.setSearchQuery(newText);
-            return true;
-          }
-        });
-  }
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        productListViewModel.setSearchQuery(newText);
+                        return true;
+                    }
+                });
+    }
 
-  private void initViewPagerAdapter() {
-    ProductTabsAdapter adapter = new ProductTabsAdapter(this);
-    binding.viewPager.setAdapter(adapter);
-  }
+    private void initViewPagerAdapter() {
+        ProductTabsAdapter adapter = new ProductTabsAdapter(this);
+        binding.viewPager.setAdapter(adapter);
+    }
 
-  @Override
-  public void onDestroyView() {
-    binding = null;
-    super.onDestroyView();
-  }
+    @Override
+    public void onDestroyView() {
+        binding = null;
+        super.onDestroyView();
+    }
 
-  private void setupTabLayout() {
-    int[] tabTitleRes = {
-      R.string.tab_title_product, R.string.tab_title_category, R.string.tab_title_brand
-    };
+    private void setupTabLayout() {
+        int[] tabTitleRes = {
+                R.string.tab_title_product, R.string.tab_title_category, R.string.tab_title_brand
+        };
 
-    new TabLayoutMediator(
-            binding.tabLayout,
-            binding.viewPager,
-            (tab, position) -> {
-              if (position >= 0 && position <= tabTitleRes.length) {
-                tab.setText(getString(tabTitleRes[position]));
-              }
-            })
-        .attach();
-  }
+        new TabLayoutMediator(
+                binding.tabLayout,
+                binding.viewPager,
+                (tab, position) -> {
+                    if (position >= 0 && position <= tabTitleRes.length) {
+                        tab.setText(getString(tabTitleRes[position]));
+                    }
+                })
+                .attach();
+    }
 
-  private void setUpQueryHintText() {
-    int[] hintQueryRes = {
-      R.string.hint_query_search_keyword, R.string.hint_query_category, R.string.hint_query_brand
-    };
+    private void setUpQueryHintText() {
+        int[] hintQueryRes = {
+                R.string.hint_query_search_keyword, R.string.hint_query_category, R.string.hint_query_brand
+        };
 
-    binding.viewPager.registerOnPageChangeCallback(
-        new OnPageChangeCallback() {
-          @Override
-          public void onPageSelected(int position) {
-            if (position >= 0 && position <= hintQueryRes.length) {
-              binding.searchView.setQueryHint(getString(hintQueryRes[position]));
-            }
-          }
-        });
+        binding.viewPager.registerOnPageChangeCallback(
+                new OnPageChangeCallback() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        if (position >= 0 && position <= hintQueryRes.length) {
+                            binding.searchView.setQueryHint(getString(hintQueryRes[position]));
+                        }
+                    }
+                });
 
-    // Add the vertical divider to each item in TabLayout.
-    addVerticalDivider();
-  }
+        // Add the vertical divider to each item in TabLayout.
+        addVerticalDivider();
+    }
 
-  private void addVerticalDivider() {
-    LinearLayout linearLayout = (LinearLayout) binding.tabLayout.getChildAt(0);
-    linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-    linearLayout.setDividerDrawable(
-        ContextCompat.getDrawable(requireContext(), R.drawable.vertical_divider_tab_layout));
-  }
+    private void addVerticalDivider() {
+        LinearLayout linearLayout = (LinearLayout) binding.tabLayout.getChildAt(0);
+        linearLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+        linearLayout.setDividerDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.vertical_divider_tab_layout));
+    }
 
-  private void initToolBar() {
-    NavController navController = NavHostFragment.findNavController(this);
-    ProductTabListViewModel productTabListViewModel = getTabListViewModel(navController);
+    private void initToolBar() {
+        NavController navController = NavHostFragment.findNavController(this);
+        ProductTabListViewModel productTabListViewModel = getTabListViewModel(navController);
 
-    UserPreferenceManager userPreferenceManager = new UserPreferenceManager(requireContext());
-    boolean layoutMode = userPreferenceManager.getLayoutMode();
-    productTabListViewModel.setToggleLayout(layoutMode);
+        UserPreferenceManager userPreferenceManager = new UserPreferenceManager(requireContext());
+        boolean layoutMode = userPreferenceManager.getLayoutMode();
+        productTabListViewModel.setToggleLayout(layoutMode);
 
-    binding.toolBar.inflateMenu(R.menu.menu_product_toolbar);
-    binding.toolBar.setOnMenuItemClickListener(
-        item -> {
-          if (item.getItemId() == R.id.action_button_1) {
-            navController.navigate(R.id.productSortSelectionFragment);
-          } else {
-            productTabListViewModel.toggleLayout();
-            Boolean currentLayoutMode = productTabListViewModel.getToggleLayout().getValue();
-            userPreferenceManager.saveLayoutMode(currentLayoutMode);
-          }
-          return true;
-        });
-  }
+        binding.toolBar.inflateMenu(R.menu.menu_product_toolbar);
+        binding.toolBar.setOnMenuItemClickListener(
+                item -> {
+                    if (item.getItemId() == R.id.action_button_1) {
+                        navController.navigate(R.id.productSortSelectionFragment);
+                    } else {
+                        productTabListViewModel.toggleLayout();
+                        Boolean currentLayoutMode = productTabListViewModel.getToggleLayout().getValue();
+                        userPreferenceManager.saveLayoutMode(currentLayoutMode);
+                    }
+                    return true;
+                });
+    }
 
-  private ProductTabListViewModel getTabListViewModel(NavController navController) {
-    NavBackStackEntry navBackStackEntry =
-        Objects.requireNonNull(navController.getCurrentBackStackEntry());
-    return new ViewModelProvider(navBackStackEntry).get(ProductTabListViewModel.class);
-  }
+    private ProductTabListViewModel getTabListViewModel(NavController navController) {
+        NavBackStackEntry navBackStackEntry =
+                Objects.requireNonNull(navController.getCurrentBackStackEntry());
+        return new ViewModelProvider(navBackStackEntry).get(ProductTabListViewModel.class);
+    }
 }
