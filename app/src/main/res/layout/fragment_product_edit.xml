@@ -13,6 +13,14 @@
         <variable
             name="viewModel"
             type="com.optlab.banhangso.ui.product.viewmodel.ProductEditViewModel" />
+
+        <variable
+            name="fragment"
+            type="com.optlab.banhangso.ui.product.view.ProductEditFragment" />
+
+        <variable
+            name="isCreateMode"
+            type="boolean" />
     </data>
 
     <ScrollView
@@ -24,6 +32,13 @@
             android:layout_height="wrap_content"
             android:background="@color/color_background"
             android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:visibility="gone" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -597,8 +612,8 @@
                             android:focusableInTouchMode="true"
                             android:gravity="top|start"
                             android:imeOptions="flagNoEnterAction"
-                            android:text="@={viewModel.product.note}"
-                            android:inputType="textMultiLine" />
+                            android:inputType="textMultiLine"
+                            android:text="@={viewModel.product.note}" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -616,6 +631,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:onClick="@{fragment::onDeleteButtonClick}"
                     android:padding="16dp"
                     android:text="@string/delete"
                     android:textColor="@android:color/holo_red_light"
@@ -634,11 +650,13 @@
                     android:visibility="gone" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_finish"
+                    android:id="@+id/btn_update"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:backgroundTint="@color/color_primary"
+                    android:enabled="@{viewModel.updateButtonState}"
+                    android:onClick="@{isCreateMode ? viewModel::onCreateButtonClick : viewModel::onUpdateButtonClick}"
                     android:padding="16dp"
                     android:text="@string/update"
                     android:textSize="18sp"
