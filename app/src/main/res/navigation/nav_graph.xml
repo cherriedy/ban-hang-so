@@ -26,9 +26,7 @@
         android:name="com.optlab.banhangso.ui.product.view.ProductListFragment"
         android:label="Product Management"
         android:launchMode="singleTop"
-        tools:layout="@layout/fragment_product_list">
-
-    </fragment>
+        tools:layout="@layout/fragment_product_list" />
 
     <fragment
         android:id="@+id/productTabsFragment"
@@ -46,6 +44,23 @@
                 android:defaultValue="false"
                 app:argType="boolean" />
         </action>
+
+        <action
+            android:id="@+id/action_to_edit_fragment"
+            app:destination="@id/productEditFragment"
+            app:restoreState="true">
+
+            <argument
+                android:name="productId"
+                android:defaultValue=""
+                app:argType="string" />
+
+            <argument
+                android:name="isCreateMode"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
+
     </fragment>
 
     <fragment
@@ -79,7 +94,8 @@
 
         <argument
             android:name="brandId"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <fragment
@@ -90,7 +106,8 @@
 
         <argument
             android:name="categoryId"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
     <dialog
