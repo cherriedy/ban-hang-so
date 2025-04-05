@@ -21,6 +21,7 @@ import timber.log.Timber;
 
 @Singleton
 public class ProductRepositoryImpl implements ProductRepository {
+    public static final String COLLECTION_PATH = "products";
     private final FirebaseFirestore firestore;
     private final MutableLiveData<List<Product>> products = new MutableLiveData<>();
 
@@ -48,7 +49,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     private void retrieveData() {
-        firestore.collection("products")
+        firestore.collection(COLLECTION_PATH)
                 .addSnapshotListener((snapshots, error) -> {
                     if (error != null) {
                         Timber.e("Error getting documents: %s", error.getMessage());
@@ -100,7 +101,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void addProduct(Product newProduct, Consumer<Boolean> callback) {
-        firestore.collection("products")
+        firestore.collection(COLLECTION_PATH)
                 .add(newProduct)
                 .addOnSuccessListener(docRef -> {
                     Timber.d("Product added with ID: %s", docRef.getId());
@@ -119,7 +120,7 @@ public class ProductRepositoryImpl implements ProductRepository {
             return;
         }
 
-        firestore.collection("products")
+        firestore.collection(COLLECTION_PATH)
                 .document(updatedProduct.getId())
                 .set(updatedProduct)
                 .addOnSuccessListener(unused -> {
@@ -128,6 +129,40 @@ public class ProductRepositoryImpl implements ProductRepository {
                 })
                 .addOnFailureListener(e -> {
                     Timber.e("Failed to update product: %s", e.getMessage());
+                    callback.accept(false);
+                });
+    }
+
+    @Override
+    public void deleteProduct(Product deletedProduct, Consumer<Boolean> callback) {
+        if (deletedProduct.getId() == null) {
+            Timber.e("Cannot delete the product: ID is null!");
+            return;
+        }
+
+        firestore.collection(COLLECTION_PATH)
+                .document(deletedProduct.getId())
+                .delete()
+                .addOnSuccessListener(unused -> {
+                    Timber.d("Product deleted: %s", deletedProduct.getId());
+                    callback.accept(true);
+                })
+                .addOnFailureListener(e -> {
+                    Timber.e("Failed to delete product: %s", e.getMessage());
+                    callback.accept(false);
+                });
+    }
+
+    @Override
+    public void createProduct(Product creatingProduct, Consumer<Boolean> callback) {
+        firestore.collection(COLLECTION_PATH)
+                .add(creatingProduct)
+                .addOnSuccessListener(docRef -> {
+                    Timber.d("Product created with ID: %s", docRef.getId());
+                    callback.accept(true);
+                })
+                .addOnFailureListener(e -> {
+                    Timber.e("Failed to create product: %s", e.getMessage());
                     callback.accept(false);
                 });
     }
