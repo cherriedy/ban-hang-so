@@ -239,6 +239,22 @@ public class Product extends BaseObservable implements Cloneable {
         notifyPropertyChanged(BR.note);
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public static class Builder {
         private String id;
         private String barcode = "";
