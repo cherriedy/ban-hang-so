@@ -11,8 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -20,28 +18,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.optlab.banhangso.R;
+import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.repository.CategoryRepository;
-import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
+import com.optlab.banhangso.databinding.FragmentProductListBinding;
 import com.optlab.banhangso.ui.adapter.CategoryTagSelectionAdapter;
 import com.optlab.banhangso.ui.adapter.ProductListAdapter;
-import com.optlab.banhangso.databinding.FragmentProductListBinding;
 import com.optlab.banhangso.ui.common.decoration.GridSpacingStrategy;
 import com.optlab.banhangso.ui.common.decoration.LinearSpacingStrategy;
-import com.optlab.banhangso.ui.common.decoration.SpacingStrategy;
-import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.ui.common.decoration.SpacingItemDecoration;
-import com.optlab.banhangso.util.UserPreferenceManager;
+import com.optlab.banhangso.ui.common.decoration.SpacingStrategy;
 import com.optlab.banhangso.ui.product.viewmodel.ProductListViewModel;
 import com.optlab.banhangso.ui.product.viewmodel.ProductSortSelectionViewModel;
 import com.optlab.banhangso.ui.product.viewmodel.ProductTabListViewModel;
+import com.optlab.banhangso.util.UserPreferenceManager;
 
 import java.util.EnumSet;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import timber.log.Timber;
 
 @AndroidEntryPoint
 public class ProductListFragment extends Fragment {
@@ -87,6 +82,8 @@ public class ProductListFragment extends Fragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentProductListBinding.inflate(inflater, container, false);
+        binding.setLifecycleOwner(getViewLifecycleOwner());
+        binding.setFragment(this);
         return binding.getRoot();
     }
 
@@ -106,7 +103,7 @@ public class ProductListFragment extends Fragment {
     }
 
     private <T extends ViewModel> T getParentViewModel(Class<T> viewModelClass) {
-        return new ViewModelProvider((requireParentFragment())).get(viewModelClass);
+        return new ViewModelProvider(requireParentFragment()).get(viewModelClass);
     }
 
     private <T extends ViewModel> T getCurrentViewModel(Class<T> viewModelClass) {
@@ -124,6 +121,14 @@ public class ProductListFragment extends Fragment {
      */
     private void setupProductRecyclerView() {
         binding.recyclerViewProduct.setLayoutManager(new LinearLayoutManager(requireContext()));
+        EnumSet<LinearSpacingStrategy.Direction> directions =
+                EnumSet.of(
+                        LinearSpacingStrategy.Direction.LEFT,
+                        LinearSpacingStrategy.Direction.RIGHT,
+                        LinearSpacingStrategy.Direction.TOP,
+                        LinearSpacingStrategy.Direction.BOTTOM);
+        SpacingStrategy spacingStrategy = new LinearSpacingStrategy(requireContext(), 8, directions);
+        binding.recyclerViewProduct.addItemDecoration(new SpacingItemDecoration(spacingStrategy));
         binding.recyclerViewProduct.setHasFixedSize(true);
         binding.recyclerViewProduct.setAdapter(productListAdapter);
     }
@@ -198,5 +203,15 @@ public class ProductListFragment extends Fragment {
             int pos = categoryRepository.getPositionById(selectedCategory.getId());
             categoryTagSelectionAdapter.setSelectedPosition(pos);
         }
+    }
+
+    /**
+     * Called when the user clicks the "Create" button to navigate to the EditFragment.
+     *
+     * @noinspection unused
+     */
+    public void onCreateButtonClick(@NonNull View view) {
+        NavDirections action = ProductTabsFragmentDirections.actionToEditFragment();
+        NavHostFragment.findNavController(requireParentFragment()).navigate(action);
     }
 }
