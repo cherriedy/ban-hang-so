@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -22,14 +23,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.optlab.banhangso.R;
-import com.optlab.banhangso.data.repository.BrandRepository;
-import com.optlab.banhangso.data.repository.CategoryRepository;
-import com.optlab.banhangso.databinding.FragmentProductEditBinding;
 import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.Product;
+import com.optlab.banhangso.data.repository.BrandRepository;
+import com.optlab.banhangso.data.repository.CategoryRepository;
+import com.optlab.banhangso.databinding.FragmentProductEditBinding;
 import com.optlab.banhangso.ui.brand.view.BrandSelectionFragment;
 import com.optlab.banhangso.ui.category.view.CategorySelectionFragment;
+import com.optlab.banhangso.ui.common.view.DeleteConfirmationDialog;
 import com.optlab.banhangso.ui.common.view.ExitConfirmationDialog;
 import com.optlab.banhangso.ui.product.viewmodel.ProductEditViewModel;
 
@@ -106,6 +108,7 @@ public class ProductEditFragment extends Fragment {
         binding = FragmentProductEditBinding.inflate(inflater, container, false);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(viewModel);
+        binding.setFragment(this);
         return binding.getRoot();
     }
 
@@ -113,6 +116,7 @@ public class ProductEditFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupNavigation();
+        configureInteractionMode();
         setupBrandSelection();
         setupCategorySelection();
         observeViewModels();
@@ -133,21 +137,84 @@ public class ProductEditFragment extends Fragment {
 
         // Retrieve the arguments passed to this fragment.
         productEditFragmentArgs = ProductEditFragmentArgs.fromBundle(requireArguments());
+    }
 
-        // Check if the fragment is in create mode or edit mode.
-        if (!productEditFragmentArgs.getIsCreateMode()) {
-            // Load the product details using the provided product ID.
-            viewModel.loadProductById(productEditFragmentArgs.getProductId());
+    /**
+     * Configures the interaction mode of the fragment based on the arguments passed to it.
+     */
+    private void configureInteractionMode() {
+        boolean isCreateMode = productEditFragmentArgs.getIsCreateMode();
+        String productId = productEditFragmentArgs.getProductId();
 
-            // Set up the delete button to remove the product.
+        binding.setIsCreateMode(isCreateMode);
+        binding.executePendingBindings();
+
+        // If the fragment is in create mode, hide the delete button and divider and set the update
+        // button text to "Complete".
+        Timber.d("isCreateMode: %s", isCreateMode);
+        if (!isCreateMode) {
             binding.viewDivider.setVisibility(View.VISIBLE);
             binding.btnDelete.setVisibility(View.VISIBLE);
+        } else {
+            binding.btnUpdate.setText(R.string.complete);
         }
+
+        // Load the product details using the provided product ID.
+        Timber.d("Product ID from arguments: %s", productId);
+        viewModel.loadProductById(productId);
     }
 
     private void observeViewModels() {
         // Observe the product LiveData from the ViewModel and update the UI accordingly.
         viewModel.getProduct().observe(getViewLifecycleOwner(), this::onProductPropertyChanged);
+
+        // Observe the updating state to show or hide the progress bar.
+        viewModel.getUpdateState().observe(getViewLifecycleOwner(), this::toggleProgressDialog);
+        // Observe the update result to show a success or failure message.
+        viewModel.getUpdateResult().observe(getViewLifecycleOwner(), isSuccessful -> {
+            if (isSuccessful) {
+                Toast.makeText(
+                        requireContext(),
+                        "Cập nhật sản phẩm thành công", Toast.LENGTH_SHORT).show();
+                NavHostFragment.findNavController(this).navigateUp();
+            } else {
+                Toast.makeText(
+                        requireContext(),
+                        "Cập nhật sản phẩm thất bại", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Observe the deleting state to show or hide the progress bar.
+        viewModel.getDeleteState().observe(getViewLifecycleOwner(), this::toggleProgressDialog);
+        // Observe the delete result to show a success or failure message.
+        viewModel.getDeleteResult().observe(getViewLifecycleOwner(), isSuccessful -> {
+            if (isSuccessful) {
+                Toast.makeText(
+                        requireContext(),
+                        "Xóa sản phẩm thành công", Toast.LENGTH_SHORT).show();
+                NavHostFragment.findNavController(this).navigateUp();
+            } else {
+                Toast.makeText(
+                        requireContext(),
+                        "Xóa sản phẩm thất bại", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Observe the create state to show or hide the progress bar.
+        viewModel.getCreateState().observe(getViewLifecycleOwner(), this::toggleProgressDialog);
+        // Observe the create result to show a success or failure message.
+        viewModel.getCreateResult().observe(getViewLifecycleOwner(), isSuccessful -> {
+            if (isSuccessful) {
+                Toast.makeText(
+                        requireContext(),
+                        "Tạo sản phẩm thành công", Toast.LENGTH_SHORT).show();
+                NavHostFragment.findNavController(this).navigateUp();
+            } else {
+                Toast.makeText(
+                        requireContext(),
+                        "Tạo sản phẩm thất bại", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
@@ -232,9 +299,14 @@ public class ProductEditFragment extends Fragment {
                             if (product == null) return;
 
                             Brand checkedBrand = brandRepository.getBrandByPosition(pos);
-                            if (checkedBrand != null && !checkedBrand.equals(product.getBrand())) {
-                                product.setBrand(checkedBrand);
-                                viewModel.setProduct(product);
+                            if (checkedBrand != null) {
+                                if (product.getBrand() == null ||
+                                        !checkedBrand.equals(product.getBrand())) {
+                                    product.setBrand(checkedBrand);
+                                    viewModel.setProduct(product);
+                                }
+                            } else {
+                                Timber.e("Brand not found for position: %d", pos);
                             }
                         });
     }
@@ -260,9 +332,14 @@ public class ProductEditFragment extends Fragment {
                             if (product == null) return;
 
                             Category checkedCategory = categoryRepository.getCategoryByPosition(pos);
-                            if (checkedCategory != null && !checkedCategory.equals(product.getCategory())) {
-                                product.setCategory(checkedCategory);
-                                viewModel.setProduct(product);
+                            if (checkedCategory != null) {
+                                if (product.getCategory() == null ||
+                                        !checkedCategory.equals(product.getCategory())) {
+                                    product.setCategory(checkedCategory);
+                                    viewModel.setProduct(product);
+                                }
+                            } else {
+                                Timber.e("Category not found for position: %d", pos);
                             }
                         });
     }
@@ -306,7 +383,9 @@ public class ProductEditFragment extends Fragment {
      *   <li>discountPrice - Validates the product's discount price
      *   <li>description - Validates the product description
      *   <li>note - Validates product notes
-     *   <li>status - Updates radio button colors based on stock status
+     *   <li>status - Updates radio button colors,and the update button state
+     *   <li>brand - Updates the update button state
+     *   <li>category - Updates the update button state
      * </ul>
      *
      * @param product The product to observe for property changes
@@ -321,27 +400,98 @@ public class ProductEditFragment extends Fragment {
                     @Override
                     public void onPropertyChanged(Observable sender, int propertyId) {
                         switch (propertyId) {
-                            case BR.name -> viewModel.validateName(product.getName());
+                            case BR.name -> {
+                                Timber.d("onPropertyChanged: name");
+                                viewModel.validateName(product.getName());
+                            }
 
-                            case BR.sellingPrice ->
-                                    viewModel.validateSellingPrice(product.getSellingPrice());
+                            case BR.sellingPrice -> {
+                                Timber.d("onPropertyChanged: sellingPrice");
+                                viewModel.validateSellingPrice(product.getSellingPrice());
+                            }
 
-                            case BR.purchasePrice ->
-                                    viewModel.validatePurchasePrice(product.getPurchasePrice());
+                            case BR.purchasePrice -> {
+                                Timber.d("onPropertyChanged: purchasePrice");
+                                viewModel.validatePurchasePrice(product.getPurchasePrice());
+                            }
 
-                            case BR.discountPrice ->
-                                    viewModel.validateDiscountPrice(product.getDiscountPrice());
+                            case BR.discountPrice -> {
+                                Timber.d("onPropertyChanged: discountPrice");
+                                viewModel.validateDiscountPrice(product.getDiscountPrice());
+                            }
 
-                            case BR.description ->
-                                    viewModel.validateDescription(product.getDescription());
+                            case BR.description -> {
+                                Timber.d("onPropertyChanged: description");
+                                viewModel.validateDescription(product.getDescription());
+                            }
 
-                            case BR.note -> viewModel.validateNote(product.getNote());
+                            case BR.note -> {
+                                Timber.d("onPropertyChanged: note");
+                                viewModel.validateNote(product.getNote());
+                            }
 
-                            case BR.status -> updateRadioButtonColors(product.getStatus());
+                            case BR.status -> {
+                                Timber.d("onPropertyChanged: status");
+                                viewModel.updateButtonState();
+                                updateRadioButtonColors(product.getStatus());
+                            }
+
+                            case BR.brand -> {
+                                Timber.d("onPropertyChanged: brand");
+                                viewModel.updateButtonState();
+                            }
+
+                            case BR.category -> {
+                                Timber.d("onPropertyChanged: category");
+                                viewModel.updateButtonState();
+
+                            }
+
                         }
                     }
                 };
 
         product.addOnPropertyChangedCallback(productPropertyChangedCallback);
+    }
+
+    /**
+     * Toggles the visibility of the progress dialog based on the loading state.
+     *
+     * @param isLoading True if loading; false otherwise.
+     */
+    private void toggleProgressDialog(Boolean isLoading) {
+        binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Handles the click event for the update button.
+     *
+     * <p> Display the confirmation dialog to the user and navigate to the product list screen if
+     * the user confirms the action.
+     *
+     * @param view The view that was clicked.
+     * @noinspection unused
+     */
+    public void onDeleteButtonClick(@NonNull View view) {
+        DeleteConfirmationDialog deleteConfirmationDialog
+                = DeleteConfirmationDialog.newInstance(
+                getString(R.string.alert_delete_product),
+                getString(R.string.alert_confirm_delete),
+                getString(R.string.refuse),
+                getString(R.string.agree));
+
+        deleteConfirmationDialog.show(
+                getParentFragmentManager(), this.getClass().getSimpleName());
+
+        // Set up a listener for the delete confirmation dialog result. This is triggered when
+        // the user confirms or cancels the delete action.
+        getParentFragmentManager().setFragmentResultListener(
+                DeleteConfirmationDialog.REQUEST,
+                this,
+                (requestKey, result) -> {
+                    if (result.getBoolean(DeleteConfirmationDialog.RESULT)) {
+                        viewModel.delete();
+                    }
+                });
     }
 }
