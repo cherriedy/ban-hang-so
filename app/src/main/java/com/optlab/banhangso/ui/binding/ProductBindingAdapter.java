@@ -18,8 +18,10 @@ public class ProductBindingAdapter {
      */
     @BindingAdapter("brand")
     public static void setBrand(@NonNull TextView view, Brand brand) {
-        if (!TextUtils.isEmpty(brand.getName())) {
+        if (brand != null && !TextUtils.isEmpty(brand.getName())) {
             view.setText(brand.getName());
+        } else if (brand == null) {
+            view.setText("");
         }
     }
 
@@ -31,8 +33,10 @@ public class ProductBindingAdapter {
      */
     @BindingAdapter("category")
     public static void setCategory(@NonNull TextView view, Category category) {
-        if (!TextUtils.isEmpty(category.getName())) {
+        if (category != null && !TextUtils.isEmpty(category.getName())) {
             view.setText(category.getName());
+        } else if (category == null) {
+            view.setText("");
         }
     }
 }
