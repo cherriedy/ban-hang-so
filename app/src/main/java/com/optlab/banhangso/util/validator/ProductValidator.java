@@ -3,6 +3,9 @@ package com.optlab.banhangso.util.validator;
 import android.content.Context;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.model.Category;
@@ -17,7 +20,7 @@ public final class ProductValidator {
         this.context = context;
     }
 
-    public String validateName(String name) {
+    public String validateName(@NonNull String name) {
         if (TextUtils.isEmpty(name)) {
             return context.getString(R.string.alert_product_name_non_null);
         } else if (name.length() < 10) {
@@ -29,7 +32,7 @@ public final class ProductValidator {
         }
     }
 
-    public String validateSellingPrice(Double sellingPrice) {
+    public String validateSellingPrice(@NonNull Double sellingPrice) {
         if (sellingPrice == 0) {
             return context.getString(R.string.alert_product_price_non_null);
         } else if (sellingPrice < 0) {
@@ -39,7 +42,8 @@ public final class ProductValidator {
         }
     }
 
-    public String validatePurchasePrice(Double purchasePrice, Double sellingPrice) {
+    public String validatePurchasePrice(
+            @NonNull Double purchasePrice, @NonNull Double sellingPrice) {
         if (purchasePrice > sellingPrice) {
             return context.getString(R.string.alert_product_purchase_price_invalid);
         } else if (purchasePrice < 0) {
@@ -49,10 +53,9 @@ public final class ProductValidator {
         }
     }
 
-    public String validateDiscountPrice(Double discountPrice, Double sellingPrice) {
-        if (discountPrice == null) {
-            return context.getString(R.string.alert_product_price_non_null);
-        } else if (discountPrice < 0) {
+    public String validateDiscountPrice(
+            @NonNull Double discountPrice, @NonNull Double sellingPrice) {
+        if (discountPrice < 0) {
             return context.getString(R.string.alert_product_price_invalid);
         } else if (discountPrice > sellingPrice) {
             return context.getString(R.string.alert_product_discount_price_invalid);
@@ -61,16 +64,16 @@ public final class ProductValidator {
         }
     }
 
-    public String validateDescription(String description) {
-        if (description.length() > 120) {
+    public String validateDescription(@Nullable String description) {
+        if (description != null && description.length() > 120) {
             return context.getString(R.string.alert_product_description_max_chars);
         } else {
             return "";
         }
     }
 
-    public String validateNote(String note) {
-        if (note.length() > 50) {
+    public String validateNote(@Nullable String note) {
+        if (note != null && note.length() > 50) {
             return context.getString(R.string.alert_product_note_max_chars);
         } else {
             return "";
@@ -78,7 +81,7 @@ public final class ProductValidator {
     }
 
     public String validateBrand(Brand brand) {
-        if (brand == null) {
+        if (brand == null || brand.isEmpty()) {
             return context.getString(R.string.alert_product_brand_non_null);
         } else {
             return "";
@@ -86,7 +89,7 @@ public final class ProductValidator {
     }
 
     public String validateCategory(Category category) {
-        if (category == null) {
+        if (category == null || category.isEmpty()) {
             return context.getString(R.string.alert_product_category_non_null);
         } else {
             return "";
