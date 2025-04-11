@@ -10,6 +10,8 @@
 
         <import type="com.optlab.banhangso.data.model.Product" />
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.optlab.banhangso.ui.product.viewmodel.ProductEditViewModel" />
@@ -452,6 +454,7 @@
                             android:clickable="false"
                             android:hint="@string/hint_product_brand"
                             android:inputType="none"
+                            android:onClick="@{fragment::onBrandSelectionClick}"
                             app:brand="@{viewModel.product.brand}" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
@@ -504,6 +507,7 @@
                             android:layout_weight="1"
                             android:hint="@string/hint_product_category"
                             android:inputType="none"
+                            android:onClick="@{fragment::onCategorySelectionClick}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                             app:category="@{viewModel.product.category}" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -639,7 +643,7 @@
                     android:textColor="@android:color/holo_red_light"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:visibility="gone"
+                    android:visibility="@{isCreateMode ? View.GONE : View.VISIBLE}"
                     app:backgroundTint="@android:color/transparent"
                     app:cornerRadius="5dp"
                     app:strokeColor="@android:color/holo_red_light"
@@ -649,7 +653,7 @@
                     android:id="@+id/view_divider"
                     android:layout_width="16dp"
                     android:layout_height="match_parent"
-                    android:visibility="gone" />
+                    android:visibility="@{isCreateMode ? View.GONE : View.VISIBLE}" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_update"
@@ -660,7 +664,7 @@
                     android:enabled="@{viewModel.updateButtonState}"
                     android:onClick="@{isCreateMode ? viewModel::onCreateButtonClick : viewModel::onUpdateButtonClick}"
                     android:padding="16dp"
-                    android:text="@string/update"
+                    android:text="@{isCreateMode ? @string/complete : @string/update}"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:cornerRadius="5dp" />
