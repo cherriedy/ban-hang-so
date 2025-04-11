@@ -147,16 +147,6 @@ public class ProductEditFragment extends Fragment {
         binding.setIsCreateMode(isCreateMode);
         binding.executePendingBindings();
 
-        // If the fragment is in create mode, hide the delete button and divider and set the update
-        // button text to "Complete".
-        Timber.d("isCreateMode: %s", isCreateMode);
-        if (!isCreateMode) {
-            binding.viewDivider.setVisibility(View.VISIBLE);
-            binding.btnDelete.setVisibility(View.VISIBLE);
-        } else {
-            binding.btnUpdate.setText(R.string.complete);
-        }
-
         // Load the product details using the provided product ID.
         Timber.d("Product ID from arguments: %s", productId);
         viewModel.loadProductById(productId);
