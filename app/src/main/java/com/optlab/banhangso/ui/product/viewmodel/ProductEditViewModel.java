@@ -1,6 +1,5 @@
 package com.optlab.banhangso.ui.product.viewmodel;
 
-import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -9,110 +8,97 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.optlab.banhangso.data.model.Brand;
+import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.ProductRepository;
+import com.optlab.banhangso.ui.product.state.ProductEditValidationState;
 import com.optlab.banhangso.util.validator.ProductValidator;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.lifecycle.HiltViewModel;
+
 import timber.log.Timber;
+
+import java.util.function.Consumer;
+
+import javax.inject.Inject;
 
 @HiltViewModel
 public class ProductEditViewModel extends ViewModel {
     private final ProductRepository repository;
-    private final ProductValidator productValidator;
+    private final ProductValidator validator;
     private final MutableLiveData<Product> product = new MutableLiveData<>();
-    private final MutableLiveData<String> nameErrorLiveData = new MutableLiveData<>();
-    private final MutableLiveData<String> sellingPriceErrorLiveData = new MutableLiveData<>();
-    private final MutableLiveData<String> purchasePriceErrorLiveData = new MutableLiveData<>();
-    private final MutableLiveData<String> discountPriceErrorLiveData = new MutableLiveData<>();
-    private final MutableLiveData<String> descriptionErrorLiveData = new MutableLiveData<>();
-    private final MutableLiveData<String> noteErrorLiveData = new MutableLiveData<>();
-    private final MediatorLiveData<Boolean> updateButtonStateLiveDate = new MediatorLiveData<>();
-    private final MutableLiveData<Boolean> isUpdatingLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> updateResultLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isDeletingLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> deleteResultLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isCreatingLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> createResultLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ProductEditValidationState> validationState =
+            new MutableLiveData<>(ProductEditValidationState.empty());
+    private final MediatorLiveData<Boolean> updateButtonState = new MediatorLiveData<>();
+    private final MutableLiveData<Boolean> isUpdating = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> updateResult = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isDeleting = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> deleteResult = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isCreating = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> createResult = new MutableLiveData<>();
 
     @Inject
-    public ProductEditViewModel(@NonNull ProductRepository repository,
-                                @NonNull ProductValidator productValidator) {
+    public ProductEditViewModel(
+            @NonNull ProductRepository repository, @NonNull ProductValidator validator) {
         this.repository = repository;
-        this.productValidator = productValidator;
-        setUpdateButtonEnabled();
+        this.validator = validator;
+
+        // Update the enabled state of the update button based on the validation state.
+        updateButtonState.addSource(
+                validationState,
+                state -> {
+                    boolean hasNoError = state.hasNoError();
+                    updateButtonState.setValue(hasNoError);
+                    Timber.d("updateButtonState: %s", hasNoError);
+                });
     }
 
-    /**
-     * Sets up the MediatorLiveData to observe the error states of the input fields
-     */
-    private void setUpdateButtonEnabled() {
-        updateButtonStateLiveDate.addSource(nameErrorLiveData, unused -> updateButtonState());
-        updateButtonStateLiveDate.addSource(sellingPriceErrorLiveData, unused -> updateButtonState());
-        updateButtonStateLiveDate.addSource(purchasePriceErrorLiveData, unused -> updateButtonState());
-        updateButtonStateLiveDate.addSource(discountPriceErrorLiveData, unused -> updateButtonState());
-        updateButtonStateLiveDate.addSource(descriptionErrorLiveData, unused -> updateButtonState());
-        updateButtonStateLiveDate.addSource(noteErrorLiveData, unused -> updateButtonState());
+    public LiveData<Product> getProduct() {
+        return product;
     }
 
-    /**
-     * Updates the state of the update button based on the error states of the input fields.
-     */
-    public void updateButtonState() {
-        boolean isEnabled = TextUtils.isEmpty(nameErrorLiveData.getValue())
-                && TextUtils.isEmpty(sellingPriceErrorLiveData.getValue())
-                && TextUtils.isEmpty(purchasePriceErrorLiveData.getValue())
-                && TextUtils.isEmpty(discountPriceErrorLiveData.getValue())
-                && TextUtils.isEmpty(descriptionErrorLiveData.getValue())
-                && TextUtils.isEmpty(noteErrorLiveData.getValue());
-        updateButtonStateLiveDate.setValue(isEnabled);
+    public void setProduct(Product product) {
+        this.product.setValue(product);
     }
 
-    public void validateName(String name) {
-        nameErrorLiveData.setValue(productValidator.validateName(name));
-        Timber.d("validateName: %s", nameErrorLiveData.getValue());
+    public LiveData<ProductEditValidationState> getValidationState() {
+        return validationState;
     }
 
-    public void validateSellingPrice(Double sellingPrice) {
-        sellingPriceErrorLiveData.setValue(productValidator.validateSellingPrice(sellingPrice));
-        Timber.d("validateSellingPrice: %s", sellingPriceErrorLiveData.getValue());
+    public LiveData<Boolean> getUpdateButtonState() {
+        return updateButtonState;
     }
 
-    public void validatePurchasePrice(Double purchasePrice) {
-        Product currentProduct = product.getValue();
-        if (currentProduct != null) {
-            purchasePriceErrorLiveData.setValue(
-                    productValidator.validatePurchasePrice(purchasePrice, currentProduct.getSellingPrice()));
-            Timber.d("validatePurchasePrice: %s", purchasePriceErrorLiveData.getValue());
-        }
+    public LiveData<Boolean> getUpdateResult() {
+        return updateResult;
     }
 
-    public void validateDiscountPrice(Double discountPrice) {
-        Product currentProduct = product.getValue();
-        if (currentProduct != null) {
-            discountPriceErrorLiveData.setValue(
-                    productValidator.validateDiscountPrice(discountPrice, currentProduct.getSellingPrice()));
-            Timber.d("validateDiscountPrice: %s", discountPriceErrorLiveData.getValue());
-        }
+    public LiveData<Boolean> getUpdateState() {
+        return isUpdating;
     }
 
-    public void validateDescription(String description) {
-        descriptionErrorLiveData.setValue(productValidator.validateDescription(description));
-        Timber.d("validateDescription: %s", descriptionErrorLiveData.getValue());
+    public LiveData<Boolean> getDeleteResult() {
+        return deleteResult;
     }
 
-    public void validateNote(String note) {
-        noteErrorLiveData.setValue(productValidator.validateNote(note));
-        Timber.d("validateNote: %s", noteErrorLiveData.getValue());
+    public LiveData<Boolean> getDeleteState() {
+        return isDeleting;
+    }
+
+    public LiveData<Boolean> getCreateState() {
+        return isCreating;
+    }
+
+    public LiveData<Boolean> getCreateResult() {
+        return createResult;
     }
 
     /**
      * Loads a product by its ID. If the ID is empty, a new product is created. If the ID is not
      * empty, the product is fetched from the repository.
      *
-     * @param id The ID of the product to load
+     * @param id The ID of the product to load.
      */
     public void loadProductById(String id) {
         Product currentProduct = product.getValue();
@@ -131,114 +117,198 @@ public class ProductEditViewModel extends ViewModel {
         }
     }
 
-    public LiveData<Product> getProduct() {
-        return product;
+    /**
+     * Updates the validation state of the product. This method takes a Consumer that modifies the
+     * current validation state.
+     *
+     * @param action The action to perform on the current validation state.
+     */
+    private void updateValidationState(Consumer<ProductEditValidationState> action) {
+        ProductEditValidationState currentState = validationState.getValue();
+        if (currentState != null) {
+            action.accept(currentState);
+            validationState.setValue(currentState);
+        } else {
+            Timber.e("Current state is null");
+        }
     }
 
-    public void setProduct(Product product) {
-        this.product.setValue(product);
+    /**
+     * Validates the product name. This method updates the validation state with the result of the
+     * validation.
+     *
+     * @param name The name of the product to validate.
+     */
+    public void validateName(String name) {
+        updateValidationState(
+                state -> {
+                    String nameError = validator.validateName(name);
+                    Timber.d("validateName: %s", nameError);
+                    state.setNameError(nameError);
+                });
     }
 
-    public LiveData<String> getNameError() {
-        return nameErrorLiveData;
+    /**
+     * Validates the product code. This method updates the validation state with the result of the
+     * validation.
+     *
+     * @param sellingPrice The selling price of the product to validate.
+     */
+    public void validateSellingPrice(Double sellingPrice) {
+        updateValidationState(
+                state -> {
+                    String sellingPriceError = validator.validateSellingPrice(sellingPrice);
+                    Timber.d("validateSellingPrice: %s", sellingPriceError);
+                    state.setSellingPriceError(sellingPriceError);
+                });
     }
 
-    public LiveData<String> getSellingPriceError() {
-        return sellingPriceErrorLiveData;
+    /**
+     * Validates the purchase price. This method updates the validation state with the result of the
+     * validation.
+     *
+     * @param purchasePrice The purchase price of the product to validate.
+     */
+    public void validatePurchasePrice(Double purchasePrice) {
+        Product p = product.getValue();
+        if (p != null) {
+            updateValidationState(
+                    state -> {
+                        String purchasePriceError =
+                                validator.validatePurchasePrice(purchasePrice, p.getSellingPrice());
+                        Timber.d("validatePurchasePrice: %s", purchasePriceError);
+                        state.setPurchasePriceError(purchasePriceError);
+                    });
+        } else {
+            Timber.e("Product is null when validating purchase price");
+        }
     }
 
-    public LiveData<String> getPurchasePriceError() {
-        return purchasePriceErrorLiveData;
+    /**
+     * Validates the discount price. This method updates the validation state with the result of the
+     * validation.
+     *
+     * @param discountPrice The discount price of the product to validate.
+     */
+    public void validateDiscountPrice(Double discountPrice) {
+        Product p = product.getValue();
+        if (p != null) {
+            updateValidationState(
+                    state -> {
+                        String discountPriceError =
+                                validator.validateDiscountPrice(discountPrice, p.getSellingPrice());
+                        Timber.d("validateDiscountPrice: %s", discountPriceError);
+                        state.setDiscountPriceError(discountPriceError);
+                    });
+        } else {
+            Timber.e("Product is null when validating discount price");
+        }
     }
 
-    public LiveData<String> getDiscountPriceError() {
-        return discountPriceErrorLiveData;
+    /**
+     * Validates the product description. This method updates the validation state with the result
+     * of the validation.
+     *
+     * @param description The description of the product to validate.
+     */
+    public void validateDescription(String description) {
+        updateValidationState(
+                state -> {
+                    String descriptionError = validator.validateDescription(description);
+                    Timber.d("validateDescription: %s", descriptionError);
+                    state.setDescriptionError(descriptionError);
+                });
     }
 
-    public LiveData<String> getDescriptionError() {
-        return descriptionErrorLiveData;
+    /**
+     * Validates the product note. This method updates the validation state with the result of the
+     * validation.
+     *
+     * @param note The note of the product to validate.
+     */
+    public void validateNote(String note) {
+        updateValidationState(
+                state -> {
+                    String noteError = validator.validateNote(note);
+                    Timber.d("validateNote: %s", noteError);
+                    state.setNoteError(noteError);
+                });
     }
 
-    public LiveData<String> getNoteError() {
-        return noteErrorLiveData;
+    public void validateBrand(Brand brand) {
+        updateValidationState(
+                state -> {
+                    String brandError = validator.validateBrand(brand);
+                    Timber.d("validateBrand: %s", brandError);
+                    state.setBrandError(brandError);
+                });
     }
 
-    public LiveData<Boolean> getUpdateButtonState() {
-        return updateButtonStateLiveDate;
-    }
-
-    public LiveData<Boolean> getUpdateResult() {
-        return updateResultLiveData;
-    }
-
-    public LiveData<Boolean> getUpdateState() {
-        return isUpdatingLiveData;
-    }
-
-    public LiveData<Boolean> getDeleteResult() {
-        return deleteResultLiveData;
-    }
-
-    public LiveData<Boolean> getDeleteState() {
-        return isDeletingLiveData;
+    public void validateCategory(Category category) {
+        updateValidationState(
+                state -> {
+                    String categoryError = validator.validateCategory(category);
+                    Timber.d("validateCategory: %s", categoryError);
+                    state.setCategoryError(categoryError);
+                });
     }
 
     /**
      * Called when the user clicks the "Finish" button to update the product.
      *
-     * <p> This method retrieves the current product from the LiveData and updates it in the
+     * <p>This method retrieves the current product from the LiveData and updates it in the
      * repository. It also sets the loading state and update result LiveData.
      *
-     * @param view The view that was clicked
+     * @param view The view that was clicked.
      * @noinspection unused
      */
     public void onUpdateButtonClick(View view) {
         Product currentProduct = product.getValue();
         if (currentProduct != null) {
-            isUpdatingLiveData.setValue(true);
+            isUpdating.setValue(true);
             repository.updateProduct(
-                    currentProduct, isSuccessful -> {
-                        isUpdatingLiveData.setValue(false);
-                        updateResultLiveData.setValue(isSuccessful);
+                    currentProduct,
+                    isSuccessful -> {
+                        isUpdating.setValue(false);
+                        updateResult.setValue(isSuccessful);
                     });
         } else {
             Timber.e("Product is null when trying to update");
         }
     }
 
-    public void delete() {
+    /** Called when the user clicks the "Delete" button to delete the product. */
+    public void deleteProduct() {
         Product currentProduct = product.getValue();
         if (currentProduct != null) {
-            isDeletingLiveData.setValue(true);
+            isDeleting.setValue(true);
             repository.deleteProduct(
-                    currentProduct, isSuccessful -> {
-                        isDeletingLiveData.setValue(false);
-                        deleteResultLiveData.setValue(isSuccessful);
+                    currentProduct,
+                    isSuccessful -> {
+                        isDeleting.setValue(false);
+                        deleteResult.setValue(isSuccessful);
                     });
         } else {
             Timber.e("Product is null when trying to delete");
         }
     }
 
-    public LiveData<Boolean> getCreateState() {
-        return isCreatingLiveData;
-    }
-
-    public LiveData<Boolean> getCreateResult() {
-        return createResultLiveData;
-    }
-
     /**
+     * Called when the user clicks the "Create" button to create the product.
+     *
+     * @param view The view that was clicked.
      * @noinspection unused
      */
     public void onCreateButtonClick(@NonNull View view) {
         Product currentProduct = product.getValue();
         if (currentProduct != null) {
-            isCreatingLiveData.setValue(true);
-            repository.createProduct(currentProduct, isSuccessful -> {
-                isCreatingLiveData.setValue(false);
-                createResultLiveData.setValue(isSuccessful);
-            });
+            isCreating.setValue(true);
+            repository.createProduct(
+                    currentProduct,
+                    isSuccessful -> {
+                        isCreating.setValue(false);
+                        createResult.setValue(isSuccessful);
+                    });
         } else {
             Timber.e("Product is null when trying to create");
         }

@@ -110,4 +110,6 @@
     <string name="alert_delete_product">Xóa sản phẩm</string>
     <string name="alert_confirm_delete">Sản phẩm này sẽ được xóa khỏi danh sách các sản phẩm trong cửu hàng của bản. Bạn có chắc rằng muốn thực hiện?</string>
     <string name="complete">Hoàn tất</string>
+    <string name="alert_product_brand_non_null">Thương hiệu không được để trống</string>
+    <string name="alert_product_category_non_null">Danh mục không được để trống</string>
 </resources>

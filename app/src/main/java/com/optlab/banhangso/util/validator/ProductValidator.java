@@ -4,6 +4,8 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.optlab.banhangso.R;
+import com.optlab.banhangso.data.model.Brand;
+import com.optlab.banhangso.data.model.Category;
 
 import javax.inject.Inject;
 
@@ -70,6 +72,22 @@ public final class ProductValidator {
     public String validateNote(String note) {
         if (note.length() > 50) {
             return context.getString(R.string.alert_product_note_max_chars);
+        } else {
+            return "";
+        }
+    }
+
+    public String validateBrand(Brand brand) {
+        if (brand == null) {
+            return context.getString(R.string.alert_product_brand_non_null);
+        } else {
+            return "";
+        }
+    }
+
+    public String validateCategory(Category category) {
+        if (category == null) {
+            return context.getString(R.string.alert_product_category_non_null);
         } else {
             return "";
         }

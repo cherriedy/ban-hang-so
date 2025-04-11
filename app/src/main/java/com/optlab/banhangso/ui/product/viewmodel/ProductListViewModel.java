@@ -86,10 +86,10 @@ public class ProductListViewModel extends ViewModel {
         }
 
         // Sort the list if sort option is set.
-        SortOption<Product.SortField> sortOption = sortOptionLiveData.getValue();
-        if (sortOption != null) {
-            updatedList.sort(Product.getComparator(sortOption.getSortField(), sortOption.isAscending()));
-        }
+        // SortOption<Product.SortField> sortOption = sortOptionLiveData.getValue();
+        // if (sortOption != null) {
+        //     updatedList.sort(Product.getComparator(sortOption.getSortField(), sortOption.isAscending()));
+        // }
 
         updatedList.forEach(product -> Timber.d("Product: %s", product));
         listMediatorLiveData.setValue(updatedList);

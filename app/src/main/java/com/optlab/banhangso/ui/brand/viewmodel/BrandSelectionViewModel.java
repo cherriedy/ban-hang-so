@@ -11,62 +11,65 @@ import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.repository.BrandRepository;
-import com.optlab.banhangso.data.repository.impl.BrandRepositoryImpl;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import dagger.hilt.android.lifecycle.HiltViewModel;
-
 @HiltViewModel
 public class BrandSelectionViewModel extends ViewModel {
-  private final BrandRepository repository;
-  private final MutableLiveData<List<Brand>> brandsSourceLiveData = new MutableLiveData<>();
-  private final MutableLiveData<String> searchQueryLiveData = new MutableLiveData<>("");
-  private final MediatorLiveData<List<Brand>> brandsLiveData = new MediatorLiveData<>();
+    private final BrandRepository repository;
+    private final MutableLiveData<List<Brand>> brandsSource = new MutableLiveData<>();
+    private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
+    private final MediatorLiveData<List<Brand>> brands = new MediatorLiveData<>();
 
-  @Inject
-  public BrandSelectionViewModel(@NonNull BrandRepository repository) {
-    this.repository = repository;
-    // Observe the brands change from repository and update the list.
-    repository.getBrands().observeForever(brandsSourceLiveData::setValue);
+    @Inject
+    public BrandSelectionViewModel(@NonNull BrandRepository repository) {
+        this.repository = repository;
+        // Observe the brands change from repository and update the list.
+        repository.getBrands().observeForever(brandsSource::setValue);
 
-    // Set up the mediator to observe changes in the brands list and search query.
-    brandsLiveData.addSource(brandsSourceLiveData, unused -> updateBrands());
-    brandsLiveData.addSource(searchQueryLiveData, unused -> updateBrands());
-  }
-
-  /** Update the brands list based on the search query. If the query is empty, show all brands. */
-  private void updateBrands() {
-    List<Brand> updatedBrands = brandsSourceLiveData.getValue();
-    if (updatedBrands == null || updatedBrands.isEmpty()) return;
-
-    String query = searchQueryLiveData.getValue();
-    if (!TextUtils.isEmpty(query)) {
-      updatedBrands =
-          updatedBrands.stream()
-              .filter(brand -> brand.getName().toLowerCase().contains(query.toLowerCase()))
-              .collect(Collectors.toList());
+        // Set up the mediator to observe changes in the brands list and search query.
+        brands.addSource(brandsSource, unused -> updateBrands());
+        brands.addSource(searchQuery, unused -> updateBrands());
     }
 
-    brandsLiveData.setValue(updatedBrands);
-  }
+    /** Update the brands list based on the search query. If the query is empty, show all brands. */
+    private void updateBrands() {
+        List<Brand> updatedBrands = brandsSource.getValue();
+        if (updatedBrands == null || updatedBrands.isEmpty()) return;
 
-  @Override
-  protected void onCleared() {
-    repository.getBrands().removeObserver(brandsSourceLiveData::setValue);
-    brandsLiveData.removeSource(brandsSourceLiveData);
-    brandsLiveData.removeSource(searchQueryLiveData);
-    super.onCleared();
-  }
+        String query = searchQuery.getValue();
+        if (!TextUtils.isEmpty(query)) {
+            updatedBrands =
+                    updatedBrands.stream()
+                            .filter(
+                                    brand ->
+                                            brand.getName()
+                                                    .toLowerCase()
+                                                    .contains(query.toLowerCase()))
+                            .collect(Collectors.toList());
+        }
 
-  public LiveData<List<Brand>> getBrands() {
-    return brandsLiveData;
-  }
+        brands.setValue(updatedBrands);
+    }
 
-  public void setSearchQuery(@Nullable String query) {
-    searchQueryLiveData.setValue(query);
-  }
+    @Override
+    protected void onCleared() {
+        repository.getBrands().removeObserver(brandsSource::setValue);
+        brands.removeSource(brandsSource);
+        brands.removeSource(searchQuery);
+        super.onCleared();
+    }
+
+    public LiveData<List<Brand>> getBrands() {
+        return brands;
+    }
+
+    public void setSearchQuery(@Nullable String query) {
+        searchQuery.setValue(query);
+    }
 }

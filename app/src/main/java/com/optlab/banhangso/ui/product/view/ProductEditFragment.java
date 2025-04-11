@@ -50,10 +50,8 @@ import timber.log.Timber;
 @AndroidEntryPoint
 @SuppressWarnings({"SimplifiableIfStatement", "FieldCanBeLocal"})
 public class ProductEditFragment extends Fragment {
-    @Inject
-    protected BrandRepository brandRepository;
-    @Inject
-    protected CategoryRepository categoryRepository;
+    @Inject protected BrandRepository brandRepository;
+    @Inject protected CategoryRepository categoryRepository;
     private FragmentProductEditBinding binding;
     private ProductEditViewModel viewModel;
     private NavBackStackEntry navBackStackEntry;
@@ -65,35 +63,37 @@ public class ProductEditFragment extends Fragment {
         super.onAttach(context);
         requireActivity()
                 .getOnBackPressedDispatcher()
-                .addCallback(this, new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        // When the back button is pressed, show a confirmation dialog to the user.
-                        showExitConfirmationDialog();
-                    }
-                });
+                .addCallback(
+                        this,
+                        new OnBackPressedCallback(true) {
+                            @Override
+                            public void handleOnBackPressed() {
+                                // When the back button is pressed, show a confirmation dialog to
+                                // the user.
+                                showExitConfirmationDialog();
+                            }
+                        });
 
         // Set up a listener for the exit confirmation dialog result, which is triggered when the
         // user confirms or cancels the exit action.
-        getParentFragmentManager().setFragmentResultListener(
-                ExitConfirmationDialog.REQUEST,
-                this,
-                (requestKey, result) -> {
-                    if (result.getBoolean(ExitConfirmationDialog.CONFIRMED)) {
-                        Timber.d("User confirmed exit without saving.");
-                        NavHostFragment.findNavController(this).navigateUp();
-                    } else {
-                        Timber.d("User canceled exit without saving.");
-                    }
-                });
+        getParentFragmentManager()
+                .setFragmentResultListener(
+                        ExitConfirmationDialog.REQUEST,
+                        this,
+                        (requestKey, result) -> {
+                            if (result.getBoolean(ExitConfirmationDialog.CONFIRMED)) {
+                                Timber.d("User confirmed exit without saving.");
+                                NavHostFragment.findNavController(this).navigateUp();
+                            } else {
+                                Timber.d("User canceled exit without saving.");
+                            }
+                        });
     }
 
-    /**
-     * Shows a confirmation dialog when the user attempts to exit the fragment.
-     */
+    /** Shows a confirmation dialog when the user attempts to exit the fragment. */
     private void showExitConfirmationDialog() {
-        ExitConfirmationDialog exitConfirmationDialog = new ExitConfirmationDialog();
-        exitConfirmationDialog.show(getParentFragmentManager(), this.getClass().getSimpleName());
+        new ExitConfirmationDialog()
+                .show(getParentFragmentManager(), this.getClass().getSimpleName());
     }
 
     @Override
@@ -139,9 +139,7 @@ public class ProductEditFragment extends Fragment {
         productEditFragmentArgs = ProductEditFragmentArgs.fromBundle(requireArguments());
     }
 
-    /**
-     * Configures the interaction mode of the fragment based on the arguments passed to it.
-     */
+    /** Configures the interaction mode of the fragment based on the arguments passed to it. */
     private void configureInteractionMode() {
         boolean isCreateMode = productEditFragmentArgs.getIsCreateMode();
         String productId = productEditFragmentArgs.getProductId();
@@ -171,58 +169,74 @@ public class ProductEditFragment extends Fragment {
         // Observe the updating state to show or hide the progress bar.
         viewModel.getUpdateState().observe(getViewLifecycleOwner(), this::toggleProgressDialog);
         // Observe the update result to show a success or failure message.
-        viewModel.getUpdateResult().observe(getViewLifecycleOwner(), isSuccessful -> {
-            if (isSuccessful) {
-                Toast.makeText(
-                        requireContext(),
-                        "Cập nhật sản phẩm thành công", Toast.LENGTH_SHORT).show();
-                NavHostFragment.findNavController(this).navigateUp();
-            } else {
-                Toast.makeText(
-                        requireContext(),
-                        "Cập nhật sản phẩm thất bại", Toast.LENGTH_SHORT).show();
-            }
-        });
+        viewModel
+                .getUpdateResult()
+                .observe(
+                        getViewLifecycleOwner(),
+                        isSuccessful -> {
+                            if (isSuccessful) {
+                                showSuccessState("Cập nhật sản phẩm thành công");
+                            } else {
+                                showErrorState("Cập nhật sản phẩm thất bại");
+                            }
+                        });
 
         // Observe the deleting state to show or hide the progress bar.
         viewModel.getDeleteState().observe(getViewLifecycleOwner(), this::toggleProgressDialog);
         // Observe the delete result to show a success or failure message.
-        viewModel.getDeleteResult().observe(getViewLifecycleOwner(), isSuccessful -> {
-            if (isSuccessful) {
-                Toast.makeText(
-                        requireContext(),
-                        "Xóa sản phẩm thành công", Toast.LENGTH_SHORT).show();
-                NavHostFragment.findNavController(this).navigateUp();
-            } else {
-                Toast.makeText(
-                        requireContext(),
-                        "Xóa sản phẩm thất bại", Toast.LENGTH_SHORT).show();
-            }
-        });
+        viewModel
+                .getDeleteResult()
+                .observe(
+                        getViewLifecycleOwner(),
+                        isSuccessful -> {
+                            if (isSuccessful) {
+                                showSuccessState("Xóa sản phẩm thành công");
+                            } else {
+                                showErrorState("Xóa sản phẩm thất bại");
+                            }
+                        });
 
         // Observe the create state to show or hide the progress bar.
         viewModel.getCreateState().observe(getViewLifecycleOwner(), this::toggleProgressDialog);
         // Observe the create result to show a success or failure message.
-        viewModel.getCreateResult().observe(getViewLifecycleOwner(), isSuccessful -> {
-            if (isSuccessful) {
-                Toast.makeText(
-                        requireContext(),
-                        "Tạo sản phẩm thành công", Toast.LENGTH_SHORT).show();
-                NavHostFragment.findNavController(this).navigateUp();
-            } else {
-                Toast.makeText(
-                        requireContext(),
-                        "Tạo sản phẩm thất bại", Toast.LENGTH_SHORT).show();
-            }
-        });
+        viewModel
+                .getCreateResult()
+                .observe(
+                        getViewLifecycleOwner(),
+                        isSuccessful -> {
+                            if (isSuccessful) {
+                                showSuccessState("Tạo sản phẩm thành công");
+                            } else {
+                                showErrorState("Tạo sản phẩm thất bại");
+                            }
+                        });
+    }
+
+    /**
+     * Shows a success state with a message and navigates back to the previous screen.
+     *
+     * @param message The message to display in the success state.
+     */
+    private void showSuccessState(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
+        NavHostFragment.findNavController(this).navigateUp();
+    }
+
+    /**
+     * Shows an error state with a message.
+     *
+     * @param message The message to display in the error state.
+     */
+    private void showErrorState(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Sets up the click listener for the brand selection field.
      *
-     * <p>This method retrieves the current product and its brand, then navigates to the brand details
-     * fragment. It also disables the clickable behavior on the end icon to prevent user accidentally
-     * clicking it.
+     * <p>This method retrieves the current product and its brand, then navigates to the brand
+     * details fragment. It also disables the clickable behavior on the end icon to prevent user
+     * accidentally clicking it.
      */
     private void setupBrandSelection() {
         binding.actvBrand.setOnClickListener(
@@ -233,10 +247,13 @@ public class ProductEditFragment extends Fragment {
 
                     // Get the brand id from the product, if it is null, set it to null.
                     String brandId =
-                            (product == null || product.getBrand() == null) ? null : product.getBrand().getId();
+                            (product == null || product.getBrand() == null)
+                                    ? null
+                                    : product.getBrand().getId();
 
                     // Navigate to the brand selection screen, passing the selected brand id.
-                    NavDirections action = ProductEditFragmentDirections.actionToBrandSelection(brandId);
+                    NavDirections action =
+                            ProductEditFragmentDirections.actionToBrandSelection(brandId);
                     Navigation.findNavController(v).navigate(action);
                 });
 
@@ -274,9 +291,7 @@ public class ProductEditFragment extends Fragment {
         binding.tilCategory.setEndIconCheckable(false);
     }
 
-    /**
-     * Observes changes in brand selection and updates the product accordingly.
-     */
+    /** Observes changes in brand selection and updates the product accordingly. */
     private void observeBrandSelectionChanges() {
         navBackStackEntry
                 .getSavedStateHandle()
@@ -300,8 +315,8 @@ public class ProductEditFragment extends Fragment {
 
                             Brand checkedBrand = brandRepository.getBrandByPosition(pos);
                             if (checkedBrand != null) {
-                                if (product.getBrand() == null ||
-                                        !checkedBrand.equals(product.getBrand())) {
+                                if (product.getBrand() == null
+                                        || !checkedBrand.equals(product.getBrand())) {
                                     product.setBrand(checkedBrand);
                                     viewModel.setProduct(product);
                                 }
@@ -311,9 +326,7 @@ public class ProductEditFragment extends Fragment {
                         });
     }
 
-    /**
-     * Observes changes in category selection and updates the product accordingly.
-     */
+    /** Observes changes in category selection and updates the product accordingly. */
     private void observeCategorySelectionChanges() {
         navBackStackEntry
                 .getSavedStateHandle()
@@ -331,10 +344,11 @@ public class ProductEditFragment extends Fragment {
                             Product product = viewModel.getProduct().getValue();
                             if (product == null) return;
 
-                            Category checkedCategory = categoryRepository.getCategoryByPosition(pos);
+                            Category checkedCategory =
+                                    categoryRepository.getCategoryByPosition(pos);
                             if (checkedCategory != null) {
-                                if (product.getCategory() == null ||
-                                        !checkedCategory.equals(product.getCategory())) {
+                                if (product.getCategory() == null
+                                        || !checkedCategory.equals(product.getCategory())) {
                                     product.setCategory(checkedCategory);
                                     viewModel.setProduct(product);
                                 }
@@ -369,10 +383,10 @@ public class ProductEditFragment extends Fragment {
     /**
      * Sets up property change callback for a Product object.
      *
-     * <p>This method adds a callback to the provided product that monitors changes to its properties.
-     * When a property changes, it calls the appropriate validation method on the view model or
-     * updates UI elements based on the specific property. Property changes are identified by their BR
-     * (Binding Resource) ID.
+     * <p>This method adds a callback to the provided product that monitors changes to its
+     * properties. When a property changes, it calls the appropriate validation method on the view
+     * model or updates UI elements based on the specific property. Property changes are identified
+     * by their BR (Binding Resource) ID.
      *
      * <p>Properties handled include:
      *
@@ -432,21 +446,18 @@ public class ProductEditFragment extends Fragment {
 
                             case BR.status -> {
                                 Timber.d("onPropertyChanged: status");
-                                viewModel.updateButtonState();
                                 updateRadioButtonColors(product.getStatus());
                             }
 
                             case BR.brand -> {
                                 Timber.d("onPropertyChanged: brand");
-                                viewModel.updateButtonState();
+                                viewModel.validateBrand(product.getBrand());
                             }
 
                             case BR.category -> {
                                 Timber.d("onPropertyChanged: category");
-                                viewModel.updateButtonState();
-
+                                viewModel.validateCategory(product.getCategory());
                             }
-
                         }
                     }
                 };
@@ -466,32 +477,32 @@ public class ProductEditFragment extends Fragment {
     /**
      * Handles the click event for the update button.
      *
-     * <p> Display the confirmation dialog to the user and navigate to the product list screen if
-     * the user confirms the action.
+     * <p>Display the confirmation dialog to the user and navigate to the product list screen if the
+     * user confirms the action.
      *
      * @param view The view that was clicked.
      * @noinspection unused
      */
     public void onDeleteButtonClick(@NonNull View view) {
-        DeleteConfirmationDialog deleteConfirmationDialog
-                = DeleteConfirmationDialog.newInstance(
-                getString(R.string.alert_delete_product),
-                getString(R.string.alert_confirm_delete),
-                getString(R.string.refuse),
-                getString(R.string.agree));
+        DeleteConfirmationDialog deleteConfirmationDialog =
+                DeleteConfirmationDialog.newInstance(
+                        getString(R.string.alert_delete_product),
+                        getString(R.string.alert_confirm_delete),
+                        getString(R.string.refuse),
+                        getString(R.string.agree));
 
-        deleteConfirmationDialog.show(
-                getParentFragmentManager(), this.getClass().getSimpleName());
+        deleteConfirmationDialog.show(getParentFragmentManager(), this.getClass().getSimpleName());
 
         // Set up a listener for the delete confirmation dialog result. This is triggered when
         // the user confirms or cancels the delete action.
-        getParentFragmentManager().setFragmentResultListener(
-                DeleteConfirmationDialog.REQUEST,
-                this,
-                (requestKey, result) -> {
-                    if (result.getBoolean(DeleteConfirmationDialog.RESULT)) {
-                        viewModel.delete();
-                    }
-                });
+        getParentFragmentManager()
+                .setFragmentResultListener(
+                        DeleteConfirmationDialog.REQUEST,
+                        this,
+                        (requestKey, result) -> {
+                            if (result.getBoolean(DeleteConfirmationDialog.RESULT)) {
+                                viewModel.deleteProduct();
+                            }
+                        });
     }
 }

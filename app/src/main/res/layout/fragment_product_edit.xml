@@ -140,7 +140,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:endIconMode="clear_text"
-                        app:error="@{viewModel.nameError}"
+                        app:error="@{viewModel.validationState.nameError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -199,7 +199,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:endIconMode="clear_text"
-                            app:error="@{viewModel.sellingPriceError}"
+                            app:error="@{viewModel.validationState.sellingPriceError}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -238,7 +238,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:endIconMode="clear_text"
-                            app:error="@{viewModel.purchasePriceError}"
+                            app:error="@{viewModel.validationState.purchasePriceError}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -275,7 +275,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:endIconMode="clear_text"
-                        app:error="@{viewModel.discountPriceError}"
+                        app:error="@{viewModel.validationState.discountPriceError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -441,6 +441,7 @@
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:error="@{viewModel.validationState.brandError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -493,6 +494,7 @@
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:error="@{viewModel.validationState.categoryError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -556,7 +558,7 @@
                         app:counterEnabled="true"
                         app:counterMaxLength="120"
                         app:endIconMode="clear_text"
-                        app:error="@{viewModel.descriptionError}"
+                        app:error="@{viewModel.validationState.descriptionError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -601,7 +603,7 @@
                         app:counterEnabled="true"
                         app:counterMaxLength="50"
                         app:endIconMode="clear_text"
-                        app:error="@{viewModel.noteError}"
+                        app:error="@{viewModel.validationState.noteError}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
