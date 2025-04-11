@@ -74,6 +74,7 @@ public class ProductEditValidationState {
 
     public void setBrandError(String brandError) {
         this.brandError = brandError;
+        setHasError();
     }
 
     public String getCategoryError() {
@@ -82,6 +83,7 @@ public class ProductEditValidationState {
 
     public void setCategoryError(String categoryError) {
         this.categoryError = categoryError;
+        setHasError();
     }
 
     public String getDescriptionError() {
@@ -109,7 +111,9 @@ public class ProductEditValidationState {
                         && TextUtils.isEmpty(purchasePriceError)
                         && TextUtils.isEmpty(discountPriceError)
                         && TextUtils.isEmpty(descriptionError)
-                        && TextUtils.isEmpty(noteError);
+                        && TextUtils.isEmpty(noteError)
+                        && TextUtils.isEmpty(brandError)
+                        && TextUtils.isEmpty(categoryError);
     }
 
     public boolean hasNoError() {
