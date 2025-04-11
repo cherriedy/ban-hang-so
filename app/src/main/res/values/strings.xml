@@ -112,4 +112,10 @@
     <string name="complete">Hoàn tất</string>
     <string name="alert_product_brand_non_null">Thương hiệu không được để trống</string>
     <string name="alert_product_category_non_null">Danh mục không được để trống</string>
+    <string name="notify_create_product_successfully">Tạo sản phẩm thành công</string>
+    <string name="notify_update_product_successfully">Cập nhật sản phẩm thành công</string>
+    <string name="notify_delete_product_successfully">Xóa sản phẩm thành công</string>
+    <string name="notify_create_product_fail">Tạo sản phẩm thất bại</string>
+    <string name="notify_update_product_fail">Cập nhật sản phẩm thất bại</string>
+    <string name="notify_delete_product_fail">Xóa sản phẩm thất bại</string>
 </resources>
