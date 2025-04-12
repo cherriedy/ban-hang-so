@@ -13,19 +13,18 @@ import com.optlab.banhangso.ui.listener.OnBrandSelectListener;
 import com.optlab.banhangso.data.model.Brand;
 
 public class BrandSelectionAdapter extends ListAdapter<Brand, BrandSelectionAdapter.ViewHolder> {
+    private static final DiffUtil.ItemCallback<Brand> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull Brand oldItem, @NonNull Brand newItem) {
+                    return oldItem.getId().equals(newItem.getId());
+                }
 
-    private static final DiffUtil.ItemCallback<Brand> DIFF_CALLBACK
-            = new DiffUtil.ItemCallback<>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Brand oldItem, @NonNull Brand newItem) {
-            return oldItem.getId() == newItem.getId();
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Brand oldItem, @NonNull Brand newItem) {
-            return oldItem.getName().equals(newItem.getName());
-        }
-    };
+                @Override
+                public boolean areContentsTheSame(@NonNull Brand oldItem, @NonNull Brand newItem) {
+                    return oldItem.getName().equals(newItem.getName());
+                }
+            };
 
     private final OnBrandSelectListener listener;
     private int checkedPosition = RecyclerView.NO_POSITION;
@@ -34,9 +33,8 @@ public class BrandSelectionAdapter extends ListAdapter<Brand, BrandSelectionAdap
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ListItemBrandSelectionBinding binding = ListItemBrandSelectionBinding.inflate(
-                inflater, parent, false
-        );
+        ListItemBrandSelectionBinding binding =
+                ListItemBrandSelectionBinding.inflate(inflater, parent, false);
         return new ViewHolder(binding);
     }
 
@@ -65,29 +63,29 @@ public class BrandSelectionAdapter extends ListAdapter<Brand, BrandSelectionAdap
         this.listener = listener;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
-
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private final ListItemBrandSelectionBinding binding;
 
         public ViewHolder(@NonNull final ListItemBrandSelectionBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 
-            binding.getRoot().setOnClickListener(v -> {
-                // Get the current checked position.
-                setCheckedPosition(getAdapterPosition());
+            binding.getRoot()
+                    .setOnClickListener(
+                            v -> {
+                                // Get the current checked position and set it to the new position.
+                                setCheckedPosition(getBindingAdapterPosition());
 
-                // Notify the listener that a new position has been selected
-                listener.onClick(checkedPosition);
-            });
+                                // Notify the listener that a new position has been selected
+                                // and pass the selected position to it.
+                                listener.onClick(checkedPosition);
+                            });
         }
 
         public void bind(@NonNull final Brand brand) {
             binding.setBrand(brand);
-
-            // Update radio button based on the `checkedPosition`
-            binding.rbSelect.setChecked(checkedPosition == getAdapterPosition());
-
+            // Set the checked state of the checkbox based on the current position.
+            binding.rbSelect.setChecked(checkedPosition == getBindingAdapterPosition());
             binding.executePendingBindings();
         }
     }
