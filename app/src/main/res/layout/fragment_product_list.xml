@@ -44,8 +44,8 @@
             android:layout_marginBottom="24dp"
             android:backgroundTint="@color/color_primary"
             android:contentDescription="@null"
-            android:src="@drawable/ic_add"
             android:onClick="@{fragment::onCreateButtonClick}"
+            android:src="@drawable/ic_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
