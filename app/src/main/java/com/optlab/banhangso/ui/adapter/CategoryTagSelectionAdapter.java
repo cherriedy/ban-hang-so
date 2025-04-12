@@ -12,25 +12,26 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.optlab.banhangso.R;
+import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.databinding.ListItemCategoryTagBinding;
 import com.optlab.banhangso.ui.listener.OnCategorySelectListener;
-import com.optlab.banhangso.data.model.Category;
 
-import timber.log.Timber;
+public class CategoryTagSelectionAdapter
+        extends ListAdapter<Category, CategoryTagSelectionAdapter.ViewHolder> {
+    private static final DiffUtil.ItemCallback<Category> CALL_BACK =
+            new DiffUtil.ItemCallback<>() {
+                @Override
+                public boolean areItemsTheSame(
+                        @NonNull Category oldItem, @NonNull Category newItem) {
+                    return oldItem.getId().equals(newItem.getId());
+                }
 
-public class CategoryTagSelectionAdapter extends ListAdapter<Category, CategoryTagSelectionAdapter.ViewHolder> {
-
-    private static final DiffUtil.ItemCallback<Category> CALL_BACK = new DiffUtil.ItemCallback<>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Category oldItem, @NonNull Category newItem) {
-            return oldItem.getId() == newItem.getId();
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Category oldItem, @NonNull Category newItem) {
-            return oldItem.getName().equals(newItem.getName());
-        }
-    };
+                @Override
+                public boolean areContentsTheSame(
+                        @NonNull Category oldItem, @NonNull Category newItem) {
+                    return oldItem.getName().equals(newItem.getName());
+                }
+            };
 
     private final OnCategorySelectListener listener;
     private int selectedPosition = RecyclerView.NO_POSITION;
@@ -44,7 +45,8 @@ public class CategoryTagSelectionAdapter extends ListAdapter<Category, CategoryT
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ListItemCategoryTagBinding binding = ListItemCategoryTagBinding.inflate(inflater, parent, false);
+        ListItemCategoryTagBinding binding =
+                ListItemCategoryTagBinding.inflate(inflater, parent, false);
         return new ViewHolder(binding);
     }
 
@@ -55,10 +57,6 @@ public class CategoryTagSelectionAdapter extends ListAdapter<Category, CategoryT
 
     public void setSelectedPosition(int newPosition) {
         int previousPosition = selectedPosition;
-
-        Timber.tag("position").e("----------------");
-        Timber.tag("position").e("previous - new: %s - %d", String.valueOf(selectedPosition), newPosition);
-
         if (newPosition == previousPosition) {
             selectedPosition = RecyclerView.NO_POSITION;
             notifyItemChanged(previousPosition);
@@ -78,11 +76,12 @@ public class CategoryTagSelectionAdapter extends ListAdapter<Category, CategoryT
         public ViewHolder(@NonNull ListItemCategoryTagBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-            binding.getRoot().setOnClickListener(v -> {
-                int newPosition = getBindingAdapterPosition();
-                setSelectedPosition(newPosition);
-                listener.onClick(newPosition);
-            });
+            binding.getRoot()
+                    .setOnClickListener(
+                            v -> {
+                                setSelectedPosition(getBindingAdapterPosition());
+                                listener.onClick(selectedPosition);
+                            });
         }
 
         public void bind(Category category) {
@@ -95,8 +94,10 @@ public class CategoryTagSelectionAdapter extends ListAdapter<Category, CategoryT
             Context context = binding.getRoot().getContext();
             int selectedColor = ContextCompat.getColor(context, R.color.color_primary);
             int unselectedColor = ContextCompat.getColor(context, R.color.color_text_title);
-            Drawable selectedBg = ContextCompat.getDrawable(context, R.drawable.bg_in_stock_checked);
-            Drawable unselectedBg = ContextCompat.getDrawable(context, R.drawable.bg_out_stock_unchecked);
+            Drawable selectedBg =
+                    ContextCompat.getDrawable(context, R.drawable.bg_in_stock_checked);
+            Drawable unselectedBg =
+                    ContextCompat.getDrawable(context, R.drawable.bg_out_stock_unchecked);
 
             if (selectedPosition == getBindingAdapterPosition()) {
                 binding.tvName.setTextColor(selectedColor);
