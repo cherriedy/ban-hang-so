@@ -11,22 +11,23 @@ import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.optlab.banhangso.R;
 import com.optlab.banhangso.data.repository.CategoryRepository;
-import com.optlab.banhangso.ui.adapter.CategorySelectionAdapter;
 import com.optlab.banhangso.databinding.FragmentOptionSelectionBinding;
-import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
+import com.optlab.banhangso.ui.adapter.CategorySelectionAdapter;
 import com.optlab.banhangso.ui.category.viewmodel.CategorySelectionViewModel;
+import com.optlab.banhangso.ui.product.viewmodel.ProductEditSharedViewModel;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+import timber.log.Timber;
 
 import java.util.Collections;
 
 import javax.inject.Inject;
-
-import dagger.hilt.android.AndroidEntryPoint;
-import timber.log.Timber;
 
 /**
  * Displays a list of categories for selection.
@@ -37,108 +38,114 @@ import timber.log.Timber;
  */
 @AndroidEntryPoint
 public class CategorySelectionFragment extends Fragment {
-  /** Key used for storing the selected category position in SavedStateHandle */
-  public static final String KEY_CHECKED_POSITION = "checked_category_position_key";
+    @Inject protected CategoryRepository repository;
+    private FragmentOptionSelectionBinding binding;
+    private CategorySelectionViewModel viewModel;
+    private CategorySelectionAdapter adapter;
+    private ProductEditSharedViewModel productEditSharedViewModel;
 
-  @Inject protected CategoryRepository repository;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initViewModels();
 
-  private FragmentOptionSelectionBinding binding;
-  private CategorySelectionViewModel viewModel;
-  private CategorySelectionAdapter adapter;
-
-  @Nullable
-  @Override
-  public View onCreateView(
-      @NonNull LayoutInflater inflater,
-      @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
-    binding = FragmentOptionSelectionBinding.inflate(inflater, container, false);
-    return binding.getRoot();
-  }
-
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    viewModel = new ViewModelProvider(this).get(CategorySelectionViewModel.class);
-    setupCategoryListAdapter();
-    handleSearchView();
-  }
-
-  /**
-   * This method is called when an item in the adapter is selected. It retrieves the checked
-   * position and sets it in the previous back stack entry's SavedStateHandle.
-   *
-   * @param checkedPosition The position of the selected item in the RecyclerView.
-   */
-  private void onItemSelected(int checkedPosition) {
-    if (checkedPosition != RecyclerView.NO_POSITION) {
-      NavController navController = NavHostFragment.findNavController(this);
-      NavBackStackEntry prevBackStackEntry = navController.getPreviousBackStackEntry();
-
-      if (prevBackStackEntry != null) {
-        prevBackStackEntry
-            .getSavedStateHandle() // Get the previous back stack entry's SavedStateHandle
-            .set(KEY_CHECKED_POSITION, checkedPosition); // Set back the checked position
-      } else {
-        Timber.e("Previous back stack entry is null.");
-      }
+        // Initialize the RecyclerView adapter with a listener for item selection.
+        adapter = new CategorySelectionAdapter(this::onItemSelected);
     }
-  }
 
-  /**
-   * Sets up the RecyclerView adapter for displaying categories. Retrieves the category ID from
-   * arguments, initializes the adapter with the correct selection, and observes the category list
-   * from the ViewModel.
-   */
-  private void setupCategoryListAdapter() {
-    // Get the arguments passed to this fragment, specifically the category ID.
-    CategorySelectionFragmentArgs args =
-        CategorySelectionFragmentArgs.fromBundle(requireArguments());
+    private void initViewModels() {
+        viewModel = new ViewModelProvider(this).get(CategorySelectionViewModel.class);
 
-    // Initialize the RecyclerView adapter with a listener for item selection.
-    adapter = new CategorySelectionAdapter(this::onItemSelected);
+        // Get the back stack entry for the product edit graph and retrieve the shared ViewModel.
+        NavBackStackEntry productEditBackEntry =
+                NavHostFragment.findNavController(this)
+                        .getBackStackEntry(R.id.nav_graph_product_edit);
+        productEditSharedViewModel =
+                new ViewModelProvider(productEditBackEntry).get(ProductEditSharedViewModel.class);
+    }
 
-    // Set the initial checked position in the adapter based on the category ID passed.
-    adapter.setCheckedPosition(repository.getPositionById(args.getCategoryId()));
+    @Nullable
+    @Override
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+        binding = FragmentOptionSelectionBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-    binding.listOption.setAdapter(adapter);
-    binding.listOption.setHasFixedSize(true);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupCategoryListAdapter();
+        observeViewModels();
+        handleSearchView();
+    }
 
-    // Observe the checked position in the ViewModel and update the adapter accordingly.
-    viewModel
-        .getCategoriesSourceLiveData()
-        .observe(
-            getViewLifecycleOwner(),
-            categories -> {
-              if (categories == null || categories.isEmpty()) {
-                adapter.submitList(Collections.emptyList());
-                Timber.e("Categories list is empty or null.");
-              } else {
-                adapter.submitList(categories);
-              }
-            });
-  }
+    private void observeViewModels() {
+        viewModel
+                .getCategoriesSource()
+                .observe(
+                        getViewLifecycleOwner(),
+                        categories -> {
+                            if (categories == null || categories.isEmpty()) {
+                                adapter.submitList(Collections.emptyList());
+                                Timber.e("Categories list is empty or null.");
+                            } else {
+                                adapter.submitList(categories);
+                            }
+                        });
+    }
 
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    binding = null;
-  }
+    /**
+     * Handles the selection of a category item. When an item is selected, it updates the
+     * ProductEditSharedViewModel with the selected category's position.
+     *
+     * @param checkedPosition The position of the selected category in the list.
+     */
+    private void onItemSelected(int checkedPosition) {
+        if (checkedPosition != RecyclerView.NO_POSITION) {
+            productEditSharedViewModel.setSelectCategoryPosition(checkedPosition);
+        }
+    }
 
-  /** Update the search query in the ViewModel when text changes. */
-  private void handleSearchView() {
-    binding.svKeyword.setOnQueryTextListener(
-        new SearchView.OnQueryTextListener() {
-          @Override
-          public boolean onQueryTextSubmit(String query) {
-            return false;
-          }
+    /**
+     * Sets up the RecyclerView adapter for displaying categories. Retrieves the category ID from
+     * arguments, initializes the adapter with the correct selection, and observes the category list
+     * from the ViewModel.
+     */
+    private void setupCategoryListAdapter() {
+        // Get the arguments passed to this fragment, specifically the category ID.
+        CategorySelectionFragmentArgs args =
+                CategorySelectionFragmentArgs.fromBundle(requireArguments());
+        // Set the initial checked position in the adapter based on the category ID passed.
+        adapter.setCheckedPosition(repository.getPositionById(args.getCategoryId()));
 
-          @Override
-          public boolean onQueryTextChange(String newText) {
-            viewModel.setSearchQuery(newText); // Update the search query in the ViewModel
-            return true;
-          }
-        });
-  }
+        binding.listOption.setAdapter(adapter);
+        binding.listOption.setHasFixedSize(true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    /** Update the search query in the ViewModel when text changes. */
+    private void handleSearchView() {
+        binding.svKeyword.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        // Update the search query in the ViewModel
+                        viewModel.setSearchQuery(newText);
+                        return true;
+                    }
+                });
+    }
 }
