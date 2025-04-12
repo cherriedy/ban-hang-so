@@ -8,6 +8,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.ProductRepository;
 
+import timber.log.Timber;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,8 +19,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.inject.Singleton;
-
-import timber.log.Timber;
 
 @Singleton
 public class ProductRepositoryImpl implements ProductRepository {
@@ -39,38 +40,43 @@ public class ProductRepositoryImpl implements ProductRepository {
     private Product docToProduct(DocumentSnapshot doc) {
         Product product = doc.toObject(Product.class);
         if (product == null) {
-            Timber.e("Document %s is null", doc.getId());
+            // Timber.e("Document %s is null", doc.getId());
             return null;
         } else {
-            Timber.d("Document %s is not null", doc.getId());
+            // Timber.d("Document %s is not null", doc.getId());
             product.setId(doc.getId()); // Set the document ID to
             return product;
         }
     }
 
     private void retrieveData() {
-        firestore.collection(COLLECTION_PATH)
-                .addSnapshotListener((snapshots, error) -> {
-                    if (error != null) {
-                        Timber.e("Error getting documents: %s", error.getMessage());
-                        return;
-                    }
+        firestore
+                .collection(COLLECTION_PATH)
+                .addSnapshotListener(
+                        (snapshots, error) -> {
+                            if (error != null) {
+                                Timber.e("Error getting documents: %s", error.getMessage());
+                                return;
+                            }
 
-                    if (snapshots != null && !snapshots.isEmpty()) {
-                        List<Product> productList = snapshots.getDocuments().stream()
-                                .map(this::docToProduct)
-                                .filter(Objects::nonNull) // Filter out null products, if any
-                                .collect(Collectors.toList());
-                        Timber.d("Products retrieved: %d", productList.size());
-                        products.setValue(productList);
-                    } else {
-                        if (snapshots == null) {
-                            Timber.e("Snapshot is null");
-                        } else {
-                            Timber.d("Snapshot is not null but empty");
-                        }
-                    }
-                });
+                            if (snapshots != null && !snapshots.isEmpty()) {
+                                List<Product> productList =
+                                        snapshots.getDocuments().stream()
+                                                .map(this::docToProduct)
+                                                // Filter out null products, if any
+                                                .filter(Objects::nonNull)
+                                                .collect(Collectors.toList());
+                                Timber.d("Products retrieved: %d", productList.size());
+                                products.setValue(productList);
+                            } else {
+                                if (snapshots == null) {
+                                    Timber.e("Snapshot is null");
+                                } else {
+                                    Timber.d("Snapshot is not null but empty");
+                                }
+                                products.setValue(Collections.emptyList());
+                            }
+                        });
     }
 
     @Override
@@ -81,10 +87,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public Product getProductById(String id) {
         return Optional.ofNullable(products.getValue())
-                .flatMap(pl -> pl.stream()
-                        .filter(product -> product.getId().equals(id))
-                        .findFirst()
-                )
+                .flatMap(
+                        pl -> pl.stream().filter(product -> product.getId().equals(id)).findFirst())
                 .map(this::safeClone)
                 .orElse(null);
     }
@@ -101,16 +105,19 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void addProduct(Product newProduct, Consumer<Boolean> callback) {
-        firestore.collection(COLLECTION_PATH)
+        firestore
+                .collection(COLLECTION_PATH)
                 .add(newProduct)
-                .addOnSuccessListener(docRef -> {
-                    Timber.d("Product added with ID: %s", docRef.getId());
-                    callback.accept(true);
-                })
-                .addOnFailureListener(e -> {
-                    Timber.e("Failed to add product: %s", e.getMessage());
-                    callback.accept(false);
-                });
+                .addOnSuccessListener(
+                        docRef -> {
+                            Timber.d("Product added with ID: %s", docRef.getId());
+                            callback.accept(true);
+                        })
+                .addOnFailureListener(
+                        e -> {
+                            Timber.e("Failed to add product: %s", e.getMessage());
+                            callback.accept(false);
+                        });
     }
 
     @Override
@@ -120,17 +127,20 @@ public class ProductRepositoryImpl implements ProductRepository {
             return;
         }
 
-        firestore.collection(COLLECTION_PATH)
+        firestore
+                .collection(COLLECTION_PATH)
                 .document(updatedProduct.getId())
                 .set(updatedProduct)
-                .addOnSuccessListener(unused -> {
-                    Timber.d("Product updated: %s", updatedProduct.getId());
-                    callback.accept(true);
-                })
-                .addOnFailureListener(e -> {
-                    Timber.e("Failed to update product: %s", e.getMessage());
-                    callback.accept(false);
-                });
+                .addOnSuccessListener(
+                        unused -> {
+                            Timber.d("Product updated: %s", updatedProduct.getId());
+                            callback.accept(true);
+                        })
+                .addOnFailureListener(
+                        e -> {
+                            Timber.e("Failed to update product: %s", e.getMessage());
+                            callback.accept(false);
+                        });
     }
 
     @Override
@@ -140,31 +150,37 @@ public class ProductRepositoryImpl implements ProductRepository {
             return;
         }
 
-        firestore.collection(COLLECTION_PATH)
+        firestore
+                .collection(COLLECTION_PATH)
                 .document(deletedProduct.getId())
                 .delete()
-                .addOnSuccessListener(unused -> {
-                    Timber.d("Product deleted: %s", deletedProduct.getId());
-                    callback.accept(true);
-                })
-                .addOnFailureListener(e -> {
-                    Timber.e("Failed to delete product: %s", e.getMessage());
-                    callback.accept(false);
-                });
+                .addOnSuccessListener(
+                        unused -> {
+                            Timber.d("Product deleted: %s", deletedProduct.getId());
+                            callback.accept(true);
+                        })
+                .addOnFailureListener(
+                        e -> {
+                            Timber.e("Failed to delete product: %s", e.getMessage());
+                            callback.accept(false);
+                        });
     }
 
     @Override
     public void createProduct(Product creatingProduct, Consumer<Boolean> callback) {
-        firestore.collection(COLLECTION_PATH)
+        firestore
+                .collection(COLLECTION_PATH)
                 .add(creatingProduct)
-                .addOnSuccessListener(docRef -> {
-                    Timber.d("Product created with ID: %s", docRef.getId());
-                    callback.accept(true);
-                })
-                .addOnFailureListener(e -> {
-                    Timber.e("Failed to create product: %s", e.getMessage());
-                    callback.accept(false);
-                });
+                .addOnSuccessListener(
+                        docRef -> {
+                            Timber.d("Product created with ID: %s", docRef.getId());
+                            callback.accept(true);
+                        })
+                .addOnFailureListener(
+                        e -> {
+                            Timber.e("Failed to create product: %s", e.getMessage());
+                            callback.accept(false);
+                        });
     }
 
     private Product safeClone(Product product) {
