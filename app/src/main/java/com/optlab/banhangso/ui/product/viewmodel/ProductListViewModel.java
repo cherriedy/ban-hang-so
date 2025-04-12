@@ -1,17 +1,21 @@
 package com.optlab.banhangso.ui.product.viewmodel;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.Product;
+import com.optlab.banhangso.data.model.SortOption;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.ProductRepository;
-import com.optlab.banhangso.data.model.SortOption;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+import timber.log.Timber;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,67 +23,67 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import dagger.hilt.android.lifecycle.HiltViewModel;
-import timber.log.Timber;
-
 @HiltViewModel
 public class ProductListViewModel extends ViewModel {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final MediatorLiveData<List<Product>> listMediatorLiveData = new MediatorLiveData<>();
-    private final MutableLiveData<SortOption<Product.SortField>> sortOptionLiveData = new MutableLiveData<>();
-    private final MutableLiveData<List<Category>> listCategoryLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Category> selectedCategoryLiveData = new MutableLiveData<>();
-    private final MutableLiveData<String> searchQueryLiveData = new MutableLiveData<>();
+    private final MediatorLiveData<List<Product>> products = new MediatorLiveData<>();
+    private final MutableLiveData<SortOption<Product.SortField>> sortOption =
+            new MutableLiveData<>();
+    private final MutableLiveData<List<Category>> categories = new MutableLiveData<>();
+    private final MutableLiveData<Category> selectedCategory = new MutableLiveData<>();
+    private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
 
     @Inject
-    public ProductListViewModel(@NonNull ProductRepository productRepository,
-                                @NonNull CategoryRepository categoryRepository) {
+    public ProductListViewModel(
+            @NonNull ProductRepository productRepository,
+            @NonNull CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
 
         // Observe the categories change and update the list.
         categoryRepository.getCategories().observeForever(this::observeCategories);
 
-        listMediatorLiveData.addSource(productRepository.getProducts(), unused -> updateProducts());
-        listMediatorLiveData.addSource(sortOptionLiveData, unused -> updateProducts());
-        listMediatorLiveData.addSource(selectedCategoryLiveData, unused -> updateProducts());
-        listMediatorLiveData.addSource(searchQueryLiveData, unused -> updateProducts());
+        products.addSource(productRepository.getProducts(), unused -> updateProducts());
+        products.addSource(sortOption, unused -> updateProducts());
+        products.addSource(selectedCategory, unused -> updateProducts());
+        products.addSource(searchQuery, unused -> updateProducts());
     }
 
     @Override
     protected void onCleared() {
         categoryRepository.getCategories().removeObserver(this::observeCategories);
-        listMediatorLiveData.removeSource(productRepository.getProducts());
-        listMediatorLiveData.removeSource(sortOptionLiveData);
-        listMediatorLiveData.removeSource(selectedCategoryLiveData);
-        listMediatorLiveData.removeSource(searchQueryLiveData);
+        products.removeSource(productRepository.getProducts());
+        products.removeSource(sortOption);
+        products.removeSource(selectedCategory);
+        products.removeSource(searchQuery);
 
         super.onCleared();
     }
 
     private void observeCategories(List<Category> categories) {
-        listCategoryLiveData.setValue(categories);
+        this.categories.setValue(categories);
         updateProducts();
     }
 
     private void updateProducts() {
+        Timber.d("updateProducts method called");
         List<Product> updatedList = productRepository.getProducts().getValue();
         if (updatedList == null) {
-            Timber.e("Product list is null in updateProducts method");
-            listMediatorLiveData.setValue(Collections.emptyList());
+            // Timber.e("Product list is null in updateProducts method");
+            products.setValue(Collections.emptyList());
             return;
         } else {
             Timber.d("Product list size in updateProducts method is %d", updatedList.size());
         }
 
         // Filter by category if a category is selected.
-        Category selectedCategory = selectedCategoryLiveData.getValue();
+        Category selectedCategory = this.selectedCategory.getValue();
         Timber.d("Selected category: %s", selectedCategory);
         updatedList = filterByCategory(updatedList, selectedCategory);
 
         // Filter by search query if available.
-        String query = searchQueryLiveData.getValue();
+        String query = searchQuery.getValue();
         if (query != null && !query.trim().isEmpty()) {
             Timber.d("Search query: %s", query);
             updatedList = filterByQuery(updatedList, query);
@@ -88,54 +92,60 @@ public class ProductListViewModel extends ViewModel {
         // Sort the list if sort option is set.
         // SortOption<Product.SortField> sortOption = sortOptionLiveData.getValue();
         // if (sortOption != null) {
-        //     updatedList.sort(Product.getComparator(sortOption.getSortField(), sortOption.isAscending()));
+        //     updatedList.sort(Product.getComparator(sortOption.getSortField(),
+        // sortOption.isAscending()));
         // }
 
-        updatedList.forEach(product -> Timber.d("Product: %s", product));
-        listMediatorLiveData.setValue(updatedList);
+        // updatedList.forEach(product -> Timber.d("Product: %s", product));
+        products.setValue(updatedList);
     }
 
     @NonNull
     private static List<Product> filterByQuery(List<Product> updatedList, String query) {
         String lowercaseQuery = query.toLowerCase();
-        updatedList = updatedList.stream()
-                .filter(product -> product.getName()
-                        .toLowerCase()
-                        .contains(lowercaseQuery)
-                )
-                .collect(Collectors.toList());
+        updatedList =
+                updatedList.stream()
+                        .filter(product -> product.getName().toLowerCase().contains(lowercaseQuery))
+                        .collect(Collectors.toList());
         return updatedList;
     }
 
-    private static List<Product> filterByCategory(List<Product> updatedList, Category selectedCategory) {
-        updatedList = selectedCategory == null ? updatedList
-                : updatedList.stream()
-                .filter(product -> product.getCategory().equals(selectedCategory))
-                .collect(Collectors.toList());
+    private static List<Product> filterByCategory(
+            List<Product> updatedList, Category selectedCategory) {
+        updatedList =
+                selectedCategory == null
+                        ? updatedList
+                        : updatedList.stream()
+                                .filter(product -> product.getCategory().equals(selectedCategory))
+                                .collect(Collectors.toList());
         return updatedList;
     }
 
     public LiveData<List<Product>> getProducts() {
-        return listMediatorLiveData;
+        return products;
     }
 
     public void setSortOption(SortOption<Product.SortField> sortOption) {
-        sortOptionLiveData.setValue(sortOption);
+        this.sortOption.setValue(sortOption);
     }
 
-    public void setCategory(@Nullable Category category) {
-        selectedCategoryLiveData.setValue(category);
+    public void setCategory(int position) {
+        if (position == RecyclerView.NO_POSITION) {
+            selectedCategory.setValue(null);
+        } else {
+            selectedCategory.setValue(categoryRepository.getCategoryByPosition(position));
+        }
     }
 
     public LiveData<Category> getSelectedCategory() {
-        return selectedCategoryLiveData;
+        return selectedCategory;
     }
 
     public void setSearchQuery(@NonNull String query) {
-        searchQueryLiveData.setValue(query);
+        searchQuery.setValue(query);
     }
 
     public LiveData<List<Category>> getCategories() {
-        return listCategoryLiveData;
+        return categories;
     }
 }
