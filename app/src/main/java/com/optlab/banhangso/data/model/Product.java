@@ -35,16 +35,15 @@ public class Product extends BaseObservable implements Cloneable {
     public static Comparator<Product> getComparator(SortField field, boolean isAscending) {
         Comparator<Product> comparator =
                 switch (field) {
-                    case NAME -> Comparator.comparing(
-                            Product::getName, String.CASE_INSENSITIVE_ORDER);
+                    case NAME ->
+                            Comparator.comparing(Product::getName, String.CASE_INSENSITIVE_ORDER);
 
                     case SELLING_PRICE -> Comparator.comparingDouble(Product::getSellingPrice);
                 };
         return isAscending ? comparator : comparator.reversed();
     }
 
-    @Exclude
-    private String id;
+    @Exclude private String id;
     private String barcode;
     private Category category;
     private Brand brand;
@@ -60,12 +59,26 @@ public class Product extends BaseObservable implements Cloneable {
     private boolean status;
     private double discountPrice;
     private String note;
-    @ServerTimestamp
-    private Date createdAt;
-    @ServerTimestamp
-    private Date updatedAt;
+    @ServerTimestamp private Date createdAt;
+    @ServerTimestamp private Date updatedAt;
 
-    public Product() {
+    public Product() {}
+
+    public static Product empty() {
+        return new Builder("")
+                .name("")
+                .barcode("")
+                .category(Category.empty())
+                .brand(Brand.empty())
+                .purchasePrice(0)
+                .sellingPrice(0)
+                .avatarUrl("")
+                .stockQuantity(0)
+                .description("")
+                .status(true)
+                .discountPrice(0)
+                .note("")
+                .build();
     }
 
     private Product(@NonNull Builder builder) {
@@ -93,23 +106,44 @@ public class Product extends BaseObservable implements Cloneable {
     @NonNull
     @Override
     public String toString() {
-        return "Product{" +
-                "id='" + id + '\'' +
-                ", barcode='" + barcode + '\'' +
-                ", category=" + category +
-                ", brand=" + brand +
-                ", name='" + name + '\'' +
-                ", purchasePrice=" + purchasePrice +
-                ", sellingPrice=" + sellingPrice +
-                ", avatarUrl='" + avatarUrl + '\'' +
-                ", stockQuantity=" + stockQuantity +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                ", discountPrice=" + discountPrice +
-                ", note='" + note + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
+        return "Product{"
+                + "id='"
+                + id
+                + '\''
+                + ", barcode='"
+                + barcode
+                + '\''
+                + ", category="
+                + category
+                + ", brand="
+                + brand
+                + ", name='"
+                + name
+                + '\''
+                + ", purchasePrice="
+                + purchasePrice
+                + ", sellingPrice="
+                + sellingPrice
+                + ", avatarUrl='"
+                + avatarUrl
+                + '\''
+                + ", stockQuantity="
+                + stockQuantity
+                + ", description='"
+                + description
+                + '\''
+                + ", status="
+                + status
+                + ", discountPrice="
+                + discountPrice
+                + ", note='"
+                + note
+                + '\''
+                + ", createdAt="
+                + createdAt
+                + ", updatedAt="
+                + updatedAt
+                + '}';
     }
 
     @Exclude

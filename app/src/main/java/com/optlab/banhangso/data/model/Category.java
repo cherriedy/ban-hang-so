@@ -12,21 +12,21 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 public class Category extends BaseObservable implements Cloneable {
-    @Exclude
-    private String id;
+    @Exclude private String id;
     private String name;
 
-    @ServerTimestamp
-    private Date createdAt;
-    @ServerTimestamp
-    private Date updatedAt;
+    @ServerTimestamp private Date createdAt;
+    @ServerTimestamp private Date updatedAt;
 
-    public Category() {
-    }
+    public Category() {}
 
     public Category(String id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public static Category empty() {
+        return new Category("", "");
     }
 
     @NonNull
@@ -40,8 +40,7 @@ public class Category extends BaseObservable implements Cloneable {
         if (obj instanceof Category that) {
             if (this == that) return true;
 
-            return this.id.equals(that.id)
-                    && this.name.equals(that.name);
+            return this.id.equals(that.id) && this.name.equals(that.name);
         } else {
             throw new IllegalArgumentException("Not an instance of Category");
         }
@@ -79,5 +78,9 @@ public class Category extends BaseObservable implements Cloneable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public boolean isEmpty() {
+        return id.isEmpty() && name.isEmpty();
     }
 }

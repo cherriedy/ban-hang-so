@@ -12,21 +12,21 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 public class Brand extends BaseObservable implements Cloneable {
-    @Exclude
-    private String id;
+    @Exclude private String id;
     private String name;
 
-    @ServerTimestamp
-    private Date createdAt;
-    @ServerTimestamp
-    private Date updatedAt;
+    @ServerTimestamp private Date createdAt;
+    @ServerTimestamp private Date updatedAt;
 
-    public Brand() {
-    }
+    public Brand() {}
 
     public Brand(String id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public static Brand empty() {
+        return new Brand("", "");
     }
 
     @NonNull
@@ -39,9 +39,7 @@ public class Brand extends BaseObservable implements Cloneable {
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof Brand that) {
             if (this == that) return true;
-
-            return this.id.equals(that.id)
-                    && this.name.equals(that.name);
+            return this.id.equals(that.id) && this.name.equals(that.name);
         } else {
             throw new IllegalArgumentException("Not an instance of Brand");
         }
@@ -79,5 +77,9 @@ public class Brand extends BaseObservable implements Cloneable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public boolean isEmpty() {
+        return id.isEmpty() && name.isEmpty();
     }
 }
