@@ -25,11 +25,9 @@ public class ProductListAdapter extends ListAdapter<Product, ProductListAdapter.
                 }
 
                 @Override
-                public boolean areContentsTheSame(@NonNull Product oldItem, @NonNull Product newItem) {
-                    return oldItem.getName().equals(newItem.getName())
-                            && oldItem.getBrand().getName().equals(newItem.getBrand().getName())
-                            && oldItem.getCategory().getName().equals(newItem.getCategory().getName())
-                            && oldItem.getSellingPrice() == newItem.getSellingPrice();
+                public boolean areContentsTheSame(
+                        @NonNull Product oldItem, @NonNull Product newItem) {
+                    return oldItem.equals(newItem);
                 }
             };
 
@@ -60,9 +58,7 @@ public class ProductListAdapter extends ListAdapter<Product, ProductListAdapter.
         return itemLayoutRes;
     }
 
-    /**
-     * Setter to update the layout resource dynamically.
-     */
+    /** Setter to update the layout resource dynamically. */
     @SuppressLint("NotifyDataSetChanged")
     public void setItemLayoutRes(int itemLayoutRes) {
         this.itemLayoutRes = itemLayoutRes;
@@ -75,14 +71,14 @@ public class ProductListAdapter extends ListAdapter<Product, ProductListAdapter.
         public ViewHolder(@NonNull ViewDataBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-            binding
-                    .getRoot()
+            binding.getRoot()
                     .setOnClickListener(
                             v -> {
                                 // Get the selected position in RecyclerView.
                                 selectedPosition = getBindingAdapterPosition();
 
-                                // If the position is valid, triggering the listener to send the id of product.
+                                // If the position is valid, triggering the listener to send the id
+                                // of product.
                                 if (selectedPosition != RecyclerView.NO_POSITION) {
                                     listener.onClick(getItem(selectedPosition).getId());
                                 }
