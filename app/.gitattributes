@@ -1,0 +1,2 @@
+*.html linguist-detectable=false
+*.xml linguist-language=XML
