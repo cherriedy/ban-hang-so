@@ -41,7 +41,7 @@ public class Brand extends BaseObservable implements Cloneable {
             if (this == that) return true;
             return this.id.equals(that.id) && this.name.equals(that.name);
         } else {
-            throw new IllegalArgumentException("Not an instance of Brand");
+            return false;
         }
     }
 

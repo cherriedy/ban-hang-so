@@ -1,6 +1,7 @@
 package com.optlab.banhangso.data.model;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
@@ -101,6 +102,27 @@ public class Product extends BaseObservable implements Cloneable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof Product that) {
+            if (this == obj) return true;
+            return id.equals(that.id)
+                    && barcode.equals(that.barcode)
+                    && category.equals(that.category)
+                    && brand.equals(that.brand)
+                    && name.equals(that.name)
+                    && purchasePrice == that.purchasePrice
+                    && sellingPrice == that.sellingPrice
+                    && avatarUrl.equals(that.avatarUrl)
+                    && stockQuantity == that.stockQuantity
+                    && description.equals(that.description)
+                    && status == that.status
+                    && discountPrice == that.discountPrice
+                    && note.equals(that.note);
+        }
+        return false;
     }
 
     @NonNull

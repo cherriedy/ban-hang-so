@@ -39,10 +39,9 @@ public class Category extends BaseObservable implements Cloneable {
     public boolean equals(@Nullable Object obj) {
         if (obj instanceof Category that) {
             if (this == that) return true;
-
             return this.id.equals(that.id) && this.name.equals(that.name);
         } else {
-            throw new IllegalArgumentException("Not an instance of Category");
+            return false;
         }
     }
 
