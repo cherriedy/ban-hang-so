@@ -2,6 +2,8 @@ package com.optlab.banhangso.ui.product.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.repository.BrandRepository;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.databinding.FragmentProductEditBinding;
+import com.optlab.banhangso.ui.common.view.AnimationLoadingDialog;
 import com.optlab.banhangso.ui.common.view.DeleteConfirmationDialog;
 import com.optlab.banhangso.ui.common.view.ExitConfirmationDialog;
 import com.optlab.banhangso.ui.product.viewmodel.ProductEditSharedViewModel;
@@ -55,6 +58,7 @@ public class ProductEditFragment extends Fragment {
     private ProductEditFragmentArgs args;
     private Observable.OnPropertyChangedCallback changedCallback;
     private ProductEditSharedViewModel sharedViewModel;
+    private AnimationLoadingDialog loadingDialog = new AnimationLoadingDialog();
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -364,13 +368,13 @@ public class ProductEditFragment extends Fragment {
         }
     }
 
-    /**
-     * Toggles the visibility of the progress dialog based on the loading state.
-     *
-     * @param isLoading True if loading; false otherwise.
-     */
+    /** Toggles the visibility of the progress dialog based on the loading state. */
     private void toggleProgressDialog(Boolean isLoading) {
-        binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        if (isLoading) {
+            loadingDialog.show(getParentFragmentManager(), this.getClass().getSimpleName());
+        } else {
+            loadingDialog.dismiss();
+        }
     }
 
     /**
