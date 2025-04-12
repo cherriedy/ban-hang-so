@@ -12,19 +12,22 @@ import com.optlab.banhangso.databinding.ListItemCategorySelectionBinding;
 import com.optlab.banhangso.ui.listener.OnCategorySelectListener;
 import com.optlab.banhangso.data.model.Category;
 
-public class CategorySelectionAdapter extends ListAdapter<Category, CategorySelectionAdapter.ViewHolder> {
+public class CategorySelectionAdapter
+        extends ListAdapter<Category, CategorySelectionAdapter.ViewHolder> {
+    private static final DiffUtil.ItemCallback<Category> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<>() {
+                @Override
+                public boolean areItemsTheSame(
+                        @NonNull Category oldItem, @NonNull Category newItem) {
+                    return oldItem.getId().equals(newItem.getId());
+                }
 
-    private static final DiffUtil.ItemCallback<Category> DIFF_CALLBACK = new DiffUtil.ItemCallback<>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Category oldItem, @NonNull Category newItem) {
-            return oldItem.getId() == newItem.getId();
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Category oldItem, @NonNull Category newItem) {
-            return oldItem.getName().equals(newItem.getName());
-        }
-    };
+                @Override
+                public boolean areContentsTheSame(
+                        @NonNull Category oldItem, @NonNull Category newItem) {
+                    return oldItem.getName().equals(newItem.getName());
+                }
+            };
     private final OnCategorySelectListener listener;
     private int checkedPosition = RecyclerView.NO_POSITION;
 
@@ -37,9 +40,8 @@ public class CategorySelectionAdapter extends ListAdapter<Category, CategorySele
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ListItemCategorySelectionBinding binding = ListItemCategorySelectionBinding.inflate(
-                inflater, parent, false
-        );
+        ListItemCategorySelectionBinding binding =
+                ListItemCategorySelectionBinding.inflate(inflater, parent, false);
         return new ViewHolder(binding);
     }
 
@@ -69,22 +71,27 @@ public class CategorySelectionAdapter extends ListAdapter<Category, CategorySele
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-
-        final private ListItemCategorySelectionBinding binding;
+        private final ListItemCategorySelectionBinding binding;
 
         public ViewHolder(ListItemCategorySelectionBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 
-            binding.getRoot().setOnClickListener(v -> {
-                int currentPosition = getBindingAdapterPosition();
-                setCheckedPosition(currentPosition);
-                listener.onClick(currentPosition);
-            });
+            binding.getRoot()
+                    .setOnClickListener(
+                            v -> {
+                                // Get the current checked position and set it to the new position.
+                                setCheckedPosition(getBindingAdapterPosition());
+
+                                // Notify the listener that a new position has been selected
+                                // and pass the new position.
+                                listener.onClick(checkedPosition);
+                            });
         }
 
         public void bind(@NonNull final Category category) {
             binding.setCategory(category);
+            // Set the checked state of the checkbox based on the current position.
             binding.rbSelect.setChecked(checkedPosition == getBindingAdapterPosition());
             binding.executePendingBindings();
         }
