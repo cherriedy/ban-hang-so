@@ -15,7 +15,6 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.data.model.Category;
@@ -63,18 +62,8 @@ public class ProductListFragment extends Fragment {
                             NavHostFragment.findNavController(this).navigate(action);
                         });
 
-        // Setup adapter for RecyclerView of categories with callback to select category. If the
-        // position is NO_POSITION (-1), set the selection as null to trigger default sort.
-        // Otherwise,
-        // the position of selected category is set to ProductListViewModel.
         categoryTagSelectionAdapter =
-                new CategoryTagSelectionAdapter(
-                        position ->
-                                productListViewModel.setCategory(
-                                        position == RecyclerView.NO_POSITION
-                                                ? null
-                                                : categoryRepository.getCategoryByPosition(
-                                                        position)));
+                new CategoryTagSelectionAdapter(productListViewModel::setCategory);
 
         // Get the previous sort option from user preference and set it to ProductListViewModel.
         UserPreferenceManager userPreferenceManager = new UserPreferenceManager(requireContext());
@@ -100,7 +89,7 @@ public class ProductListFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        binding.recyclerViewProduct.setAdapter(null);
+        // binding.recyclerViewProduct.setAdapter(null);
         binding = null;
         super.onDestroyView();
     }
@@ -122,6 +111,7 @@ public class ProductListFragment extends Fragment {
     /** Sets up the RecyclerView for displaying products. */
     private void setupProductRecyclerView() {
         binding.recyclerViewProduct.setLayoutManager(new LinearLayoutManager(requireContext()));
+
         EnumSet<LinearSpacingStrategy.Direction> directions =
                 EnumSet.of(
                         LinearSpacingStrategy.Direction.LEFT,
@@ -131,7 +121,8 @@ public class ProductListFragment extends Fragment {
         SpacingStrategy spacingStrategy =
                 new LinearSpacingStrategy(requireContext(), 8, directions);
         binding.recyclerViewProduct.addItemDecoration(new SpacingItemDecoration(spacingStrategy));
-        binding.recyclerViewProduct.setHasFixedSize(true);
+
+        // binding.recyclerViewProduct.setHasFixedSize(true);
         binding.recyclerViewProduct.setAdapter(productListAdapter);
     }
 
@@ -139,12 +130,7 @@ public class ProductListFragment extends Fragment {
         // Observe the products and update the adapter.
         productListViewModel
                 .getProducts()
-                .observe(
-                        getViewLifecycleOwner(),
-                        products -> {
-                            productListAdapter.submitList(null);
-                            productListAdapter.submitList(products);
-                        });
+                .observe(getViewLifecycleOwner(), productListAdapter::submitList);
 
         // Observe the categories and update the adapter.
         productListViewModel
