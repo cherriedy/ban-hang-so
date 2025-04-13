@@ -12,8 +12,8 @@ import java.util.Objects;
 public class GridSpacingStrategy implements SpacingStrategy {
     private final int spacing;
 
-    public GridSpacingStrategy(Context context, int spacingDp) {
-        this.spacing = dpToPx(context, spacingDp);
+    public GridSpacingStrategy(Context context, int spacing) {
+        this.spacing = dpToPx(context, spacing);
     }
 
     @Override
