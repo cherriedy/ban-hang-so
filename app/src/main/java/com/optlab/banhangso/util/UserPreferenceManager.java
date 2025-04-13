@@ -3,12 +3,16 @@ package com.optlab.banhangso.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.model.SortOption;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+
+import javax.inject.Inject;
 
 public class UserPreferenceManager {
     private static final String PREFS_NAME = "user_preferences";
@@ -18,7 +22,8 @@ public class UserPreferenceManager {
     private final SharedPreferences sharedPreferences;
     private final Gson gson = new Gson();
 
-    public UserPreferenceManager(Context context) {
+    @Inject
+    public UserPreferenceManager(@NonNull Context context) {
         sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
@@ -39,8 +44,7 @@ public class UserPreferenceManager {
         String sortOptionJson = sharedPreferences.getString(KEY_SORT_OPTION, null);
 
         // Get the type of sort option to prevent unchecked conversion.
-        Type type = new TypeToken<SortOption<Product.SortField>>() {
-        }.getType();
+        Type type = new TypeToken<SortOption<Product.SortField>>() {}.getType();
 
         // Convert the sort option json to object.
         SortOption<Product.SortField> sortOption = gson.fromJson(sortOptionJson, type);
