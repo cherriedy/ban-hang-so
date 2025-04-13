@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_product_tabs"
+    app:startDestination="@id/productTabsFragment">
+
+    <action
+        android:id="@+id/action_to_product_edit"
+        app:destination="@+id/nav_graph_product_edit">
+
+        <argument
+            android:name="productId"
+            app:argType="string" />
+
+        <argument
+            android:name="isCreateMode"
+            app:argType="boolean" />
+    </action>
+
+    <fragment
+        android:id="@+id/productTabsFragment"
+        android:name="com.optlab.banhangso.ui.product.view.ProductTabsFragment"
+        tools:layout="@layout/fragment_product_tabs" />
+
+    <fragment
+        android:id="@+id/categoryListFragment"
+        android:name="com.optlab.banhangso.ui.category.view.CategoryListFragment"
+        tools:layout="@layout/fragment_category_list" />
+
+    <fragment
+        android:id="@+id/brandListFragment"
+        android:name="com.optlab.banhangso.ui.brand.view.BrandListFragment"
+        tools:layout="@layout/fragment_brand_list" />
+
+    <fragment
+        android:id="@+id/productListFragment"
+        android:name="com.optlab.banhangso.ui.product.view.ProductListFragment"
+        tools:layout="@layout/fragment_product_list" />
+
+    <dialog
+        android:id="@+id/productSortSelectionFragment"
+        android:name="com.optlab.banhangso.ui.product.view.ProductSortSelectionFragment"
+        tools:layout="@layout/list_item_product_sort_selection" />
+
+</navigation>
