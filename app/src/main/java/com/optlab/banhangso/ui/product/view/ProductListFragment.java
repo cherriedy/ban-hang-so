@@ -15,6 +15,7 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.data.model.Category;
@@ -40,6 +41,8 @@ import javax.inject.Inject;
 @AndroidEntryPoint
 public class ProductListFragment extends Fragment {
     @Inject protected CategoryRepository categoryRepository;
+    @Inject protected UserPreferenceManager userPreferenceManager;
+
     private FragmentProductListBinding binding;
     private ProductListViewModel productListViewModel;
     private ProductSortSelectionViewModel productSortSelectionViewModel;
@@ -51,23 +54,26 @@ public class ProductListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initViewModels();
-
-        // Setup adapter for RecyclerView of products with callback to edit a specific product.
-        productListAdapter =
-                new ProductListAdapter(
-                        productId -> {
-                            NavDirections action =
-                                    ProductTabsFragmentDirections.actionToEditFragment(
-                                            productId, false);
-                            NavHostFragment.findNavController(this).navigate(action);
-                        });
-
-        categoryTagSelectionAdapter =
-                new CategoryTagSelectionAdapter(productListViewModel::setCategory);
+        initAdapters();
 
         // Get the previous sort option from user preference and set it to ProductListViewModel.
-        UserPreferenceManager userPreferenceManager = new UserPreferenceManager(requireContext());
         productListViewModel.setSortOption(userPreferenceManager.getSortOption());
+    }
+
+    private void initAdapters() {
+        // Setup adapter for RecyclerView of products with callback to edit a specific product.
+        productListAdapter = new ProductListAdapter(this::navigateToEditFragment);
+
+        // Setup adapter for RecyclerView of category tags with callback to set the selected
+        // category.
+        categoryTagSelectionAdapter =
+                new CategoryTagSelectionAdapter(productListViewModel::setCategory);
+    }
+
+    /** Navigates to the EditFragment when a product is clicked. */
+    private void navigateToEditFragment(String productId) {
+        NavDirections action = ProductTabsFragmentDirections.actionToEditFragment(productId, false);
+        NavHostFragment.findNavController(this).navigate(action);
     }
 
     @Override
@@ -82,14 +88,17 @@ public class ProductListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupRecyclerViews();
+        observeViewModels();
+    }
+
+    private void setupRecyclerViews() {
         setupProductRecyclerView();
         setupCategoryRecyclerView();
-        observeViewModels();
     }
 
     @Override
     public void onDestroyView() {
-        // binding.recyclerViewProduct.setAdapter(null);
         binding = null;
         super.onDestroyView();
     }
@@ -110,20 +119,15 @@ public class ProductListFragment extends Fragment {
 
     /** Sets up the RecyclerView for displaying products. */
     private void setupProductRecyclerView() {
+        binding.recyclerViewProduct.setAdapter(productListAdapter);
+
         binding.recyclerViewProduct.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        EnumSet<LinearSpacingStrategy.Direction> directions =
-                EnumSet.of(
-                        LinearSpacingStrategy.Direction.LEFT,
-                        LinearSpacingStrategy.Direction.RIGHT,
-                        LinearSpacingStrategy.Direction.TOP,
-                        LinearSpacingStrategy.Direction.BOTTOM);
-        SpacingStrategy spacingStrategy =
-                new LinearSpacingStrategy(requireContext(), 8, directions);
-        binding.recyclerViewProduct.addItemDecoration(new SpacingItemDecoration(spacingStrategy));
-
-        // binding.recyclerViewProduct.setHasFixedSize(true);
-        binding.recyclerViewProduct.setAdapter(productListAdapter);
+        // Set the item layout resource for the adapter based on the layout type.
+        addSpacingDecoration(
+                binding.recyclerViewProduct,
+                new LinearSpacingStrategy(
+                        requireContext(), 8, EnumSet.allOf(LinearSpacingStrategy.Direction.class)));
     }
 
     private void observeViewModels() {
@@ -145,7 +149,7 @@ public class ProductListFragment extends Fragment {
         // Observer layout toggles to update the RecyclerView's layout.
         productTabListViewModel
                 .getToggleLayout()
-                .observe(getViewLifecycleOwner(), this::setupRecyclerViewLayout);
+                .observe(getViewLifecycleOwner(), this::updateRecyclerViewLayout);
     }
 
     /**
@@ -153,46 +157,57 @@ public class ProductListFragment extends Fragment {
      *
      * @param isGrid the boolean flag to determine the layout
      */
-    private void setupRecyclerViewLayout(Boolean isGrid) {
+    private void updateRecyclerViewLayout(Boolean isGrid) {
         Context context = requireContext();
-        // Remove the existing decorations.
-        while (binding.recyclerViewProduct.getItemDecorationCount() > 0) {
-            binding.recyclerViewProduct.removeItemDecorationAt(0);
-        }
 
-        if (isGrid) {
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
-            SpacingStrategy spacingStrategy = new GridSpacingStrategy(context, 8);
-            binding.recyclerViewProduct.addItemDecoration(
-                    new SpacingItemDecoration(spacingStrategy));
-            binding.recyclerViewProduct.setLayoutManager(gridLayoutManager);
-            productListAdapter.setItemLayoutRes(R.layout.grid_item_product);
-        } else {
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-            SpacingStrategy spacingStrategy = new LinearSpacingStrategy(context, 8);
-            binding.recyclerViewProduct.addItemDecoration(
-                    new SpacingItemDecoration(spacingStrategy));
-            binding.recyclerViewProduct.setLayoutManager(linearLayoutManager);
-            productListAdapter.setItemLayoutRes(R.layout.list_item_horizontal_product);
-        }
+        // Set the item layout resource for the adapter based on the layout type.
+        productListAdapter.setItemLayoutRes(
+                isGrid ? R.layout.grid_item_product : R.layout.list_item_horizontal_product);
+
+        // Set the layout manager for the RecyclerView based on the layout type.
+        binding.recyclerViewProduct.setLayoutManager(
+                isGrid ? new GridLayoutManager(context, 2) : new LinearLayoutManager(context));
+
+        // Add spacing decoration to the RecyclerView based on the layout type.
+        addSpacingDecoration(
+                binding.recyclerViewProduct,
+                isGrid
+                        ? new GridSpacingStrategy(context, 8)
+                        : new LinearSpacingStrategy(
+                                context, 8, EnumSet.allOf(LinearSpacingStrategy.Direction.class)));
     }
 
     /** Sets up the RecyclerView for displaying category tags. */
     private void setupCategoryRecyclerView() {
-        EnumSet<LinearSpacingStrategy.Direction> directions =
-                EnumSet.of(
-                        LinearSpacingStrategy.Direction.LEFT,
-                        LinearSpacingStrategy.Direction.RIGHT);
-        SpacingStrategy spacingStrategy =
-                new LinearSpacingStrategy(requireContext(), 8, directions);
-        binding.rvCategory.addItemDecoration(new SpacingItemDecoration(spacingStrategy));
         binding.rvCategory.setAdapter(categoryTagSelectionAdapter);
+
+        addSpacingDecoration(
+                binding.rvCategory,
+                new LinearSpacingStrategy(
+                        requireContext(),
+                        8,
+                        EnumSet.of(
+                                LinearSpacingStrategy.Direction.LEFT,
+                                LinearSpacingStrategy.Direction.RIGHT)));
 
         Category selectedCategory = productListViewModel.getSelectedCategory().getValue();
         if (selectedCategory != null) {
             int pos = categoryRepository.getPositionById(selectedCategory.getId());
             categoryTagSelectionAdapter.setSelectedPosition(pos);
         }
+    }
+
+    /**
+     * Adds spacing decoration to the RecyclerView.
+     *
+     * @param view the RecyclerView to add the decoration to
+     * @param spacingStrategy the spacing strategy to use for the decoration
+     */
+    private void addSpacingDecoration(RecyclerView view, SpacingStrategy spacingStrategy) {
+        while (view.getItemDecorationCount() > 0) {
+            view.removeItemDecorationAt(0);
+        }
+        view.addItemDecoration(new SpacingItemDecoration(spacingStrategy));
     }
 
     /**
