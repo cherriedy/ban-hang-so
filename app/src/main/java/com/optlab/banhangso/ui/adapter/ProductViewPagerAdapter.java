@@ -8,9 +8,9 @@ import com.optlab.banhangso.ui.brand.view.BrandListFragment;
 import com.optlab.banhangso.ui.category.view.CategoryListFragment;
 import com.optlab.banhangso.ui.product.view.ProductListFragment;
 
-public class ProductTabsAdapter extends FragmentStateAdapter {
+public class ProductViewPagerAdapter extends FragmentStateAdapter {
 
-    public ProductTabsAdapter(@NonNull Fragment fragment) {
+    public ProductViewPagerAdapter(@NonNull Fragment fragment) {
         super(fragment);
     }
 
