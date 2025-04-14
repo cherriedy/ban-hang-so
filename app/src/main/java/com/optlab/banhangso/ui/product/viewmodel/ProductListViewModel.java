@@ -40,10 +40,15 @@ public class ProductListViewModel extends ViewModel {
             @NonNull CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
-
         // Observe the categories change and update the list.
         categoryRepository.getCategories().observeForever(this::observeCategories);
+        setupProductListObserver();
+    }
 
+    /**
+     * Sets up the observers for the product list, sort option, selected category, and search query.
+     */
+    private void setupProductListObserver() {
         products.addSource(productRepository.getProducts(), unused -> updateProducts());
         products.addSource(sortOption, unused -> updateProducts());
         products.addSource(selectedCategory, unused -> updateProducts());
@@ -57,7 +62,6 @@ public class ProductListViewModel extends ViewModel {
         products.removeSource(sortOption);
         products.removeSource(selectedCategory);
         products.removeSource(searchQuery);
-
         super.onCleared();
     }
 
@@ -70,33 +74,28 @@ public class ProductListViewModel extends ViewModel {
         Timber.d("updateProducts method called");
         List<Product> updatedList = productRepository.getProducts().getValue();
         if (updatedList == null) {
-            // Timber.e("Product list is null in updateProducts method");
             products.setValue(Collections.emptyList());
             return;
-        } else {
-            Timber.d("Product list size in updateProducts method is %d", updatedList.size());
         }
 
         // Filter by category if a category is selected.
         Category selectedCategory = this.selectedCategory.getValue();
-        Timber.d("Selected category: %s", selectedCategory);
         updatedList = filterByCategory(updatedList, selectedCategory);
 
         // Filter by search query if available.
         String query = searchQuery.getValue();
         if (query != null && !query.trim().isEmpty()) {
-            Timber.d("Search query: %s", query);
             updatedList = filterByQuery(updatedList, query);
         }
 
         // Sort the list if sort option is set.
-        // SortOption<Product.SortField> sortOption = sortOptionLiveData.getValue();
-        // if (sortOption != null) {
-        //     updatedList.sort(Product.getComparator(sortOption.getSortField(),
-        // sortOption.isAscending()));
-        // }
+        SortOption<Product.SortField> selectedSortOption = sortOption.getValue();
+        if (selectedSortOption != null) {
+            updatedList.sort(
+                    Product.getComparator(
+                            selectedSortOption.getSortField(), selectedSortOption.isAscending()));
+        }
 
-        // updatedList.forEach(product -> Timber.d("Product: %s", product));
         products.setValue(updatedList);
     }
 
@@ -125,8 +124,8 @@ public class ProductListViewModel extends ViewModel {
         return products;
     }
 
-    public void setSortOption(SortOption<Product.SortField> sortOption) {
-        this.sortOption.setValue(sortOption);
+    public void setSortOption(SortOption<Product.SortField> selectedSortOption) {
+        sortOption.setValue(selectedSortOption);
     }
 
     public void setCategory(int position) {
