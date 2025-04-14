@@ -7,19 +7,19 @@ import com.optlab.banhangso.data.repository.BrandRepository;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.ProductRepository;
 import com.optlab.banhangso.data.repository.ProductSortOptionRepository;
+import com.optlab.banhangso.data.repository.impl.BrandRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
-import com.optlab.banhangso.data.repository.impl.BrandRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.ProductSortOptionRepositoryImpl;
 import com.optlab.banhangso.util.UserPreferenceManager;
-
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
+
+import javax.inject.Singleton;
 
 @Module
 @InstallIn(SingletonComponent.class)
