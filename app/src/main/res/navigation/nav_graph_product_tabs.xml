@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_product_tabs"
-    app:startDestination="@id/productTabsFragment">
+    app:startDestination="@id/productTabHostFragment">
 
     <action
         android:id="@+id/action_to_product_edit"
@@ -19,9 +19,9 @@
     </action>
 
     <fragment
-        android:id="@+id/productTabsFragment"
-        android:name="com.optlab.banhangso.ui.product.view.ProductTabsFragment"
-        tools:layout="@layout/fragment_product_tabs" />
+        android:id="@+id/productTabHostFragment"
+        android:name="com.optlab.banhangso.ui.product.view.ProductTabHostFragment"
+        tools:layout="@layout/fragment_product_tab_host" />
 
     <fragment
         android:id="@+id/categoryListFragment"
