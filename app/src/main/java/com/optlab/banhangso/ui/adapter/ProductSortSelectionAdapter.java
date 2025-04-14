@@ -4,24 +4,39 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.optlab.banhangso.databinding.ListItemProductSortSelectionBinding;
-import com.optlab.banhangso.ui.listener.OnProductSortSelectListener;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.model.SortOption;
+import com.optlab.banhangso.databinding.ListItemProductSortSelectionBinding;
+import com.optlab.banhangso.ui.listener.OnProductSortSelectListener;
 
-import java.util.List;
+public class ProductSortSelectionAdapter
+        extends ListAdapter<SortOption<Product.SortField>, ProductSortSelectionAdapter.ViewHolder> {
+    private static final DiffUtil.ItemCallback<SortOption<Product.SortField>> CALL_BACK =
+            new DiffUtil.ItemCallback<>() {
+                @Override
+                public boolean areItemsTheSame(
+                        @NonNull SortOption<Product.SortField> oldItem,
+                        @NonNull SortOption<Product.SortField> newItem) {
+                    return oldItem.getDisplayName().equals(newItem.getDisplayName());
+                }
 
-public class ProductSortSelectionAdapter extends RecyclerView.Adapter<ProductSortSelectionAdapter.ViewHolder> {
+                @Override
+                public boolean areContentsTheSame(
+                        @NonNull SortOption<Product.SortField> oldItem,
+                        @NonNull SortOption<Product.SortField> newItem) {
+                    return oldItem.equals(newItem);
+                }
+            };
 
-    private final List<SortOption<Product.SortField>> sortOptions;
     private final OnProductSortSelectListener listener;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
-    public ProductSortSelectionAdapter(@NonNull final List<SortOption<Product.SortField>> sortOptions,
-                                       @NonNull final OnProductSortSelectListener listener) {
-        this.sortOptions = sortOptions;
+    public ProductSortSelectionAdapter(@NonNull OnProductSortSelectListener listener) {
+        super(CALL_BACK);
         this.listener = listener;
     }
 
@@ -29,18 +44,14 @@ public class ProductSortSelectionAdapter extends RecyclerView.Adapter<ProductSor
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ListItemProductSortSelectionBinding binding = ListItemProductSortSelectionBinding.inflate(inflater, parent, false);
+        ListItemProductSortSelectionBinding binding =
+                ListItemProductSortSelectionBinding.inflate(inflater, parent, false);
         return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(sortOptions.get(position));
-    }
-
-    @Override
-    public int getItemCount() {
-        return sortOptions.size();
+        holder.bind(getItem(position));
     }
 
     public void setCheckedPosition(int newPosition) {
@@ -56,19 +67,17 @@ public class ProductSortSelectionAdapter extends RecyclerView.Adapter<ProductSor
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-
         private final ListItemProductSortSelectionBinding binding;
 
         public ViewHolder(@NonNull ListItemProductSortSelectionBinding binding) {
             super(binding.getRoot());
-
             this.binding = binding;
-
-            binding.getRoot().setOnClickListener(v -> {
-                int newPosition = getBindingAdapterPosition();
-                setCheckedPosition(newPosition);
-                listener.onClick(sortOptions.get(newPosition));
-            });
+            binding.getRoot()
+                    .setOnClickListener(
+                            v -> {
+                                setCheckedPosition(getBindingAdapterPosition());
+                                listener.onClick(getItem(selectedPosition));
+                            });
         }
 
         public void bind(@NonNull SortOption<Product.SortField> sortOption) {
