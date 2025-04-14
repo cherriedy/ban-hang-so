@@ -6,37 +6,47 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Product;
-import com.optlab.banhangso.data.repository.ProductSortOptionRepository;
-import com.optlab.banhangso.data.repository.impl.ProductSortOptionRepositoryImpl;
 import com.optlab.banhangso.data.model.SortOption;
+import com.optlab.banhangso.data.repository.ProductSortOptionRepository;
+import com.optlab.banhangso.util.UserPreferenceManager;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.hilt.android.lifecycle.HiltViewModel;
-
 @HiltViewModel
 public class ProductSortSelectionViewModel extends ViewModel {
     private final ProductSortOptionRepository repository;
-    private final MutableLiveData<List<SortOption<Product.SortField>>> sortOptionsLiveData = new MutableLiveData<>();
-    private final MutableLiveData<SortOption<Product.SortField>> selectedSortOptionLiveData = new MutableLiveData<>();
+    private final UserPreferenceManager userPreferenceManager;
+    private final MutableLiveData<List<SortOption<Product.SortField>>> sortOptions =
+            new MutableLiveData<>();
+    private final MutableLiveData<Integer> selectedSortOptionPosition = new MutableLiveData<>();
 
     @Inject
-    public ProductSortSelectionViewModel(@NonNull ProductSortOptionRepository repository) {
+    public ProductSortSelectionViewModel(
+            @NonNull ProductSortOptionRepository repository,
+            @NonNull UserPreferenceManager userPreferenceManager) {
         this.repository = repository;
-        sortOptionsLiveData.setValue(repository.getSortOptions());
+        this.userPreferenceManager = userPreferenceManager;
+
+        sortOptions.setValue(repository.getSortOptions());
+
+        selectedSortOptionPosition.setValue(
+                repository.getPosition(userPreferenceManager.getSortOption()));
     }
 
     public List<SortOption<Product.SortField>> getSortOptions() {
-        return sortOptionsLiveData.getValue();
+        return sortOptions.getValue();
     }
 
-    public LiveData<SortOption<Product.SortField>> getSortOption() {
-        return selectedSortOptionLiveData;
+    public void setSelectedSortOptionPosition(SortOption<Product.SortField> sortOption) {
+        userPreferenceManager.setSortOption(sortOption);
+        selectedSortOptionPosition.setValue(repository.getPosition(sortOption));
     }
 
-    public void setSortOption(SortOption<Product.SortField> sortOption) {
-        selectedSortOptionLiveData.setValue(sortOption);
+    public LiveData<Integer> getSelectedSortOptionPosition() {
+        return selectedSortOptionPosition;
     }
 }
