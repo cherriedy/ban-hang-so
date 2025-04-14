@@ -1,7 +1,6 @@
 package com.optlab.banhangso.ui;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -20,10 +19,10 @@ import com.optlab.banhangso.databinding.ActivityMainBinding;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
+import timber.log.Timber;
+
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = MainActivity.class.getSimpleName();
     private ActivityMainBinding binding;
     private NavHostFragment navHostFragment;
     private NavController navController;
@@ -32,52 +31,78 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        ViewCompat.setOnApplyWindowInsetsListener(
+                binding.getRoot(),
+                (v, insets) -> {
+                    Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                    v.setPadding(
+                            systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                    return insets;
+                });
 
-        navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        if (navHostFragment != null) {
-            navController = navHostFragment.getNavController();
-            addOnDestinationChangedListener();
-        } else {
-            Log.e(TAG, "Can't find NavHostFragment, check XML again");
-            finish();
-        }
+        initNavController();
+        initBottomNavigation();
+        addOnDestinationChangedListener();
+    }
 
-//        ProductRepository productRepository = ProductRepository.getInstance();
-//        ProductEditViewModelFactory editViewModelFactory = new ProductEditViewModelFactory(this, productRepository);
-//        ProductEditViewModel productEditViewModel = new ViewModelProvider(this, editViewModelFactory).get(ProductEditViewModel.class);
-//
-//        Long savedProductId = productEditViewModel.getKeySelectedProduct();
-//        if (savedProductId != null) {
-//            Bundle args = new Bundle();
-//            args.putLong("productId", savedProductId);
-//            args.putBoolean("isCreate", false);
-//            navController.navigate(R.id.productEditFragment, args);
-//        } else {
-//            Toast.makeText(this, "Product ID not restored! Navigating to home.", Toast.LENGTH_SHORT).show();
-//        }
-
+    private void initBottomNavigation() {
         NavigationUI.setupWithNavController(binding.bottomNavigation, navController);
     }
 
+    private void initNavController() {
+        navHostFragment =
+                (NavHostFragment)
+                        getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+
+        requireNavController();
+    }
+
+    /**
+     * Ensures that the NavHostFragment is initialized and not null. If it is null, the activity is
+     * finished.
+     */
+    private void requireNavHostFragment() {
+        if (navHostFragment == null) {
+            Timber.e("NavHostFragment is null");
+            finish();
+        }
+    }
+
+    /**
+     * Ensures that the NavController is initialized and not null. If it is null, the activity is
+     * finished.
+     */
+    private void requireNavController() {
+        try {
+            requireNavHostFragment(); // Ensure NavHostFragment is not null
+            navController = navHostFragment.getNavController();
+        } catch (NullPointerException e) {
+            Timber.e("NavHostFragment is null");
+            finish();
+        }
+    }
+
+    /**
+     * Adds a listener to the NavController to handle destination changes and show/hide the bottom
+     * navigation bar accordingly.
+     */
     private void addOnDestinationChangedListener() {
-        navController.addOnDestinationChangedListener((navController, navDestination, bundle) -> {
-            int destinationId = navDestination.getId();
-            if (destinationId == R.id.productEditFragment || destinationId == R.id.productTabsFragment) {
-                binding.bottomNavigation.setVisibility(View.GONE);
-            } else {
-                binding.bottomNavigation.setVisibility(View.VISIBLE);
-            }
-        });
+        navController.addOnDestinationChangedListener(
+                (navController, navDestination, bundle) -> {
+                    int destinationId = navDestination.getId();
+                    if (destinationId == R.id.productEditFragment
+                            || destinationId == R.id.productTabHostFragment) {
+                        binding.bottomNavigation.setVisibility(View.GONE);
+                    } else {
+                        binding.bottomNavigation.setVisibility(View.VISIBLE);
+                    }
+                });
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item) || NavigationUI.onNavDestinationSelected(item, navController);
+        return super.onOptionsItemSelected(item)
+                || NavigationUI.onNavDestinationSelected(item, navController);
     }
 
     @Override
