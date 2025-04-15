@@ -11,7 +11,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,9 +30,7 @@ import com.optlab.banhangso.ui.common.decoration.LinearSpacingStrategy;
 import com.optlab.banhangso.ui.common.decoration.SpacingItemDecoration;
 import com.optlab.banhangso.ui.common.decoration.SpacingStrategy;
 import com.optlab.banhangso.ui.product.viewmodel.ProductListViewModel;
-import com.optlab.banhangso.ui.product.viewmodel.ProductSortSelectionViewModel;
-import com.optlab.banhangso.ui.product.viewmodel.ProductTabListViewModel;
-import com.optlab.banhangso.util.UserPreferenceManager;
+import com.optlab.banhangso.ui.product.viewmodel.ProductTabHostSharedViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -41,12 +41,10 @@ import javax.inject.Inject;
 @AndroidEntryPoint
 public class ProductListFragment extends Fragment {
     @Inject protected CategoryRepository categoryRepository;
-    @Inject protected UserPreferenceManager userPreferenceManager;
 
     private FragmentProductListBinding binding;
     private ProductListViewModel productListViewModel;
-    private ProductSortSelectionViewModel productSortSelectionViewModel;
-    private ProductTabListViewModel productTabListViewModel;
+    private ProductTabHostSharedViewModel tabHostSharedViewModel;
     private ProductListAdapter productListAdapter;
     private CategoryTagSelectionAdapter categoryTagSelectionAdapter;
 
@@ -55,9 +53,6 @@ public class ProductListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         initViewModels();
         initAdapters();
-
-        // Get the previous sort option from user preference and set it to ProductListViewModel.
-        productListViewModel.setSortOption(userPreferenceManager.getSortOption());
     }
 
     private void initAdapters() {
@@ -72,7 +67,7 @@ public class ProductListFragment extends Fragment {
 
     /** Navigates to the EditFragment when a product is clicked. */
     private void navigateToEditFragment(String productId) {
-        NavDirections action = ProductTabsFragmentDirections.actionToEditFragment(productId, false);
+        NavDirections action = ProductListFragmentDirections.actionToProductEdit(productId, false);
         NavHostFragment.findNavController(this).navigate(action);
     }
 
@@ -113,8 +108,12 @@ public class ProductListFragment extends Fragment {
 
     private void initViewModels() {
         productListViewModel = getParentViewModel(ProductListViewModel.class);
-        productTabListViewModel = getParentViewModel(ProductTabListViewModel.class);
-        productSortSelectionViewModel = getCurrentViewModel(ProductSortSelectionViewModel.class);
+
+        NavBackStackEntry productTabsEntry =
+                NavHostFragment.findNavController(this)
+                        .getBackStackEntry(R.id.nav_graph_product_tabs);
+        tabHostSharedViewModel =
+                new ViewModelProvider(productTabsEntry).get(ProductTabHostSharedViewModel.class);
     }
 
     /** Sets up the RecyclerView for displaying products. */
@@ -131,10 +130,16 @@ public class ProductListFragment extends Fragment {
     }
 
     private void observeViewModels() {
-        // Observe the products and update the adapter.
+        // Observe the search query and update the adapter.
         productListViewModel
                 .getProducts()
-                .observe(getViewLifecycleOwner(), productListAdapter::submitList);
+                .observe(
+                        getViewLifecycleOwner(),
+                        products -> {
+                            // Bug: The product is not updated unless the list is set to null first.
+                            productListAdapter.submitList(null);
+                            productListAdapter.submitList(products);
+                        });
 
         // Observe the categories and update the adapter.
         productListViewModel
@@ -142,14 +147,19 @@ public class ProductListFragment extends Fragment {
                 .observe(getViewLifecycleOwner(), categoryTagSelectionAdapter::submitList);
 
         // Observe the selected category and update the adapter.
-        productSortSelectionViewModel
-                .getSortOption()
-                .observe(getViewLifecycleOwner(), productListViewModel::setSortOption);
-
-        // Observer layout toggles to update the RecyclerView's layout.
-        productTabListViewModel
-                .getToggleLayout()
+        tabHostSharedViewModel
+                .getGridModeEnabled()
                 .observe(getViewLifecycleOwner(), this::updateRecyclerViewLayout);
+
+        // Observe the search query and update the ViewModel.
+        tabHostSharedViewModel
+                .getSearchQuery()
+                .observe(getViewLifecycleOwner(), productListViewModel::setSearchQuery);
+
+        // Observe the selected sort option and update the ViewModel.
+        tabHostSharedViewModel
+                .getSelectedSortOption()
+                .observe(getViewLifecycleOwner(), productListViewModel::setSortOption);
     }
 
     /**
@@ -210,13 +220,9 @@ public class ProductListFragment extends Fragment {
         view.addItemDecoration(new SpacingItemDecoration(spacingStrategy));
     }
 
-    /**
-     * Called when the user clicks the "Create" button to navigate to the EditFragment.
-     *
-     * @noinspection unused
-     */
+    /** Called when the user clicks the "Create" button to navigate to the EditFragment. */
     public void onCreateButtonClick(@NonNull View view) {
-        NavDirections action = ProductTabsFragmentDirections.actionToEditFragment("", true);
-        NavHostFragment.findNavController(requireParentFragment()).navigate(action);
+        NavDirections action = ProductListFragmentDirections.actionToProductEdit("", true);
+        Navigation.findNavController(view).navigate(action);
     }
 }

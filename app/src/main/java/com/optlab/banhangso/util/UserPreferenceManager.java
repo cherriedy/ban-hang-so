@@ -27,7 +27,7 @@ public class UserPreferenceManager {
         sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
-    public void saveSortOption(SortOption<Product.SortField> sortOption) {
+    public void setSortOption(SortOption<Product.SortField> sortOption) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         // Convert the sort option object to json.

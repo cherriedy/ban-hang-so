@@ -5,103 +5,18 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
-    <action
-        android:id="@+id/action_to_stock"
-        app:destination="@id/stockListFragment" />
-
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.optlab.banhangso.ui.home.view.HomeFragment"
-        android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
-
-    <fragment
-        android:id="@+id/stockListFragment"
-        android:name="com.optlab.banhangso.ui.stock.view.StockListFragment"
-        android:label="fragment_stock_manager"
-        tools:layout="@layout/fragment_stock_list" />
-
-    <fragment
-        android:id="@+id/productListFragment"
-        android:name="com.optlab.banhangso.ui.product.view.ProductListFragment"
-        android:label="Product Management"
-        android:launchMode="singleTop"
-        tools:layout="@layout/fragment_product_list" />
-
-    <fragment
-        android:id="@+id/productTabsFragment"
-        android:name="com.optlab.banhangso.ui.product.view.ProductTabsFragment"
-        android:label=""
-        tools:layout="@layout/fragment_product_tabs">
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_to_edit_fragment"
-            app:destination="@id/nav_graph_product_edit"
-            app:restoreState="true">
-
-            <argument
-                android:name="productId"
-                app:argType="string" />
-
-            <argument
-                android:name="isCreateMode"
-                app:argType="boolean" />
-        </action>
+            android:id="@+id/action_to_product_tabs"
+            app:destination="@id/nav_graph_product_tabs" />
 
     </fragment>
 
-    <dialog
-        android:id="@+id/productSortSelectionFragment"
-        android:name="com.optlab.banhangso.ui.product.view.ProductSortSelectionFragment"
-        tools:layout="@layout/list_item_product_sort_selection" />
-
-    <navigation
-        android:id="@+id/nav_graph_product_edit"
-        app:startDestination="@id/productEditFragment">
-        <fragment
-            android:id="@+id/productEditFragment"
-            android:name="com.optlab.banhangso.ui.product.view.ProductEditFragment"
-            tools:layout="@layout/fragment_product_list">
-
-            <argument
-                android:name="productId"
-                app:argType="string" />
-
-            <argument
-                android:name="isCreateMode"
-                app:argType="boolean" />
-
-            <action
-                android:id="@+id/action_to_brand_selection"
-                app:destination="@id/brandSelectionFragment" />
-
-            <action
-                android:id="@+id/action_to_category_selection"
-                app:destination="@id/categorySelectionFragment" />
-        </fragment>
-
-        <fragment
-            android:id="@+id/brandSelectionFragment"
-            android:name="com.optlab.banhangso.ui.brand.view.BrandSelectionFragment"
-            android:label="fragment_option_selection"
-            tools:layout="@layout/fragment_option_selection">
-
-            <argument
-                android:name="brandId"
-                app:argType="string"
-                app:nullable="true" />
-        </fragment>
-
-        <fragment
-            android:id="@+id/categorySelectionFragment"
-            android:name="com.optlab.banhangso.ui.category.view.CategorySelectionFragment"
-            android:label="CategorySelectionFragment"
-            tools:layout="@layout/fragment_option_selection">
-
-            <argument
-                android:name="categoryId"
-                app:argType="string"
-                app:nullable="true" />
-        </fragment>
-    </navigation>
+    <include app:graph="@navigation/nav_graph_product_tabs" />
+    <include app:graph="@navigation/nav_graph_product_edit" />
 </navigation>

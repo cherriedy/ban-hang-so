@@ -19,6 +19,7 @@ recyclerviewSelection = "1.2.0-alpha01"
 gson = "2.12.1"
 googleGmsGoogleServices = "4.4.2"
 firebaseFirestore = "25.1.3"
+lottie = "6.6.6"
 
 [libraries]
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
@@ -39,6 +40,7 @@ core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx"
 recyclerview-selection = { group = "androidx.recyclerview", name = "recyclerview-selection", version.ref = "recyclerviewSelection" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.recyclerview.selection)
     implementation(libs.gson)
     implementation(libs.firebase.firestore)
+    implementation(libs.lottie)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

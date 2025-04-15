@@ -1,13 +1,12 @@
 package com.optlab.banhangso.data.model;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
 
-
 public class SortOption<T extends Enum<T>> extends BaseObservable {
-
     private T sortField;
     private boolean isAscending;
 
@@ -23,6 +22,12 @@ public class SortOption<T extends Enum<T>> extends BaseObservable {
                     && this.isAscending == that.isAscending;
         }
         return false;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "SortOption{" + "sortField=" + getDisplayName() + ", isAscending=" + isAscending + '}';
     }
 
     @Bindable
@@ -49,7 +54,6 @@ public class SortOption<T extends Enum<T>> extends BaseObservable {
         if (sortField instanceof Product.SortField sf) {
             return sf.getDisplayName(isAscending);
         }
-
         return isAscending ? (sortField.name() + " ↑") : (sortField.name() + " ↓");
     }
 }

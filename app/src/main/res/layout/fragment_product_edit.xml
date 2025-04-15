@@ -535,7 +535,9 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/ed_barcode"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:text="@={viewModel.product.barcode}" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
