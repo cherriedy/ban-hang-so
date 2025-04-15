@@ -2,6 +2,7 @@ package com.optlab.banhangso.ui.product.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -59,10 +60,26 @@ public class ProductTabHostFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViewPager();
-        initToolBar();
+        setupTabBehavior();
+        setupToolBar();
         setupTabLayout();
-        setupQueryHintText();
         observeQueryText();
+    }
+
+    private void setupTabBehavior() {
+        setupQueryHintText(); // Change the hint text based on the selected tab
+        resetSearchView(); // Reset the search view when switching tabs
+    }
+
+    /** Resets the search view when switching tabs. This is done by registering a page change */
+    private void resetSearchView() {
+        binding.viewPager.registerOnPageChangeCallback(
+                new OnPageChangeCallback() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        binding.searchView.setQuery("", true);
+                    }
+                });
     }
 
     private void observeQueryText() {
@@ -137,22 +154,32 @@ public class ProductTabHostFragment extends Fragment {
                         requireContext(), R.drawable.vertical_divider_tab_layout));
     }
 
-    private void initToolBar() {
-        boolean layoutMode = userPreferenceManager.getLayoutMode();
-        viewModel.setGridModeEnabled(layoutMode);
+    private void setupToolBar() {
+        binding.viewPager.registerOnPageChangeCallback(
+                new OnPageChangeCallback() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        if (position == 0) {
+                            if (binding.toolBar.getMenu().size() == 0) {
+                                binding.toolBar.inflateMenu(R.menu.menu_product_toolbar);
+                                binding.toolBar.setOnMenuItemClickListener(
+                                        item -> onProductMenuItemSelected(item));
+                            }
 
-        binding.toolBar.inflateMenu(R.menu.menu_product_toolbar);
-        binding.toolBar.setOnMenuItemClickListener(
-                item -> {
-                    if (item.getItemId() == R.id.action_button_1) {
-                        NavHostFragment.findNavController(this)
-                                .navigate(R.id.productSortSelectionFragment);
-                    } else {
-                        viewModel.toggleLayout();
-                        Boolean currentLayoutMode = viewModel.getGridModeEnabled().getValue();
-                        userPreferenceManager.saveLayoutMode(currentLayoutMode);
+                        } else {
+                            // Clear the menu when switching to other tabs
+                            binding.toolBar.getMenu().clear();
+                        }
                     }
-                    return true;
                 });
+    }
+
+    private boolean onProductMenuItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_toggle_layout) {
+            userPreferenceManager.saveLayoutMode(viewModel.toggleLayout());
+        } else {
+            NavHostFragment.findNavController(this).navigate(R.id.productSortSelectionFragment);
+        }
+        return true;
     }
 }

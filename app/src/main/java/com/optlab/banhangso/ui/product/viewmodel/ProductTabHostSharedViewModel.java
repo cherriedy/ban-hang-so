@@ -21,11 +21,6 @@ public class ProductTabHostSharedViewModel extends ViewModel {
     @Inject
     public ProductTabHostSharedViewModel() {}
 
-    // @Inject
-    // public ProductTabHostSharedViewModel(@NonNull UserPreferenceManager userPreferenceManager) {
-    //     selectedSortOption.setValue(userPreferenceManager.getSortOption());
-    // }
-
     public LiveData<Boolean> getGridModeEnabled() {
         return isGridModeEnabled;
     }
@@ -34,9 +29,10 @@ public class ProductTabHostSharedViewModel extends ViewModel {
         isGridModeEnabled.setValue(isGrid);
     }
 
-    public void toggleLayout() {
+    public boolean toggleLayout() {
         Boolean currentState = isGridModeEnabled.getValue();
         isGridModeEnabled.setValue(currentState == null || !currentState);
+        return Boolean.TRUE.equals(currentState);
     }
 
     public LiveData<String> getSearchQuery() {
