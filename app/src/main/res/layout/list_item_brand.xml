@@ -20,44 +20,46 @@
         app:strokeColor="@color/color_card_border"
         app:strokeWidth="1dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:padding="12dp">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/siv_logo"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
                 android:scaleType="centerCrop"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/haohao" />
+                app:srcCompat="@drawable/ic_vegetable" />
 
             <TextView
                 android:id="@+id/tv_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/siv_logo"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text="@{brand.name}"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                android:textColor="@color/color_text_title"
-                app:layout_constraintStart_toEndOf="@id/siv_logo"
-                app:layout_constraintTop_toTopOf="@id/siv_logo" />
+                android:textColor="@color/color_text_title" />
 
             <TextView
                 android:id="@+id/tv_nof_products"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/tv_name"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_toEndOf="@id/siv_logo"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text=""
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:layout_constraintStart_toStartOf="@id/tv_name"
-                app:layout_constraintTop_toBottomOf="@id/tv_name" />
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>
-
-
 </layout>
