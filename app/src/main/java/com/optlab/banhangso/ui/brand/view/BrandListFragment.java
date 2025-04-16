@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.optlab.banhangso.R;
@@ -18,11 +19,12 @@ import com.optlab.banhangso.ui.adapter.BrandListAdapter;
 import com.optlab.banhangso.ui.brand.viewmodel.BrandListViewModel;
 import com.optlab.banhangso.ui.common.decoration.LinearSpacingStrategy;
 import com.optlab.banhangso.ui.common.decoration.SpacingItemDecoration;
+import com.optlab.banhangso.ui.product.view.ProductTabHostFragmentDirections;
 import com.optlab.banhangso.ui.product.viewmodel.ProductTabHostSharedViewModel;
 
-import java.util.EnumSet;
-
 import dagger.hilt.android.AndroidEntryPoint;
+
+import java.util.EnumSet;
 
 @AndroidEntryPoint
 public class BrandListFragment extends Fragment {
@@ -30,16 +32,23 @@ public class BrandListFragment extends Fragment {
     private BrandListViewModel viewModel;
     private BrandListAdapter adapter;
     private ProductTabHostSharedViewModel tabHostSharedViewModel;
+    private NavController navController;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        navController = NavHostFragment.findNavController(this);
         initViewModels();
         initAdapters();
     }
 
     private void initAdapters() {
-        adapter = new BrandListAdapter(id -> {});
+        adapter = new BrandListAdapter(id -> navigateToBrandEditFragment(id, false));
+    }
+
+    private void navigateToBrandEditFragment(String id, boolean isCreateMode) {
+        navController.navigate(
+                ProductTabHostFragmentDirections.actionToBrandEdit(id, isCreateMode));
     }
 
     private void initViewModels() {
@@ -56,6 +65,8 @@ public class BrandListFragment extends Fragment {
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentBrandListBinding.inflate(inflater, container, false);
+        binding.setLifecycleOwner(this);
+        binding.setFragment(this);
         return binding.getRoot();
     }
 
@@ -86,6 +97,15 @@ public class BrandListFragment extends Fragment {
                         new LinearSpacingStrategy(
                                 requireContext(),
                                 8,
-                                EnumSet.allOf(LinearSpacingStrategy.Direction.class))));
+                                EnumSet.of(
+                                        LinearSpacingStrategy.Direction.LEFT,
+                                        LinearSpacingStrategy.Direction.RIGHT))));
+    }
+
+    /**
+     * @noinspection unused
+     */
+    public void onAddButtonClick(@NonNull View view) {
+        navigateToBrandEditFragment("", true);
     }
 }
