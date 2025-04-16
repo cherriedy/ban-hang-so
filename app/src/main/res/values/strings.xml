@@ -118,4 +118,13 @@
     <string name="notify_create_product_fail">Tạo sản phẩm thất bại</string>
     <string name="notify_update_product_fail">Cập nhật sản phẩm thất bại</string>
     <string name="notify_delete_product_fail">Xóa sản phẩm thất bại</string>
+    <string name="attr_brand_detail">Thông tin thương hiệu</string>
+    <string name="attr_brand_name">Tên thương hiệu</string>
+    <string name="hint_brand_name">Acecook</string>
+    <string name="alter_brand_name_non_null">Tên thương hiệu không được để trống</string>
+    <string name="alter_brand_name_min_chars">Tên thương hiệu phải có ít nhất 3 ký tự</string>
+    <string name="notify_create_brand_successful">Tạo thương hiệu thành công</string>
+    <string name="notify_create_brand_fail">Tạo thương hiệu thất bại</string>
+    <string name="notify_update_brand_successful">Cập nhật thương hiệu thành công</string>
+    <string name="notify_update_brand_fail">Cập nhật thương hiệu thất bại</string>
 </resources>
