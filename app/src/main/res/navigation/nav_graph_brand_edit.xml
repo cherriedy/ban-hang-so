@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_brand_edit"
+    app:startDestination="@id/brandEditFragment">
+
+    <dialog
+        android:id="@+id/brandEditFragment"
+        android:name="com.optlab.banhangso.ui.brand.view.BrandEditFragment"
+        android:label="BrandEditFragment"
+        tools:layout="@layout/fragment_brand_edit">
+
+        <argument
+            android:name="brandId"
+            app:argType="string" />
+
+        <argument
+            android:name="isCreateMode"
+            app:argType="boolean" />
+    </dialog>
+</navigation>

@@ -18,6 +18,19 @@
             app:argType="boolean" />
     </action>
 
+    <action
+        android:id="@+id/action_to_brand_edit"
+        app:destination="@id/nav_graph_brand_edit">
+
+        <argument
+            android:name="brandId"
+            app:argType="string" />
+
+        <argument
+            android:name="isCreateMode"
+            app:argType="boolean" />
+    </action>
+
     <fragment
         android:id="@+id/productTabHostFragment"
         android:name="com.optlab.banhangso.ui.product.view.ProductTabHostFragment"
