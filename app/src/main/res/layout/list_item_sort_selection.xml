@@ -7,8 +7,6 @@
 
         <import type="com.optlab.banhangso.data.model.SortOption" />
 
-        <import type="com.optlab.banhangso.data.model.Product" />
-
         <variable
             name="option"
             type="com.optlab.banhangso.data.model.SortOption" />
