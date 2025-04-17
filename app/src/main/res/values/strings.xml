@@ -127,4 +127,5 @@
     <string name="notify_create_brand_fail">Tạo thương hiệu thất bại</string>
     <string name="notify_update_brand_successful">Cập nhật thương hiệu thành công</string>
     <string name="notify_update_brand_fail">Cập nhật thương hiệu thất bại</string>
+    <string name="attr_sort_selection">Kiểu sắp xếp</string>
 </resources>
