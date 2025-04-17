@@ -159,19 +159,31 @@ public class ProductTabHostFragment extends Fragment {
                 new OnPageChangeCallback() {
                     @Override
                     public void onPageSelected(int position) {
-                        if (position == 0) {
-                            if (binding.toolBar.getMenu().size() == 0) {
-                                binding.toolBar.inflateMenu(R.menu.menu_product_toolbar);
-                                binding.toolBar.setOnMenuItemClickListener(
-                                        item -> onProductMenuItemSelected(item));
-                            }
-
-                        } else {
-                            // Clear the menu when switching to other tabs
-                            binding.toolBar.getMenu().clear();
-                        }
+                        handleOnPageSelected(position);
                     }
                 });
+    }
+
+    private void handleOnPageSelected(int position) {
+        binding.toolBar.getMenu().clear();
+
+        switch (position) {
+            case 0 -> {
+                binding.toolBar.inflateMenu(R.menu.menu_product_toolbar);
+                binding.toolBar.setOnMenuItemClickListener(this::onProductMenuItemSelected);
+            }
+            case 2 -> {
+                binding.toolBar.inflateMenu(R.menu.menu_brand_toolbar);
+                binding.toolBar.setOnMenuItemClickListener(this::onBrandMenuItemSelected);
+            }
+        }
+    }
+
+    private boolean onBrandMenuItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_select_sort) {
+            NavHostFragment.findNavController(this).navigate(R.id.brandSortSelectionFragment);
+        }
+        return true;
     }
 
     private boolean onProductMenuItemSelected(MenuItem item) {

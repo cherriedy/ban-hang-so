@@ -8,35 +8,30 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.model.SortOption;
-import com.optlab.banhangso.databinding.ListItemProductSortSelectionBinding;
-import com.optlab.banhangso.ui.listener.OnProductSortSelectListener;
+import com.optlab.banhangso.databinding.ListItemSortSelectionBinding;
+import com.optlab.banhangso.ui.listener.OnSortSelectListener;
 
-public class ProductSortSelectionAdapter
-        extends ListAdapter<SortOption<Product.SortField>, ProductSortSelectionAdapter.ViewHolder> {
-    private static final DiffUtil.ItemCallback<SortOption<Product.SortField>> CALL_BACK =
-            new DiffUtil.ItemCallback<>() {
-                @Override
-                public boolean areItemsTheSame(
-                        @NonNull SortOption<Product.SortField> oldItem,
-                        @NonNull SortOption<Product.SortField> newItem) {
-                    return oldItem.getDisplayName().equals(newItem.getDisplayName());
-                }
-
-                @Override
-                public boolean areContentsTheSame(
-                        @NonNull SortOption<Product.SortField> oldItem,
-                        @NonNull SortOption<Product.SortField> newItem) {
-                    return oldItem.equals(newItem);
-                }
-            };
-
-    private final OnProductSortSelectListener listener;
+public class SortSelectionAdapter<T extends Enum<T>>
+        extends ListAdapter<SortOption<T>, SortSelectionAdapter<T>.ViewHolder> {
+    private final OnSortSelectListener<T> listener;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
-    public ProductSortSelectionAdapter(@NonNull OnProductSortSelectListener listener) {
-        super(CALL_BACK);
+    public SortSelectionAdapter(@NonNull OnSortSelectListener<T> listener) {
+        super(
+                new DiffUtil.ItemCallback<>() {
+                    @Override
+                    public boolean areItemsTheSame(
+                            @NonNull SortOption<T> oldItem, @NonNull SortOption<T> newItem) {
+                        return oldItem.getDisplayName().equals(newItem.getDisplayName());
+                    }
+
+                    @Override
+                    public boolean areContentsTheSame(
+                            @NonNull SortOption<T> oldItem, @NonNull SortOption<T> newItem) {
+                        return oldItem.equals(newItem);
+                    }
+                });
         this.listener = listener;
     }
 
@@ -44,8 +39,8 @@ public class ProductSortSelectionAdapter
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ListItemProductSortSelectionBinding binding =
-                ListItemProductSortSelectionBinding.inflate(inflater, parent, false);
+        ListItemSortSelectionBinding binding =
+                ListItemSortSelectionBinding.inflate(inflater, parent, false);
         return new ViewHolder(binding);
     }
 
@@ -67,9 +62,9 @@ public class ProductSortSelectionAdapter
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private final ListItemProductSortSelectionBinding binding;
+        private final ListItemSortSelectionBinding binding;
 
-        public ViewHolder(@NonNull ListItemProductSortSelectionBinding binding) {
+        public ViewHolder(@NonNull ListItemSortSelectionBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
             binding.getRoot()
@@ -80,7 +75,7 @@ public class ProductSortSelectionAdapter
                             });
         }
 
-        public void bind(@NonNull SortOption<Product.SortField> sortOption) {
+        public void bind(@NonNull SortOption<T> sortOption) {
             binding.setOption(sortOption);
             binding.rbSelect.setChecked(selectedPosition == getBindingAdapterPosition());
             binding.executePendingBindings();

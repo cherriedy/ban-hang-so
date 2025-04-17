@@ -12,6 +12,7 @@ import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.model.SortOption;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.ProductRepository;
+import com.optlab.banhangso.util.SortFieldUtils;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
@@ -92,7 +93,7 @@ public class ProductListViewModel extends ViewModel {
         SortOption<Product.SortField> selectedSortOption = sortOption.getValue();
         if (selectedSortOption != null) {
             updatedList.sort(
-                    Product.getComparator(
+                    SortFieldUtils.getComparator(
                             selectedSortOption.getSortField(), selectedSortOption.isAscending()));
         }
 

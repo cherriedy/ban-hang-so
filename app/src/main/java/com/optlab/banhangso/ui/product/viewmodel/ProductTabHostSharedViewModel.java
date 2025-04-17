@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.model.SortOption;
 
@@ -15,7 +16,9 @@ import javax.inject.Inject;
 public class ProductTabHostSharedViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isGridModeEnabled = new MutableLiveData<>();
     private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
-    private final MutableLiveData<SortOption<Product.SortField>> selectedSortOption =
+    private final MutableLiveData<SortOption<Product.SortField>> productSortOption =
+            new MutableLiveData<>();
+    private final MutableLiveData<SortOption<Brand.SortField>> brandSortOption =
             new MutableLiveData<>();
 
     @Inject
@@ -43,11 +46,19 @@ public class ProductTabHostSharedViewModel extends ViewModel {
         searchQuery.setValue(query);
     }
 
-    public LiveData<SortOption<Product.SortField>> getSelectedSortOption() {
-        return selectedSortOption;
+    public LiveData<SortOption<Product.SortField>> getProductSortOption() {
+        return productSortOption;
     }
 
-    public void setSelectedSortOption(SortOption<Product.SortField> sortOption) {
-        selectedSortOption.setValue(sortOption);
+    public void setProductSortOption(SortOption<Product.SortField> sortOption) {
+        productSortOption.setValue(sortOption);
+    }
+
+    public void setBrandSortOption(SortOption<Brand.SortField> sortOption) {
+        brandSortOption.setValue(sortOption);
+    }
+
+    public LiveData<SortOption<Brand.SortField>> getBrandSortOption() {
+        return brandSortOption;
     }
 }
