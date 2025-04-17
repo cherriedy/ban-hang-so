@@ -54,6 +54,11 @@
     <dialog
         android:id="@+id/productSortSelectionFragment"
         android:name="com.optlab.banhangso.ui.product.view.ProductSortSelectionFragment"
-        tools:layout="@layout/list_item_product_sort_selection" />
+        tools:layout="@layout/list_item_sort_selection" />
+
+    <dialog
+        android:id="@+id/brandSortSelectionFragment"
+        android:name="com.optlab.banhangso.ui.brand.view.BrandSortSelectionFragment"
+        tools:layout="@layout/list_item_sort_selection" />
 
 </navigation>
