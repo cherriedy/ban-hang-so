@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.model.SortOption;
 
@@ -15,16 +16,13 @@ import javax.inject.Inject;
 public class ProductTabHostSharedViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isGridModeEnabled = new MutableLiveData<>();
     private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
-    private final MutableLiveData<SortOption<Product.SortField>> selectedSortOption =
+    private final MutableLiveData<SortOption<Product.SortField>> productSortOption =
+            new MutableLiveData<>();
+    private final MutableLiveData<SortOption<Brand.SortField>> brandSortOption =
             new MutableLiveData<>();
 
     @Inject
     public ProductTabHostSharedViewModel() {}
-
-    // @Inject
-    // public ProductTabHostSharedViewModel(@NonNull UserPreferenceManager userPreferenceManager) {
-    //     selectedSortOption.setValue(userPreferenceManager.getSortOption());
-    // }
 
     public LiveData<Boolean> getGridModeEnabled() {
         return isGridModeEnabled;
@@ -34,9 +32,10 @@ public class ProductTabHostSharedViewModel extends ViewModel {
         isGridModeEnabled.setValue(isGrid);
     }
 
-    public void toggleLayout() {
+    public boolean toggleProductLayout() {
         Boolean currentState = isGridModeEnabled.getValue();
         isGridModeEnabled.setValue(currentState == null || !currentState);
+        return Boolean.TRUE.equals(currentState);
     }
 
     public LiveData<String> getSearchQuery() {
@@ -47,11 +46,19 @@ public class ProductTabHostSharedViewModel extends ViewModel {
         searchQuery.setValue(query);
     }
 
-    public LiveData<SortOption<Product.SortField>> getSelectedSortOption() {
-        return selectedSortOption;
+    public LiveData<SortOption<Product.SortField>> getProductSortOption() {
+        return productSortOption;
     }
 
-    public void setSelectedSortOption(SortOption<Product.SortField> sortOption) {
-        selectedSortOption.setValue(sortOption);
+    public void setProductSortOption(SortOption<Product.SortField> sortOption) {
+        productSortOption.setValue(sortOption);
+    }
+
+    public void setBrandSortOption(SortOption<Brand.SortField> sortOption) {
+        brandSortOption.setValue(sortOption);
+    }
+
+    public LiveData<SortOption<Brand.SortField>> getBrandSortOption() {
+        return brandSortOption;
     }
 }

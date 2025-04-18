@@ -11,12 +11,11 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.PropertyName;
 import com.google.firebase.firestore.ServerTimestamp;
 
-import java.util.Comparator;
 import java.util.Date;
 
 @IgnoreExtraProperties
 public class Product extends BaseObservable implements Cloneable {
-    public enum SortField {
+    public enum SortField implements SortOption.Displayable {
         NAME("Tên A -> Z", "Tên Z -> A"),
         SELLING_PRICE("Giá từ thấp tới cao", "Giá từ cao tới thấp");
 
@@ -28,20 +27,10 @@ public class Product extends BaseObservable implements Cloneable {
             this.descendingName = descendingName;
         }
 
+        @Override
         public String getDisplayName(boolean isAscending) {
             return isAscending ? ascendingName : descendingName;
         }
-    }
-
-    public static Comparator<Product> getComparator(SortField field, boolean isAscending) {
-        Comparator<Product> comparator =
-                switch (field) {
-                    case NAME ->
-                            Comparator.comparing(Product::getName, String.CASE_INSENSITIVE_ORDER);
-
-                    case SELLING_PRICE -> Comparator.comparingDouble(Product::getSellingPrice);
-                };
-        return isAscending ? comparator : comparator.reversed();
     }
 
     @Exclude private String id;

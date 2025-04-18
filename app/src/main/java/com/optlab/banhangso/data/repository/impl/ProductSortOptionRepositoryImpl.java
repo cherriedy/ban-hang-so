@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.model.SortOption;
-import com.optlab.banhangso.data.repository.ProductSortOptionRepository;
+import com.optlab.banhangso.data.repository.SortOptionRepository;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 import javax.inject.Singleton;
 
 @Singleton
-public class ProductSortOptionRepositoryImpl implements ProductSortOptionRepository {
+public class ProductSortOptionRepositoryImpl implements SortOptionRepository<Product.SortField> {
     private static final List<SortOption<Product.SortField>> SORT_OPTIONS =
             List.of(
                     new SortOption<>(Product.SortField.NAME, true),

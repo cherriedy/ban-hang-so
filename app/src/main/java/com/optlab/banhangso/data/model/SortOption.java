@@ -7,6 +7,11 @@ import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
 
 public class SortOption<T extends Enum<T>> extends BaseObservable {
+    /** This interface is used to get the display name of the sort field. */
+    public interface Displayable {
+        String getDisplayName(boolean isAscending);
+    }
+
     private T sortField;
     private boolean isAscending;
 
@@ -27,7 +32,12 @@ public class SortOption<T extends Enum<T>> extends BaseObservable {
     @NonNull
     @Override
     public String toString() {
-        return "SortOption{" + "sortField=" + getDisplayName() + ", isAscending=" + isAscending + '}';
+        return "SortOption{"
+                + "sortField="
+                + getDisplayName()
+                + ", isAscending="
+                + isAscending
+                + '}';
     }
 
     @Bindable
@@ -51,8 +61,8 @@ public class SortOption<T extends Enum<T>> extends BaseObservable {
     }
 
     public final String getDisplayName() {
-        if (sortField instanceof Product.SortField sf) {
-            return sf.getDisplayName(isAscending);
+        if (sortField instanceof Displayable displayable) {
+            return displayable.getDisplayName(isAscending);
         }
         return isAscending ? (sortField.name() + " ↑") : (sortField.name() + " ↓");
     }

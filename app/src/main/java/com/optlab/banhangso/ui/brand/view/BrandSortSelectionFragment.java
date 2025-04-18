@@ -1,4 +1,4 @@
-package com.optlab.banhangso.ui.product.view;
+package com.optlab.banhangso.ui.brand.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,53 +13,41 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.optlab.banhangso.R;
-import com.optlab.banhangso.data.model.Product;
+import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.databinding.FragmentSortSelectionBinding;
 import com.optlab.banhangso.ui.adapter.SortSelectionAdapter;
-import com.optlab.banhangso.ui.product.viewmodel.ProductSortSelectionViewModel;
+import com.optlab.banhangso.ui.brand.viewmodel.BrandSortSelectionViewModel;
 import com.optlab.banhangso.ui.product.viewmodel.ProductTabHostSharedViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-/**
- * Display a selectable list of product sort options.
- *
- * <p>Fragment that displays a selectable list of product sort options. This fragment allows users
- * to select a sort option and passes the selection back to the previous fragment through the
- * Navigation component's SavedStateHandle.
- */
 @AndroidEntryPoint
-public class ProductSortSelectionFragment extends BottomSheetDialogFragment {
+public class BrandSortSelectionFragment extends BottomSheetDialogFragment {
     private FragmentSortSelectionBinding binding;
-    private ProductSortSelectionViewModel viewModel;
-    private SortSelectionAdapter<Product.SortField> adapter;
+    private BrandSortSelectionViewModel viewModel;
     private ProductTabHostSharedViewModel tabHostSharedViewModel;
+    private SortSelectionAdapter<Brand.SortField> adapter;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initViewModels();
         initAdapter();
     }
 
     private void initAdapter() {
-        // Initialize the adapter with a listener to handle sort option selection events.
         adapter =
                 new SortSelectionAdapter<>(
                         sortOption -> {
-                            // Set the selected sort option in the ViewModel to update the UI.
+                            // Set the selected sort option in the ViewModel
                             viewModel.setSortOptionIndex(sortOption);
-
-                            // Set the selected sort option in the shared ViewModel to communicate
-                            // with the parent fragment.
-                            tabHostSharedViewModel.setProductSortOption(sortOption);
+                            // Set the selected sort option in the shared ViewModel
+                            tabHostSharedViewModel.setBrandSortOption(sortOption);
                         });
-
-        adapter.submitList(viewModel.getSortOptions()); // Set the initial list of sort options
     }
 
     private void initViewModels() {
-        viewModel = new ViewModelProvider(this).get(ProductSortSelectionViewModel.class);
+        viewModel = new ViewModelProvider(this).get(BrandSortSelectionViewModel.class);
 
         NavBackStackEntry productTabsEntry =
                 NavHostFragment.findNavController(this)
@@ -78,8 +66,8 @@ public class ProductSortSelectionFragment extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        observeViewModels();
         setupRecyclerView();
-        observeViewModel();
     }
 
     private void setupRecyclerView() {
@@ -87,7 +75,9 @@ public class ProductSortSelectionFragment extends BottomSheetDialogFragment {
         binding.rvSortSelection.setAdapter(adapter);
     }
 
-    private void observeViewModel() {
+    private void observeViewModels() {
+        viewModel.getSortOptions().observe(getViewLifecycleOwner(), adapter::submitList);
+
         viewModel
                 .getSortOptionIndex()
                 .observe(getViewLifecycleOwner(), adapter::setCheckedPosition);

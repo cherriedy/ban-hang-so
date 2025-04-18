@@ -7,13 +7,6 @@
         android:id="@+id/action_select_sort"
         android:icon="@drawable/ic_action_sort"
         android:title=""
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
-
-    <item
-        android:id="@+id/action_toggle_layout"
-        android:icon="@drawable/ic_action_list"
-        android:title=""
         app:showAsAction="always" />
 
 </menu>

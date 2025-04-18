@@ -19,4 +19,5 @@
 
     <include app:graph="@navigation/nav_graph_product_tabs" />
     <include app:graph="@navigation/nav_graph_product_edit" />
+    <include app:graph="@navigation/nav_graph_brand_edit" />
 </navigation>

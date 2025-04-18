@@ -8,18 +8,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.repository.BrandRepository;
 
+import timber.log.Timber;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.inject.Singleton;
 
-import timber.log.Timber;
-
 @Singleton
 public class BrandRepositoryImpl implements BrandRepository {
+    public static final String COLLECTION_PATH = "brands";
     private final FirebaseFirestore firestore;
     private final MutableLiveData<List<Brand>> brands = new MutableLiveData<>();
 
@@ -46,25 +48,27 @@ public class BrandRepositoryImpl implements BrandRepository {
         }
     }
 
-    /**
-     * Retrieves data from Firestore and updates the brands LiveData.
-     */
+    /** Retrieves data from Firestore and updates the brands LiveData. */
     private void retrieveData() {
-        firestore.collection("brands")
-                .addSnapshotListener((snapshots, error) -> {
-                    if (error != null) {
-                        Timber.e("Failed getting documents: %s", error.getMessage());
-                        return;
-                    }
+        firestore
+                .collection(COLLECTION_PATH)
+                .addSnapshotListener(
+                        (snapshots, error) -> {
+                            if (error != null) {
+                                Timber.e("Failed getting documents: %s", error.getMessage());
+                                return;
+                            }
 
-                    if (snapshots != null && !snapshots.isEmpty()) {
-                        List<Brand> brandList = snapshots.getDocuments().stream()
-                                .map(this::docToBrand)
-                                .filter(Objects::nonNull) // Filter out null brands if any
-                                .collect(Collectors.toList());
-                        brands.setValue(brandList);
-                    }
-                });
+                            if (snapshots != null && !snapshots.isEmpty()) {
+                                List<Brand> brandList =
+                                        snapshots.getDocuments().stream()
+                                                .map(this::docToBrand)
+                                                .filter(Objects::nonNull) // Filter out null brands
+                                                // if any
+                                                .collect(Collectors.toList());
+                                brands.setValue(brandList);
+                            }
+                        });
     }
 
     @Override
@@ -75,10 +79,11 @@ public class BrandRepositoryImpl implements BrandRepository {
     @Override
     public Brand getBrandById(String id) {
         return Optional.ofNullable(brands.getValue())
-                .flatMap(brandList -> brandList.stream()
-                        .filter(brand -> brand.getId().equals(id))
-                        .findFirst()
-                )
+                .flatMap(
+                        brandList ->
+                                brandList.stream()
+                                        .filter(brand -> brand.getId().equals(id))
+                                        .findFirst())
                 .map(this::safeClone)
                 .orElse(null);
     }
@@ -98,6 +103,41 @@ public class BrandRepositoryImpl implements BrandRepository {
                 .filter(i -> brands.get(i).getId().equals(id))
                 .findFirst()
                 .orElse(-1);
+    }
+
+    @Override
+    public void updateBrand(Brand brand, Consumer<Boolean> callback) {
+        firestore
+                .collection(COLLECTION_PATH)
+                .document(brand.getId())
+                .set(brand)
+                .addOnSuccessListener(unused -> {
+                    Timber.d("Document %s updated", brand.getId());
+                    callback.accept(true);
+                }).addOnFailureListener(e -> {
+                    Timber.e("Failed updating document: %s", e.getMessage());
+                    callback.accept(false);
+                });
+    }
+
+    @Override
+    public void deleteBrand(Brand brand, Consumer<Boolean> callback) {}
+
+    @Override
+    public void createBrand(Brand brand, Consumer<Boolean> callback) {
+        firestore
+                .collection(COLLECTION_PATH)
+                .add(brand)
+                .addOnSuccessListener(
+                        docRef -> {
+                            Timber.d("Document %s created", docRef.getId());
+                            callback.accept(true);
+                        })
+                .addOnFailureListener(
+                        e -> {
+                            Timber.e("Failed creating document: %s", e.getMessage());
+                            callback.accept(false);
+                        });
     }
 
     private Brand safeClone(Brand brand) {

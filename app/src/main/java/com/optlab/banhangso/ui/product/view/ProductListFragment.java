@@ -158,7 +158,7 @@ public class ProductListFragment extends Fragment {
 
         // Observe the selected sort option and update the ViewModel.
         tabHostSharedViewModel
-                .getSelectedSortOption()
+                .getProductSortOption()
                 .observe(getViewLifecycleOwner(), productListViewModel::setSortOption);
     }
 
