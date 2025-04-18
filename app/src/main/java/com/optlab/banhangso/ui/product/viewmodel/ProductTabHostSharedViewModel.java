@@ -32,7 +32,7 @@ public class ProductTabHostSharedViewModel extends ViewModel {
         isGridModeEnabled.setValue(isGrid);
     }
 
-    public boolean toggleLayout() {
+    public boolean toggleProductLayout() {
         Boolean currentState = isGridModeEnabled.getValue();
         isGridModeEnabled.setValue(currentState == null || !currentState);
         return Boolean.TRUE.equals(currentState);

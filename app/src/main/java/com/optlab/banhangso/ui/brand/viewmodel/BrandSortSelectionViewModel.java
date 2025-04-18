@@ -8,6 +8,7 @@ import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.model.SortOption;
 import com.optlab.banhangso.data.repository.SortOptionRepository;
 import com.optlab.banhangso.data.repository.qualifier.BrandSortSelection;
+import com.optlab.banhangso.util.UserPreferenceManager;
 
 import java.util.List;
 
@@ -20,17 +21,27 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
  */
 @HiltViewModel
 public class BrandSortSelectionViewModel extends ViewModel {
-    private final SortOptionRepository sortRepository;
+    private final SortOptionRepository repository;
+    private final UserPreferenceManager userPreferenceManager;
     private final MutableLiveData<List<SortOption<Brand.SortField>>> sortOptions =
             new MutableLiveData<>();
     private final MutableLiveData<Integer> sortOptionIndex = new MutableLiveData<>();
 
     @Inject
     public BrandSortSelectionViewModel(
-            @NonNull @BrandSortSelection SortOptionRepository sortRepository) {
-        this.sortRepository = sortRepository;
+            @NonNull @BrandSortSelection SortOptionRepository repository,
+            @NonNull UserPreferenceManager userPreferenceManager) {
+        this.repository = repository;
+        this.userPreferenceManager = userPreferenceManager;
 
-        sortOptions.setValue(sortRepository.getSortOptions());
+        // Set the sort options based on the repository
+        sortOptions.setValue(repository.getSortOptions());
+
+        // Set the sort option index based on the user's preference
+        sortOptionIndex.setValue(
+                repository.getPosition(
+                        userPreferenceManager.getSortOption(
+                                UserPreferenceManager.KEY_BRAND_SORT_OPTION)));
     }
 
     public MutableLiveData<List<SortOption<Brand.SortField>>> getSortOptions() {
@@ -38,7 +49,9 @@ public class BrandSortSelectionViewModel extends ViewModel {
     }
 
     public void setSortOptionIndex(SortOption<Brand.SortField> sortOption) {
-        sortOptionIndex.setValue(sortRepository.getPosition(sortOption));
+        userPreferenceManager.setSortOption(
+                sortOption, UserPreferenceManager.KEY_BRAND_SORT_OPTION);
+        sortOptionIndex.setValue(repository.getPosition(sortOption));
     }
 
     public MutableLiveData<Integer> getSortOptionIndex() {

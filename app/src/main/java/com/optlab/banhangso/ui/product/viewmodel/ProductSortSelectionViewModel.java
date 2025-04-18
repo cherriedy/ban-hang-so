@@ -37,7 +37,10 @@ public class ProductSortSelectionViewModel extends ViewModel {
 
         sortOptions.setValue(repository.getSortOptions());
 
-        sortOptionIndex.setValue(repository.getPosition(userPreferenceManager.getSortOption()));
+        sortOptionIndex.setValue(
+                repository.getPosition(
+                        userPreferenceManager.getSortOption(
+                                UserPreferenceManager.KEY_PRODUCT_SORT_OPTION)));
     }
 
     public List<SortOption<Product.SortField>> getSortOptions() {
@@ -45,7 +48,8 @@ public class ProductSortSelectionViewModel extends ViewModel {
     }
 
     public void setSortOptionIndex(SortOption<Product.SortField> sortOption) {
-        userPreferenceManager.setSortOption(sortOption);
+        userPreferenceManager.setSortOption(
+                sortOption, UserPreferenceManager.KEY_PRODUCT_SORT_OPTION);
         sortOptionIndex.setValue(repository.getPosition(sortOption));
     }
 

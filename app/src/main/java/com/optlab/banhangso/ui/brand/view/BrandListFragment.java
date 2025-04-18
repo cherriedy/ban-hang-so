@@ -78,11 +78,23 @@ public class BrandListFragment extends Fragment {
     }
 
     private void observeViewModels() {
-        viewModel.getBrands().observe(getViewLifecycleOwner(), adapter::submitList);
+        viewModel
+                .getBrands()
+                .observe(
+                        getViewLifecycleOwner(),
+                        brands -> {
+                            // Bug: The brand is not updated unless the list is set to null first.
+                            adapter.submitList(null);
+                            adapter.submitList(brands);
+                        });
 
         tabHostSharedViewModel
                 .getSearchQuery()
                 .observe(getViewLifecycleOwner(), viewModel::setSearchQuery);
+
+        tabHostSharedViewModel
+                .getBrandSortOption()
+                .observe(getViewLifecycleOwner(), viewModel::setSortOption);
     }
 
     private void initRecyclerView() {

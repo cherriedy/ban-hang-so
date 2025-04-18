@@ -188,7 +188,7 @@ public class ProductTabHostFragment extends Fragment {
 
     private boolean onProductMenuItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_toggle_layout) {
-            userPreferenceManager.saveLayoutMode(viewModel.toggleLayout());
+            userPreferenceManager.setLayoutMode(viewModel.toggleProductLayout());
         } else {
             NavHostFragment.findNavController(this).navigate(R.id.productSortSelectionFragment);
         }
