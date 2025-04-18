@@ -12,9 +12,26 @@ import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 
 public class Category extends BaseObservable implements Cloneable {
+    public enum SortField implements SortOption.Displayable {
+        TIME("Mới nhất", "Cũ nhất"),
+        NAME("Tên A -> Z", "Tên Z -> A");
+
+        private final String ascending;
+        private final String descending;
+
+        SortField(String ascending, String descending) {
+            this.ascending = ascending;
+            this.descending = descending;
+        }
+
+        @Override
+        public String getDisplayName(boolean isAscending) {
+            return isAscending ? ascending : descending;
+        }
+    }
+
     @Exclude private String id;
     private String name;
-
     @ServerTimestamp private Date createdAt;
     @ServerTimestamp private Date updatedAt;
 

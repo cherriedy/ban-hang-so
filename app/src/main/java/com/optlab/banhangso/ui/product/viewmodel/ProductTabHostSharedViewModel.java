@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Brand;
+import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.model.SortOption;
 
@@ -19,6 +20,8 @@ public class ProductTabHostSharedViewModel extends ViewModel {
     private final MutableLiveData<SortOption<Product.SortField>> productSortOption =
             new MutableLiveData<>();
     private final MutableLiveData<SortOption<Brand.SortField>> brandSortOption =
+            new MutableLiveData<>();
+    private final MutableLiveData<SortOption<Category.SortField>> categorySortOption =
             new MutableLiveData<>();
 
     @Inject
@@ -60,5 +63,13 @@ public class ProductTabHostSharedViewModel extends ViewModel {
 
     public LiveData<SortOption<Brand.SortField>> getBrandSortOption() {
         return brandSortOption;
+    }
+
+    public LiveData<SortOption<Category.SortField>> getCategorySortOption() {
+        return categorySortOption;
+    }
+
+    public void setCategorySortOption(SortOption<Category.SortField> sortOption) {
+        categorySortOption.setValue(sortOption);
     }
 }

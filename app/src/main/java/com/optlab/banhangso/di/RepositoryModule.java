@@ -10,9 +10,11 @@ import com.optlab.banhangso.data.repository.SortOptionRepository;
 import com.optlab.banhangso.data.repository.impl.BrandRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.BrandSortOptionRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
+import com.optlab.banhangso.data.repository.impl.CategorySortOptionRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.ProductSortOptionRepositoryImpl;
 import com.optlab.banhangso.data.repository.qualifier.BrandSortSelection;
+import com.optlab.banhangso.data.repository.qualifier.CategorySortSelection;
 import com.optlab.banhangso.data.repository.qualifier.ProductSortSelection;
 import com.optlab.banhangso.util.UserPreferenceManager;
 
@@ -65,6 +67,13 @@ public class RepositoryModule {
     @BrandSortSelection
     public static SortOptionRepository provideBrandSortOptionRepository() {
         return new BrandSortOptionRepositoryImpl();
+    }
+
+    @Provides
+    @Singleton
+    @CategorySortSelection
+    public static SortOptionRepository provideCategorySortOptionRepository() {
+        return new CategorySortOptionRepositoryImpl();
     }
 
     @Provides
