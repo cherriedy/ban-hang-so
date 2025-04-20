@@ -1,10 +1,13 @@
 package com.optlab.banhangso.data.model;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
+
+import org.jetbrains.annotations.NotNull;
+
+import timber.log.Timber;
 
 public class SortOption<T extends Enum<T>> extends BaseObservable {
     /** This interface is used to get the display name of the sort field. */
@@ -21,7 +24,7 @@ public class SortOption<T extends Enum<T>> extends BaseObservable {
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(@NotNull Object obj) {
         if (obj instanceof SortOption<?> that) {
             return this.getDisplayName().equals(that.getDisplayName())
                     && this.isAscending == that.isAscending;
@@ -61,6 +64,10 @@ public class SortOption<T extends Enum<T>> extends BaseObservable {
     }
 
     public final String getDisplayName() {
+        if (sortField == null) {
+            Timber.e("SortField is null");
+            return isAscending ? "Unknown ↑" : "Unknown ↓";
+        }
         if (sortField instanceof Displayable displayable) {
             return displayable.getDisplayName(isAscending);
         }
