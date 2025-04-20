@@ -18,7 +18,7 @@ public final class SortFieldUtils {
                         ? Comparator.comparing(Category::getName)
                         : Comparator.comparing(Category::getName).reversed();
             }
-            case TIME -> {
+            case UPDATE_TIME -> {
                 return isAscending
                         ? Comparator.comparing(Category::getUpdatedAt)
                         : Comparator.comparing(Category::getUpdatedAt).reversed();
