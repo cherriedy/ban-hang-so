@@ -40,7 +40,7 @@ public class CategoryListViewModel extends ViewModel {
     }
 
     public MutableLiveData<List<Category>> getCategories() {
-        return categories;
+        return categoryMediator;
     }
 
     private void updateCategories() {

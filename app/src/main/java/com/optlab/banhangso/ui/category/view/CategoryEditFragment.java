@@ -4,63 +4,172 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.Observable;
+import androidx.databinding.library.baseAdapters.BR;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.optlab.banhangso.R;
+import com.optlab.banhangso.data.model.Category;
+import com.optlab.banhangso.databinding.FragmentCategoryEditBinding;
+import com.optlab.banhangso.ui.category.viewmodel.CategoryEditViewModel;
+import com.optlab.banhangso.ui.common.view.AnimationLoadingDialog;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link CategoryEditFragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
-public class CategoryEditFragment extends Fragment {
+import dagger.hilt.android.AndroidEntryPoint;
+import timber.log.Timber;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+@AndroidEntryPoint
+public class CategoryEditFragment extends BottomSheetDialogFragment {
+    private FragmentCategoryEditBinding binding;
+    private CategoryEditViewModel viewModel;
+    private CategoryEditFragmentArgs args;
+    private AnimationLoadingDialog loadingDialog;
+    private Observable.OnPropertyChangedCallback changedCallback;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public CategoryEditFragment() {
-        // Required empty public constructor
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initViewModels();
+        loadingDialog = new AnimationLoadingDialog();
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CategoryEditFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CategoryEditFragment newInstance(String param1, String param2) {
-        CategoryEditFragment fragment = new CategoryEditFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    private void initNavigation() {
+        args = CategoryEditFragmentArgs.fromBundle(requireArguments());
+        configureInteractionMode();
+    }
+
+    /** Configure the interaction mode of the fragment based on the arguments passed. */
+    private void configureInteractionMode() {
+        if (args != null) {
+            // Set the interaction mode based on the arguments passed to the fragment.
+            binding.setIsCreateMode(args.getIsCreateMode());
+            // Load the category data if the fragment is not in create mode.
+            viewModel.loadCategoryById(args.getCategoryId());
+        } else {
+            binding.setIsCreateMode(true);
+            Timber.e("Arguments are null");
+        }
+
+        // Execute pending bindings to ensure the UI is updated with the latest data.
+        binding.executePendingBindings();
+    }
+
+    private void initViewModels() {
+        viewModel = new ViewModelProvider(this).get(CategoryEditViewModel.class);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentCategoryEditBinding.inflate(inflater, container, false);
+        binding.setLifecycleOwner(this);
+        binding.setViewModel(viewModel);
+        binding.setFragment(this);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initNavigation();
+        observeViewModel();
+    }
+
+    @Override
+    public void onDestroyView() {
+        binding = null;
+        changedCallback = null;
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        loadingDialog = null;
+        super.onDestroy();
+    }
+
+    private void observeViewModel() {
+        viewModel.getCategory().observe(getViewLifecycleOwner(), this::onPropertyChanged);
+        observeLoadingState(viewModel.isCreating());
+        observeLoadingState(viewModel.isUpdating());
+
+        observeOperationResult(
+                viewModel.getUpdateResult(),
+                getString(R.string.notify_create_category_successfully),
+                getString(R.string.notify_create_category_fail));
+        observeOperationResult(
+                viewModel.getCreateResult(),
+                getString(R.string.notify_update_category_successfully),
+                getString(R.string.notify_update_category_fail));
+    }
+
+    /** Handle the property change of the category object. */
+    private void onPropertyChanged(Category category) {
+        if (changedCallback == null) {
+            changedCallback =
+                    new Observable.OnPropertyChangedCallback() {
+                        @Override
+                        public void onPropertyChanged(Observable sender, int propertyId) {
+                            handlePropertyChange((Category) sender, propertyId);
+                        }
+                    };
+
+            // Add the callback to the category object to observe property changes.
+            category.addOnPropertyChangedCallback(changedCallback);
+        }
+
+        // Initially validate the category properties.
+        viewModel.validateName(category.getName());
+    }
+
+    private void handlePropertyChange(Category sender, int propertyId) {
+        if (propertyId == BR.name) {
+            viewModel.validateName(sender.getName());
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_category_edit, container, false);
+    /** Observe the result of an operation and show a toast message based on the result. */
+    private void observeOperationResult(
+            @NonNull MutableLiveData<Boolean> result,
+            @NonNull String successMsg,
+            @NonNull String errorMsg) {
+        result.observe(
+                getViewLifecycleOwner(),
+                isSuccessful -> {
+                    if (Boolean.TRUE.equals(isSuccessful)) {
+                        showToast(successMsg);
+                    } else {
+                        showToast(errorMsg);
+                    }
+                });
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    /** Show or hide the loading dialog based on the provided state. */
+    private void toggleLoadingDialog(Boolean isLoading) {
+        if (isLoading) {
+            loadingDialog.show(getParentFragmentManager(), this.getClass().getSimpleName());
+        } else {
+            // Ensure the dialog can be dismissed even if the fragment is not in the foreground
+            // due to the behaviour of BottomSheetDialogFragment.
+            if (loadingDialog.isAdded()) {
+                loadingDialog.dismissAllowingStateLoss();
+            }
+            NavHostFragment.findNavController(this).navigateUp();
+        }
+    }
+
+    /** Observe the loading state of the provided MutableLiveData. */
+    private void observeLoadingState(MutableLiveData<Boolean> state) {
+        state.observe(getViewLifecycleOwner(), this::toggleLoadingDialog);
     }
 }

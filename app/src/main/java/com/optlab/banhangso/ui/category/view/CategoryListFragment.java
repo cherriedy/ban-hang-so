@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.optlab.banhangso.R;
@@ -18,12 +19,12 @@ import com.optlab.banhangso.ui.adapter.CategoryListAdapter;
 import com.optlab.banhangso.ui.category.viewmodel.CategoryListViewModel;
 import com.optlab.banhangso.ui.common.decoration.LinearSpacingStrategy;
 import com.optlab.banhangso.ui.common.decoration.SpacingItemDecoration;
-import com.optlab.banhangso.ui.listener.OnCategoryClickListener;
+import com.optlab.banhangso.ui.product.view.ProductTabHostFragmentDirections;
 import com.optlab.banhangso.ui.product.viewmodel.ProductTabHostSharedViewModel;
 
-import java.util.EnumSet;
-
 import dagger.hilt.android.AndroidEntryPoint;
+
+import java.util.EnumSet;
 
 @AndroidEntryPoint
 public class CategoryListFragment extends Fragment {
@@ -42,9 +43,11 @@ public class CategoryListFragment extends Fragment {
     private void initAdapters() {
         adapter =
                 new CategoryListAdapter(
-                        new OnCategoryClickListener() {
-                            @Override
-                            public void onClick(String id) {}
+                        id -> {
+                            NavDirections action =
+                                    ProductTabHostFragmentDirections.actionToCategoryEdit(
+                                            id, false);
+                            NavHostFragment.findNavController(this).navigate(action);
                         });
     }
 
@@ -80,6 +83,7 @@ public class CategoryListFragment extends Fragment {
                 .observe(
                         getViewLifecycleOwner(),
                         categories -> {
+                            // BUG: The category will not update if we do not null first
                             adapter.submitList(null);
                             adapter.submitList(categories);
                         });
@@ -120,5 +124,8 @@ public class CategoryListFragment extends Fragment {
                                         LinearSpacingStrategy.Direction.RIGHT))));
     }
 
-    public void onAddButtonClick(@NonNull View view) {}
+    public void onAddButtonClick(@NonNull View view) {
+        NavDirections action = ProductTabHostFragmentDirections.actionToCategoryEdit("", true);
+        NavHostFragment.findNavController(this).navigate(action);
+    }
 }
