@@ -3,6 +3,7 @@ package com.optlab.banhangso.di;
 import android.content.Context;
 
 import com.optlab.banhangso.util.validator.BrandValidator;
+import com.optlab.banhangso.util.validator.CategoryValidator;
 import com.optlab.banhangso.util.validator.ProductValidator;
 
 import dagger.Module;
@@ -22,5 +23,10 @@ public class ValidatorModule {
     @Provides
     public static BrandValidator provideBrandValidator(@ApplicationContext Context context) {
         return new BrandValidator(context);
+    }
+
+    @Provides
+    public static CategoryValidator provideCategoryValidator(@ApplicationContext Context context) {
+        return new CategoryValidator(context);
     }
 }

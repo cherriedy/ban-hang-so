@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 
@@ -34,11 +35,13 @@ public class ProductTabHostFragment extends Fragment {
 
     private FragmentProductTabHostBinding binding;
     private ProductTabHostSharedViewModel viewModel;
+    private NavController navController;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initViewModel();
+        navController = NavHostFragment.findNavController(this);
     }
 
     private void initViewModel() {
@@ -172,6 +175,10 @@ public class ProductTabHostFragment extends Fragment {
                 binding.toolBar.inflateMenu(R.menu.menu_product_toolbar);
                 binding.toolBar.setOnMenuItemClickListener(this::onProductMenuItemSelected);
             }
+            case 1 -> {
+                binding.toolBar.inflateMenu(R.menu.menu_category_toolbar);
+                binding.toolBar.setOnMenuItemClickListener(this::onCategoryMenuItemSelected);
+            }
             case 2 -> {
                 binding.toolBar.inflateMenu(R.menu.menu_brand_toolbar);
                 binding.toolBar.setOnMenuItemClickListener(this::onBrandMenuItemSelected);
@@ -179,9 +186,16 @@ public class ProductTabHostFragment extends Fragment {
         }
     }
 
+    private boolean onCategoryMenuItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_select_sort) {
+            navController.navigate(R.id.categorySortSelectionFragment);
+        }
+        return true;
+    }
+
     private boolean onBrandMenuItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_select_sort) {
-            NavHostFragment.findNavController(this).navigate(R.id.brandSortSelectionFragment);
+            navController.navigate(R.id.brandSortSelectionFragment);
         }
         return true;
     }
@@ -190,7 +204,7 @@ public class ProductTabHostFragment extends Fragment {
         if (item.getItemId() == R.id.action_toggle_layout) {
             userPreferenceManager.setLayoutMode(viewModel.toggleProductLayout());
         } else {
-            NavHostFragment.findNavController(this).navigate(R.id.productSortSelectionFragment);
+            navController.navigate(R.id.productSortSelectionFragment);
         }
         return true;
     }

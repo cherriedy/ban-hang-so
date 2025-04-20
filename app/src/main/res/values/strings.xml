@@ -128,4 +128,14 @@
     <string name="notify_update_brand_successful">Cập nhật thương hiệu thành công</string>
     <string name="notify_update_brand_fail">Cập nhật thương hiệu thất bại</string>
     <string name="attr_sort_selection">Kiểu sắp xếp</string>
+    <string name="attr_category_detail">Thông tin danh mục</string>
+    <string name="hint_category_name">Mì ăn liền</string>
+    <string name="attr_category_name">Tên danh mục</string>
+    <string name="alert_category_name_not_null">Tên danh mục không được để trống</string>
+    <string name="alert_category_min_chars">Tên danh mục phải có ít nhất 3 ký tự</string>
+    <string name="alert_category_max_chars">Tên danh mục không được vượt quá 50 ký tự</string>
+    <string name="notify_create_category_successfully">Tạo danh mục thành công</string>
+    <string name="notify_create_category_fail">Tạo danh mục thất bại</string>
+    <string name="notify_update_category_successfully">Cập nhật danh mục thành công</string>
+    <string name="notify_update_category_fail">Cập nhật danh mục thất bại</string>
 </resources>

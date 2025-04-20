@@ -11,6 +11,7 @@ import com.optlab.banhangso.data.repository.CategoryRepository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -20,6 +21,7 @@ import timber.log.Timber;
 
 @Singleton
 public class CategoryRepositoryImpl implements CategoryRepository {
+    private static final String COLLECTION_PATH = "categories";
     private final FirebaseFirestore firestore;
     private final MutableLiveData<List<Category>> categories = new MutableLiveData<>();
 
@@ -47,21 +49,25 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     private void retrieveData() {
-        firestore.collection("categories")
-                .addSnapshotListener((snapshots, error) -> {
-                    if (error != null) {
-                        Timber.e("Error getting documents: %s", error.getMessage());
-                        return;
-                    }
+        firestore
+                .collection(COLLECTION_PATH)
+                .addSnapshotListener(
+                        (snapshots, error) -> {
+                            if (error != null) {
+                                Timber.e("Error getting documents: %s", error.getMessage());
+                                return;
+                            }
 
-                    if (snapshots != null && !snapshots.isEmpty()) {
-                        List<Category> categoryList = snapshots.getDocuments().stream()
-                                .map(this::docToCategory)
-                                .filter(Objects::nonNull) // Filter out null objects, if any
-                                .collect(Collectors.toList());
-                        categories.setValue(categoryList);
-                    }
-                });
+                            if (snapshots != null && !snapshots.isEmpty()) {
+                                List<Category> categoryList =
+                                        snapshots.getDocuments().stream()
+                                                .map(this::docToCategory)
+                                                .filter(Objects::nonNull) // Filter out null
+                                                // objects, if any
+                                                .collect(Collectors.toList());
+                                categories.setValue(categoryList);
+                            }
+                        });
     }
 
     @Override
@@ -72,10 +78,11 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public Category getCategoryById(String id) {
         return Optional.ofNullable(categories.getValue())
-                .flatMap(cl -> cl.stream()
-                        .filter(category -> category.getId().equals(id))
-                        .findFirst()
-                )
+                .flatMap(
+                        cl ->
+                                cl.stream()
+                                        .filter(category -> category.getId().equals(id))
+                                        .findFirst())
                 .map(this::safeClone)
                 .orElse(null);
     }
@@ -96,6 +103,59 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 .filter(i -> categoryList.get(i).getId().equals(id))
                 .findFirst()
                 .orElse(-1);
+    }
+
+    @Override
+    public void updateCategory(Category currentCategory, Consumer<Boolean> isSuccessful) {
+        firestore
+                .collection(COLLECTION_PATH)
+                .document(currentCategory.getId())
+                .set(currentCategory)
+                .addOnSuccessListener(
+                        aVoid -> {
+                            Timber.d("DocumentSnapshot successfully written!");
+                            isSuccessful.accept(true);
+                        })
+                .addOnFailureListener(
+                        e -> {
+                            Timber.e("Error writing document: %s", e.getMessage());
+                            isSuccessful.accept(false);
+                        });
+    }
+
+    @Override
+    public void createCategory(Category currentCategory, Consumer<Boolean> isSuccessful) {
+        firestore
+                .collection(COLLECTION_PATH)
+                .add(currentCategory)
+                .addOnSuccessListener(
+                        documentReference -> {
+                            Timber.d("DocumentSnapshot successfully written!");
+                            isSuccessful.accept(true);
+                        })
+                .addOnFailureListener(
+                        e -> {
+                            Timber.e("Error writing document: %s", e.getMessage());
+                            isSuccessful.accept(false);
+                        });
+    }
+
+    @Override
+    public void deleteCategory(Category currentCategory, Consumer<Boolean> isSuccessful) {
+        firestore
+                .collection(COLLECTION_PATH)
+                .document(currentCategory.getId())
+                .delete()
+                .addOnSuccessListener(
+                        aVoid -> {
+                            Timber.d("DocumentSnapshot successfully deleted!");
+                            isSuccessful.accept(true);
+                        })
+                .addOnFailureListener(
+                        e -> {
+                            Timber.e("Error deleting document: %s", e.getMessage());
+                            isSuccessful.accept(false);
+                        });
     }
 
     private Category safeClone(Category category) {

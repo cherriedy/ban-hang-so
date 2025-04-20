@@ -31,6 +31,19 @@
             app:argType="boolean" />
     </action>
 
+    <action
+        android:id="@+id/action_to_category_edit"
+        app:destination="@id/nav_graph_category_edit">
+
+        <argument
+            android:name="categoryId"
+            app:argType="string" />
+
+        <argument
+            android:name="isCreateMode"
+            app:argType="boolean" />
+    </action>
+
     <fragment
         android:id="@+id/productTabHostFragment"
         android:name="com.optlab.banhangso.ui.product.view.ProductTabHostFragment"
@@ -59,6 +72,11 @@
     <dialog
         android:id="@+id/brandSortSelectionFragment"
         android:name="com.optlab.banhangso.ui.brand.view.BrandSortSelectionFragment"
+        tools:layout="@layout/list_item_sort_selection" />
+
+    <dialog
+        android:id="@+id/categorySortSelectionFragment"
+        android:name="com.optlab.banhangso.ui.category.view.CategorySortSelectionFragment"
         tools:layout="@layout/list_item_sort_selection" />
 
 </navigation>
