@@ -4,7 +4,6 @@ import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.SortOption;
 import com.optlab.banhangso.data.repository.SortOptionRepository;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Singleton;
@@ -12,9 +11,9 @@ import javax.inject.Singleton;
 @Singleton
 public class CategorySortOptionRepositoryImpl implements SortOptionRepository<Category.SortField> {
     private static final List<SortOption<Category.SortField>> SORT_OPTIONS =
-            Arrays.asList(
-                    new SortOption<>(Category.SortField.TIME, true),
-                    new SortOption<>(Category.SortField.TIME, false),
+            List.of(
+                    new SortOption<>(Category.SortField.UPDATE_TIME, true),
+                    new SortOption<>(Category.SortField.UPDATE_TIME, false),
                     new SortOption<>(Category.SortField.NAME, true),
                     new SortOption<>(Category.SortField.NAME, false));
 
