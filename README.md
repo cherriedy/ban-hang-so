@@ -18,7 +18,7 @@ Before you begin, ensure you have the following installed:
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/<cherriedy>/<ban-hang-so>.git
+   git clone https://github.com/cherriedy/ban-hang-so.git
    ```
 2. Open the project in **Android Studio**.
 3. Sync the Gradle files to download all dependencies.
