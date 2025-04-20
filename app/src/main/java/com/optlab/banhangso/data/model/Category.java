@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class Category extends BaseObservable implements Cloneable {
     public enum SortField implements SortOption.Displayable {
-        TIME("Mới nhất", "Cũ nhất"),
+        UPDATE_TIME("Cũ nhất", "Mới nhất"),
         NAME("Tên A -> Z", "Tên Z -> A");
 
         private final String ascending;
