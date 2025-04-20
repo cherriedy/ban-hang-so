@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 
 import com.optlab.banhangso.data.model.Brand;
+import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.Product;
 import com.optlab.banhangso.data.model.SortOption;
 import com.google.gson.Gson;
@@ -14,6 +15,8 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class UserPreferenceManager {
     public static final String KEY_PRODUCT_SORT_OPTION = "product_sort_option";
@@ -29,6 +32,20 @@ public class UserPreferenceManager {
     @Inject
     public UserPreferenceManager(@NonNull Context context) {
         sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        initDefaultValues();
+    }
+
+    private void initDefaultValues() {
+        if (!sharedPreferences.contains(KEY_PRODUCT_SORT_OPTION)) {
+            setSortOption(new SortOption<>(Product.SortField.NAME, true), KEY_PRODUCT_SORT_OPTION);
+        }
+        if (!sharedPreferences.contains(KEY_BRAND_SORT_OPTION)) {
+            setSortOption(new SortOption<>(Brand.SortField.NAME, true), KEY_BRAND_SORT_OPTION);
+        }
+        if (!sharedPreferences.contains(KEY_CATEGORY_SORT_OPTION)) {
+            setSortOption(
+                    new SortOption<>(Category.SortField.NAME, true), KEY_CATEGORY_SORT_OPTION);
+        }
     }
 
     public void setSortOption(SortOption<? extends Enum<?>> sortOption, String key) {
@@ -56,6 +73,11 @@ public class UserPreferenceManager {
     public SortOption<?> getSortOption(String key) {
         // Get sort option json from preference.
         String sortOptionJson = sharedPreferences.getString(key, null);
+        // Check if the sort option json is null.
+        if (sortOptionJson == null) {
+            Timber.d("Sort option json is null");
+            return null;
+        }
 
         // Get the type of sort option to prevent unchecked conversion.
         Type type =
@@ -65,7 +87,7 @@ public class UserPreferenceManager {
                     case KEY_BRAND_SORT_OPTION ->
                             new TypeToken<SortOption<Brand.SortField>>() {}.getType();
                     case KEY_CATEGORY_SORT_OPTION ->
-                            new TypeToken<SortOption<Product.SortField>>() {}.getType();
+                            new TypeToken<SortOption<Category.SortField>>() {}.getType();
                     default -> throw new IllegalArgumentException("Invalid key: " + key);
                 };
 
