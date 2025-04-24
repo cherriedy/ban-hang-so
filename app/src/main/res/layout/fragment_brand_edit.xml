@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/attr_brand_name"
                     android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                    android:textColor="@color/color_text_title"
+                    android:textColor="@color/raven"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:syncFocusColor="@{tieName}" />

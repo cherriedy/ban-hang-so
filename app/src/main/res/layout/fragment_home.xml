@@ -16,30 +16,31 @@
             android:id="@+id/action_bar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#00843B"
-            android:padding="14dp"
+            android:background="?attr/colorPrimary"
+            android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/img_avatar"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/civ_avatar"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_centerVertical="true"
-                android:scaleType="centerCrop"
                 android:src="@drawable/cat"
-                app:shapeAppearanceOverlay="@style/CircleImage" />
+                app:civ_border_color="@color/white"
+                app:civ_border_width="1dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:layout_marginStart="12dp"
-                android:layout_toEndOf="@id/img_avatar"
+                android:layout_toEndOf="@id/civ_avatar"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/txt_store_name"
+                    android:id="@+id/tv_store_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/store_name"
@@ -48,7 +49,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/txt_current_date"
+                    android:id="@+id/tv_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Th2, 1/1/2025"
@@ -68,7 +69,7 @@
             app:layout_constraintTop_toBottomOf="@id/action_bar">
 
             <TextView
-                android:id="@+id/txt_grid_header"
+                android:id="@+id/tv_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12sp"
@@ -77,7 +78,7 @@
                 android:textStyle="bold" />
 
             <GridView
-                android:id="@+id/grid_shortcut"
+                android:id="@+id/gv_shortcuts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"

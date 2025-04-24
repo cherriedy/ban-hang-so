@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_background"
+        android:background="@color/athens_gray"
         android:orientation="vertical"
         tools:context=".ui.product.view.ProductTabHostFragment">
 
@@ -40,7 +40,7 @@
             app:tabIndicatorColor="?attr/colorPrimary"
             app:tabMode="fixed"
             app:tabSelectedTextColor="?attr/colorPrimary"
-            app:tabTextColor="@color/color_text_title" />
+            app:tabTextColor="@color/raven" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/view_pager"

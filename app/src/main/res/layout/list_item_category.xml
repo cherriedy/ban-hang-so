@@ -16,7 +16,7 @@
         app:cardCornerRadius="8dp"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="true"
-        app:strokeColor="@color/color_card_border"
+        app:strokeColor="@color/alto"
         app:strokeWidth="1dp">
 
         <RelativeLayout
@@ -43,7 +43,7 @@
                 android:maxLines="1"
                 android:text="@{category.name}"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                android:textColor="@color/color_text_title" />
+                android:textColor="@color/raven" />
 
             <TextView
                 android:id="@+id/tv_nof_products"

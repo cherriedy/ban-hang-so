@@ -44,9 +44,9 @@
                 android:backgroundTint="@android:color/transparent"
                 android:padding="16dp"
                 android:text="@string/refuse"
-                android:textColor="@color/color_text_title"
+                android:textColor="@color/raven"
                 app:cornerRadius="8dp"
-                app:strokeColor="@color/color_text_title"
+                app:strokeColor="@color/raven"
                 app:strokeWidth="1dp" />
 
             <View

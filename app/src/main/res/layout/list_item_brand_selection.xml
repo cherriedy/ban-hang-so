@@ -35,7 +35,7 @@
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="0dp"
             android:layout_height="1dp"
-            app:dividerColor="@color/color_text_title"
+            app:dividerColor="@color/raven"
             app:dividerThickness="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
