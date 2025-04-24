@@ -13,7 +13,20 @@
           "package_name": "com.optlab.banhangso"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "274555398023-r31a279piphqi3r8mg3og1gv74327l2f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.optlab.banhangso",
+            "certificate_hash": "dd756488be42ab07ab3dee44beb5b93293a7707c"
+          }
+        },
+        {
+          "client_id": "274555398023-7a5g6l02hhegcgfdde5n3s3ramoo0kpq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBfBjUV3GEaHRJtJXMxoafMy-zfjw7XnLs"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "274555398023-7a5g6l02hhegcgfdde5n3s3ramoo0kpq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
