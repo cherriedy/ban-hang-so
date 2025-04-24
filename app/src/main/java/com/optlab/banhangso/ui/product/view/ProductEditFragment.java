@@ -2,8 +2,6 @@ package com.optlab.banhangso.ui.product.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -301,8 +299,8 @@ public class ProductEditFragment extends Fragment {
      */
     private void updateRadioButtonColors(boolean inStock) {
         Context context = requireContext();
-        int primaryColor = ContextCompat.getColor(context, R.color.color_primary);
-        int titleColor = ContextCompat.getColor(context, R.color.color_text_title);
+        int primaryColor = ContextCompat.getColor(context, R.color.boston_blue);
+        int titleColor = ContextCompat.getColor(context, R.color.raven);
         int warningColor = ContextCompat.getColor(context, R.color.color_warning);
         binding.rbInStock.setTextColor(inStock ? primaryColor : titleColor);
         binding.rbOutStock.setTextColor(inStock ? titleColor : warningColor);

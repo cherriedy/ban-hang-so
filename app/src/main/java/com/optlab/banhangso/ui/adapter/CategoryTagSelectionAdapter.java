@@ -92,8 +92,8 @@ public class CategoryTagSelectionAdapter
 
         private void setupAppearance() {
             Context context = binding.getRoot().getContext();
-            int selectedColor = ContextCompat.getColor(context, R.color.color_primary);
-            int unselectedColor = ContextCompat.getColor(context, R.color.color_text_title);
+            int selectedColor = ContextCompat.getColor(context, R.color.boston_blue);
+            int unselectedColor = ContextCompat.getColor(context, R.color.raven);
             Drawable selectedBg =
                     ContextCompat.getDrawable(context, R.drawable.bg_in_stock_checked);
             Drawable unselectedBg =

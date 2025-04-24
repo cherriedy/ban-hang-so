@@ -29,11 +29,9 @@ public class HomeFragment extends Fragment {
     private QuickShortcutViewModel shortcutViewModel;
     private QuickShortcutAdapter shortcutAdapter;
 
-    public HomeFragment() {
-    }
-
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -55,29 +53,36 @@ public class HomeFragment extends Fragment {
 
     private void initializeShortcutViewModel() {
         shortcutViewModel = new ViewModelProvider(this).get(QuickShortcutViewModel.class);
-        shortcutViewModel.setShortcutList(Arrays.asList(
-                new QuickShortcut("Sản phẩm", R.drawable.ic_product),
-                new QuickShortcut("Đơn hàng", R.drawable.ic_note)
-        ));
+        shortcutViewModel.setShortcutList(
+                Arrays.asList(
+                        new QuickShortcut("Sản phẩm", R.drawable.ic_product),
+                        new QuickShortcut("Đơn hàng", R.drawable.ic_note)));
     }
 
     private void observeShortcutViewModel() {
         shortcutViewModel.getShortcuts().observe(getViewLifecycleOwner(), this::updateShortcuts);
 
-        shortcutViewModel.getClickedPosition().observe(getViewLifecycleOwner(), position -> {
-            Toast.makeText(requireContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
-        });
+        shortcutViewModel
+                .getClickedPosition()
+                .observe(
+                        getViewLifecycleOwner(),
+                        position ->
+                                Toast.makeText(
+                                                requireContext(),
+                                                String.valueOf(position),
+                                                Toast.LENGTH_SHORT)
+                                        .show());
     }
 
     private void updateShortcuts(@Nullable List<QuickShortcut> shortcuts) {
         if (shortcuts == null || shortcuts.isEmpty()) {
-            binding.gridShortcut.setVisibility(View.GONE);
+            binding.gvShortcuts.setVisibility(View.GONE);
             return;
         }
 
         if (shortcutAdapter == null) {
             shortcutAdapter = new QuickShortcutAdapter(shortcutViewModel, shortcuts);
-            binding.gridShortcut.setAdapter(shortcutAdapter);
+            binding.gvShortcuts.setAdapter(shortcutAdapter);
         } else {
             shortcutAdapter.setShortcutList(shortcuts);
             shortcutAdapter.notifyDataSetChanged();
