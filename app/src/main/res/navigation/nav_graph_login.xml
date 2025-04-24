@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_login"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.optlab.banhangso.ui.login.view.LoginFragment"
+        android:label="@string/login"
+        tools:layout="@layout/fragment_login" />
+
+    <fragment
+        android:id="@+id/loginWithPhoneNumberFragment"
+        android:name="com.optlab.banhangso.ui.login.view.LoginWithPhoneNumberFragment"
+        tools:layout="@layout/fragment_login_with_phone_number" />
+</navigation>
