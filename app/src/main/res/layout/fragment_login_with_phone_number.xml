@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.optlab.banhangso.ui.login.viewmodel.LoginWithPhoneNumberViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tv_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/open_sans"
+            android:text="@string/phone_number"
+            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+            android:textFontWeight="800"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:endIconMode="clear_text"
+            app:hintEnabled="false"
+            app:layout_constraintStart_toStartOf="@id/tv_phone"
+            app:layout_constraintTop_toBottomOf="@id/tv_phone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tie_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_phone_number"
+                android:inputType="phone"
+                android:text="@={viewModel.phoneNumber}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/open_sans"
+            android:text="@string/password"
+            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+            android:textFontWeight="800"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/til_phone" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:endIconMode="password_toggle"
+            app:hintEnabled="false"
+            app:layout_constraintStart_toStartOf="@id/tv_password"
+            app:layout_constraintTop_toBottomOf="@id/tv_password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tie_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword"
+                android:text="@={viewModel.plainPassword}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_forget_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/open_sans"
+            android:text="@string/forget_password"
+            android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+            android:textColor="@color/black"
+            android:textFontWeight="800"
+            app:layout_constraintStart_toStartOf="@id/tv_password"
+            app:layout_constraintTop_toBottomOf="@id/til_password" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mb_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/open_sans"
+            android:padding="12dp"
+            android:text="@string/login"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textFontWeight="800"
+            app:cornerRadius="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_forget_password" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
