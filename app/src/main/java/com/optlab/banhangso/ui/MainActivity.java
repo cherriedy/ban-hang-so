@@ -96,6 +96,12 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         binding.bottomNavigation.setVisibility(View.VISIBLE);
                     }
+
+                    if (destinationId == R.id.loginFragment) {
+                        binding.bottomNavigation.setVisibility(View.GONE);
+                    } else {
+                        binding.bottomNavigation.setVisibility(View.VISIBLE);
+                    }
                 });
     }
 

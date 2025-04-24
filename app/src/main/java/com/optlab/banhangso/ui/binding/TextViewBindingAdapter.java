@@ -41,12 +41,12 @@ public class TextViewBindingAdapter {
                             // If the EditText has focus, set the color to primary.
                             focusColor =
                                     ContextCompat.getColor(
-                                            view.getContext(), R.color.color_primary);
+                                            view.getContext(), R.color.boston_blue);
                         } else {
                             // If the EditText does not have focus, set the color to title.
                             focusColor =
                                     ContextCompat.getColor(
-                                            view.getContext(), R.color.color_text_title);
+                                            view.getContext(), R.color.raven);
                         }
                     }
                     view.setTextColor(focusColor);
