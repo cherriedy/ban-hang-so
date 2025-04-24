@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.optlab.banhangso"
-        minSdk = 27
+        minSdk = 34
         //noinspection ExpiredTargetSdkVersion
         targetSdk = 30
         versionCode = 1
@@ -46,6 +46,8 @@ android {
 }
 
 dependencies {
+    // Import the BoM for the Firebase platform
+    implementation(platform(libs.firebase.bom))
 
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -60,6 +62,13 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.firebase.firestore)
     implementation(libs.lottie)
+    implementation(libs.circleimageview)
+    implementation(libs.firebase.auth)
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.com.google.gms.google.services.gradle.plugin)
+    implementation(libs.play.services.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
