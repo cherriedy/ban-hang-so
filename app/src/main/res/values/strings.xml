@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Bán hàng số</string>
+    <string name="app_name">Bán Hàng Số</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -43,10 +43,10 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
 
-    <string name="homepage">Homepage</string>
-    <string name="order">Order</string>
-    <string name="product">Product</string>
-    <string name="stock">Stock</string>
+    <string name="homepage">Quản lý</string>
+    <string name="order">Đơn hàng</string>
+    <string name="product">Sản phẩm</string>
+    <string name="stock">Kho hàng</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="store_name">Ho Dinh Huy</string>
@@ -138,4 +138,25 @@
     <string name="notify_create_category_fail">Tạo danh mục thất bại</string>
     <string name="notify_update_category_successfully">Cập nhật danh mục thành công</string>
     <string name="notify_update_category_fail">Cập nhật danh mục thất bại</string>
+    <string name="sell">Bán hàng</string>
+    <string name="phone_number">Số điện thoại</string>
+    <string name="hint_phone_number">Nhập số điện thoại của bạn</string>
+    <string name="hint_password">Nhập mật khẩu</string>
+    <string name="password">Mật khẩu</string>
+    <string name="forget_password">Quên mật khẩu?</string>
+    <string name="not_an_user_yet">Bạn chưa là thành viên?</string>
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="register">Hãy đăng ký</string>
+    <string name="login">Đăng nhập</string>
+    <string name="you_must_login_to_join">Bạn cần đăng nhập để sử dụng</string>
+    <string name="web_client_id">274555398023–7a5g6l02hhegcgfdde5n3s3ramoo0kpq.apps.googleusercontent.com</string>
+    <string name="regex_vietnam_phone_number">/(\+84|84|0)(3|5|7|8|9|1[2|6|8|9])[0–9]{8}\b/</string>
+    <string name="alert_phone_number_not_null">Số điện thoại không được để trống</string>
+    <string name="alert_phone_number_not_valid">Số điện thoại không hợp lệ</string>
+    <string name="alert_email_not_null">Email không được để trống</string>
+    <string name="alert_email_not_valid">Email không hợp lệ</string>
+    <string name="regex_password">/^(?=.*?[A–Z])(?=.*?[a–z])(?=.*?[0–9])(?=.*?[#?!@$%^&amp;*\-]).{8,}$/</string>
+    <string name="alert_password_not_valid">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ cái và số</string>
+    <string name="alert_password_not_null">Mật khẩu không được để trống</string>
 </resources>
