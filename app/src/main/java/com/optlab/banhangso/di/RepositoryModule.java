@@ -33,11 +33,6 @@ import javax.inject.Singleton;
 @InstallIn(SingletonComponent.class)
 public class RepositoryModule {
     @Provides
-    public static FirebaseFirestore provideFirebaseFirestore() {
-        return FirebaseFirestore.getInstance();
-    }
-
-    @Provides
     @Singleton
     public static BrandRepository provideBrandRepository(FirebaseFirestore firestore) {
         return new BrandRepositoryImpl(firestore);
