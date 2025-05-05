@@ -3,7 +3,7 @@
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
+    <string name="next">Tiếp tục</string>
     <string name="previous">Previous</string>
 
     <string name="lorem_ipsum">
@@ -49,7 +49,7 @@
     <string name="stock">Kho hàng</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="store_name">Ho Dinh Huy</string>
+    <string name="store_name">Tên cửa hàng</string>
 
     <string name="txt_managers">Managers</string>
     <string name="txt_mocked_product_name">Fucking Cute Cat</string>
@@ -151,12 +151,41 @@
     <string name="login">Đăng nhập</string>
     <string name="you_must_login_to_join">Bạn cần đăng nhập để sử dụng</string>
     <string name="web_client_id">274555398023–7a5g6l02hhegcgfdde5n3s3ramoo0kpq.apps.googleusercontent.com</string>
-    <string name="regex_vietnam_phone_number">/(\+84|84|0)(3|5|7|8|9|1[2|6|8|9])[0–9]{8}\b/</string>
+    <string name="regex_vietnam_phone_number">(\\\\+84|84|0)(3|5|7|8|9|1[2689])[0-9]{8}</string>
     <string name="alert_phone_number_not_null">Số điện thoại không được để trống</string>
     <string name="alert_phone_number_not_valid">Số điện thoại không hợp lệ</string>
     <string name="alert_email_not_null">Email không được để trống</string>
     <string name="alert_email_not_valid">Email không hợp lệ</string>
-    <string name="regex_password">/^(?=.*?[A–Z])(?=.*?[a–z])(?=.*?[0–9])(?=.*?[#?!@$%^&amp;*\-]).{8,}$/</string>
+    <string name="regex_password">^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&amp;*-]).{8,}$</string>
     <string name="alert_password_not_valid">Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ cái và số</string>
     <string name="alert_password_not_null">Mật khẩu không được để trống</string>
+    <string name="alert_confirm_password_not_null">Mật khẩu xác nhận không được để trống</string>
+    <string name="alert_confirm_password_not_match">Mật khẩu xác nhận không trùng khớp</string>
+    <string name="alert_otp_not_null">Mã xác thực không được để trống</string>
+    <string name="regex_otp" />
+    <string name="alert_otp_not_valid">Mã xác thực không chính xác</string>
+    <string name="verification">MÃ XÁC THỰC</string>
+    <string name="get_otp_code_with_sms">Bạn sẽ nhận được tin nhắn với mã xác thực đến số điện thoại này</string>
+    <string name="enter_opt_here">Nhập mã xác thực dưới đây</string>
+    <string name="resend_otp">Gửi lại mã</string>
+    <string name="default_countdown">00:00</string>
+    <string name="vietnam_phone_number_prefix">+84</string>
+    <string name="back">trước</string>
+    <string name="type_phone_number">Nhập số điện thoại</string>
+    <string name="agree_with_terms_and_cons">Tôi đồng ý với Điều khoản và Điều kiện sử dụng của ứng dụng BanHangSo</string>
+    <string name="already_have_account">Bạn đã có tài khoản?</string>
+    <string name="type_password">Nhập mật khẩu</string>
+    <string name="confirm_password">Mật khẩu xác nhận</string>
+    <string name="register_account">Đăng ký tài khoản</string>
+    <string name="hint_store_name">Ví dụ: Tạp hóa cô Ba</string>
+    <string name="email">Email</string>
+    <string name="additional_information">Thông tin thêm</string>
+    <string name="hint_email">abc123@example.com</string>
+    <string name="hint_type_email">Nhập email của bạn</string>
+    <string name="or">hoặc</string>
+    <string name="choose_sign_up_method">Chọn phương thức đăng ký tài khoản</string>
+    <string name="signup_with_phone">Đăng ký bằng số điện thoại</string>
+    <string name="signup_with_email">Đăng ký bằng địa chỉ email</string>
+    <string name="type_email">Nhập địa chỉ email</string>
+    <string name="hint_email_address">123@example.com</string>
 </resources>
