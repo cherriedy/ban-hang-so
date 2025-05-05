@@ -15,6 +15,8 @@ import androidx.databinding.BindingAdapter;
 import com.optlab.banhangso.R;
 import com.google.android.material.textfield.TextInputLayout;
 
+import timber.log.Timber;
+
 public class TextViewBindingAdapter {
     /**
      * Sets the text color of a TextView based on the focus state of an EditText.
@@ -36,17 +38,15 @@ public class TextViewBindingAdapter {
                         // If the TextInputLayout has an error, set the color to warning.
                         focusColor =
                                 ContextCompat.getColor(view.getContext(), R.color.color_warning);
+                        Timber.d("hasError: %s", layout.getError());
                     } else {
                         if (editText.hasFocus()) {
                             // If the EditText has focus, set the color to primary.
                             focusColor =
-                                    ContextCompat.getColor(
-                                            view.getContext(), R.color.boston_blue);
+                                    ContextCompat.getColor(view.getContext(), R.color.boston_blue);
                         } else {
                             // If the EditText does not have focus, set the color to title.
-                            focusColor =
-                                    ContextCompat.getColor(
-                                            view.getContext(), R.color.raven);
+                            focusColor = ContextCompat.getColor(view.getContext(), R.color.raven);
                         }
                     }
                     view.setTextColor(focusColor);
@@ -63,7 +63,8 @@ public class TextViewBindingAdapter {
                             CharSequence s, int start, int count, int after) {}
 
                     @Override
-                    public void afterTextChanged(Editable s) {}
+                    public void afterTextChanged(Editable s) {
+                    }
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {

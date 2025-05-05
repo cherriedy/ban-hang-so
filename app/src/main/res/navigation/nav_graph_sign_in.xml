@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_sign_in"
+    app:startDestination="@id/signInPrimaryFragment">
+
+    <action
+        android:id="@+id/action_loginWithPhone_to_verification"
+        app:destination="@id/otpVerificationFragment">
+
+        <argument
+            android:name="phoneNumber"
+            app:argType="string" />
+
+        <argument
+            android:name="verificationId"
+            app:argType="string" />
+    </action>
+
+    <action
+        android:id="@+id/action_signInPrimary_to_signUpPrimary"
+        app:destination="@id/nav_graph_sign_up_with_phone" />
+
+    <fragment
+        android:id="@+id/signInPrimaryFragment"
+        android:name="com.optlab.banhangso.ui.authentication.view.SignInPrimaryFragment"
+        android:label="@string/login"
+        tools:layout="@layout/fragment_sign_in_primary" />
+
+    <fragment
+        android:id="@+id/signInWithPhoneNumberFragment"
+        android:name="com.optlab.banhangso.ui.authentication.view.SignInWithPhoneNumberFragment"
+        tools:layout="@layout/fragment_sign_in_with_phone_number" />
+
+    <fragment
+        android:id="@+id/signInWithEmailFragment"
+        android:name="com.optlab.banhangso.ui.authentication.view.SignInWithEmailFragment"
+        tools:layout="@layout/fragment_sign_in_with_email" />
+
+    <fragment
+        android:id="@+id/otpVerificationFragment"
+        android:name="com.optlab.banhangso.ui.authentication.view.OtpVerificationFragment"
+        tools:layout="@layout/fragment_verification_otp">
+
+        <argument
+            android:name="phoneNumber"
+            app:argType="string" />
+
+        <argument
+            android:name="verificationId"
+            app:argType="string" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/sign_up_method_selection"
+        android:name="com.optlab.banhangso.ui.authentication.view.SignUpMethodSelectionFragment"
+        tools:layout="@layout/fragment_sign_up_method_selection" />
+</navigation>

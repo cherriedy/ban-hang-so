@@ -33,12 +33,32 @@ public class AccountValidator {
         return "";
     }
 
-    public String validatePassword(String password) {
+    public String validatePassword(String password, boolean regexRequired) {
         if (TextUtils.isEmpty(password)) {
             return context.getString(R.string.alert_password_not_null);
         }
-        if (!password.matches(context.getString(R.string.regex_password))) {
+        if (!password.matches(context.getString(R.string.regex_password)) && regexRequired) {
             return context.getString(R.string.alert_password_not_valid);
+        }
+        return "";
+    }
+
+    public String validateConfirmPassword(String password, String confirmPassword) {
+        if (TextUtils.isEmpty(confirmPassword)) {
+            return context.getString(R.string.alert_confirm_password_not_null);
+        }
+        if (!confirmPassword.equals(password)) {
+            return context.getString(R.string.alert_confirm_password_not_match);
+        }
+        return "";
+    }
+
+    public String validateOtp(String otp) {
+        if (TextUtils.isEmpty(otp)) {
+            return context.getString(R.string.alert_otp_not_null);
+        }
+        if (!otp.matches(context.getString(R.string.regex_otp))) {
+            return context.getString(R.string.alert_otp_not_valid);
         }
         return "";
     }

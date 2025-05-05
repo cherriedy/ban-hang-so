@@ -1,4 +1,4 @@
-package com.optlab.banhangso.ui.login.view;
+package com.optlab.banhangso.ui.authentication.view;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -18,16 +18,18 @@ import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 import androidx.credentials.exceptions.NoCredentialException;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavOptions;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.optlab.banhangso.R;
-import com.optlab.banhangso.databinding.FragmentLoginBinding;
+import com.optlab.banhangso.databinding.FragmentSignInPrimaryBinding;
 import com.optlab.banhangso.ui.adapter.LoginViewPagerAdapter;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -37,23 +39,31 @@ import timber.log.Timber;
 import javax.inject.Inject;
 
 @AndroidEntryPoint
-public class LoginFragment extends Fragment {
+public class SignInPrimaryFragment extends Fragment {
     @Inject protected FirebaseAuth firebaseAuth;
 
-    private FragmentLoginBinding binding;
+    private FragmentSignInPrimaryBinding binding;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        navigate(firebaseAuth.getCurrentUser());
+        // Check if the user is already signed in
+        // if (firebaseAuth.getCurrentUser() != null) {
+        //     navigate();
+        // }
     }
 
-    private void navigate(FirebaseUser currentUser) {}
+    private void navigate() {
+        NavOptions popUpSignInFragment =
+                new NavOptions.Builder().setPopUpTo(R.id.signInPrimaryFragment, true).build();
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.homeFragment, null, popUpSignInFragment);
+    }
 
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentLoginBinding.inflate(inflater, container, false);
+        binding = FragmentSignInPrimaryBinding.inflate(inflater, container, false);
         binding.setLifecycleOwner(this);
         binding.setFragment(this);
         return binding.getRoot();
@@ -68,16 +78,17 @@ public class LoginFragment extends Fragment {
     }
 
     private void setupTabLayout() {
-        int[] tabResId = {R.string.phone_number};
+        int[] tabResId = {R.string.phone_number, R.string.email};
 
         new TabLayoutMediator(
-                binding.tlMethod,
-                binding.vpAccount,
-                (tab, position) -> {
-                    if (position >= 0 && position <= tabResId.length) {
-                        tab.setText(tabResId[position]);
-                    }
-                }).attach();
+                        binding.tlMethod,
+                        binding.vpAccount,
+                        (tab, position) -> {
+                            if (position >= 0 && position <= tabResId.length) {
+                                tab.setText(tabResId[position]);
+                            }
+                        })
+                .attach();
     }
 
     private void initViewPager() {
@@ -153,13 +164,12 @@ public class LoginFragment extends Fragment {
                         authResult -> {
                             // Sign-in succeeded, update UI with the signed-in user's information
                             Timber.d("SignInWithCredential: success");
-                            navigate(authResult.getUser());
+                            navigate();
                         })
                 .addOnFailureListener(
                         e -> {
                             // Sign-in failed, display an error message to the user
                             Timber.w(e, "SignInWithCredential: failure");
-                            navigate(null);
                         });
     }
 
@@ -167,9 +177,13 @@ public class LoginFragment extends Fragment {
     @NonNull
     private GetGoogleIdOption getGetGoogleIdOption() {
         return new GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(true) // Filter by authorized accounts if needed
+                .setFilterByAuthorizedAccounts(false) // Filter by authorized accounts if needed
                 .setServerClientId(getString(R.string.web_client_id)) // Set your server client ID
                 .setAutoSelectEnabled(false) // Enable auto-select if desired
                 .build();
+    }
+
+    public void onSignUpButtonClick(@NonNull View view) {
+        Navigation.findNavController(view).navigate(R.id.sign_up_method_selection);
     }
 }
