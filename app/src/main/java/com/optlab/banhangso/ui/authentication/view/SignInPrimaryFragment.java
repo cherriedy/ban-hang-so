@@ -18,6 +18,7 @@ import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 import androidx.credentials.exceptions.NoCredentialException;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -48,12 +49,12 @@ public class SignInPrimaryFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Check if the user is already signed in
-        // if (firebaseAuth.getCurrentUser() != null) {
-        //     navigate();
-        // }
+//        if (firebaseAuth.getCurrentUser() != null) {
+//            navigateToHome();
+//        }
     }
 
-    private void navigate() {
+    private void navigateToHome() {
         NavOptions popUpSignInFragment =
                 new NavOptions.Builder().setPopUpTo(R.id.signInPrimaryFragment, true).build();
         NavHostFragment.findNavController(this)
@@ -164,7 +165,7 @@ public class SignInPrimaryFragment extends Fragment {
                         authResult -> {
                             // Sign-in succeeded, update UI with the signed-in user's information
                             Timber.d("SignInWithCredential: success");
-                            navigate();
+                            navigateToHome();
                         })
                 .addOnFailureListener(
                         e -> {
@@ -184,6 +185,7 @@ public class SignInPrimaryFragment extends Fragment {
     }
 
     public void onSignUpButtonClick(@NonNull View view) {
-        Navigation.findNavController(view).navigate(R.id.sign_up_method_selection);
+        NavDirections action = SignInPrimaryFragmentDirections.actionSignInToSignUp();
+        Navigation.findNavController(view).navigate(action);
     }
 }

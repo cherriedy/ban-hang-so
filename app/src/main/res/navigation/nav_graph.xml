@@ -18,8 +18,7 @@
     </fragment>
 
     <include app:graph="@navigation/nav_graph_sign_in" />
-    <include app:graph="@navigation/nav_graph_sign_up_with_phone" />
-    <include app:graph="@navigation/nav_graph_sign_up_with_email" />
+    <include app:graph="@navigation/nav_graph_sign_up" />
     <include app:graph="@navigation/nav_graph_product_tabs" />
     <include app:graph="@navigation/nav_graph_product_edit" />
     <include app:graph="@navigation/nav_graph_brand_edit" />

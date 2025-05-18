@@ -1,42 +1,44 @@
 package com.optlab.banhangso.ui.authentication.view;
 
-import android.app.Dialog;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentSignUpMethodSelectionBinding;
 
-public class SignUpMethodSelectionFragment extends DialogFragment {
-    @NonNull
+public class SignUpMethodSelectionFragment extends BottomSheetDialogFragment {
+    private FragmentSignUpMethodSelectionBinding binding;
+    private NavController navController;
+
+    @Nullable
     @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        Dialog dialog = new Dialog(requireContext());
-        dialog.setCancelable(true);
-        dialog.setCanceledOnTouchOutside(true);
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
+        binding = FragmentSignUpMethodSelectionBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-        FragmentSignUpMethodSelectionBinding binding =
-                FragmentSignUpMethodSelectionBinding.inflate(getLayoutInflater(), null, false);
-        dialog.setContentView(binding.getRoot());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = NavHostFragment.findNavController(requireParentFragment());
 
-        binding.mbSignupEmail.setOnClickListener(
-                v -> {
-                    NavHostFragment.findNavController(requireParentFragment())
-                            .navigate(R.id.nav_graph_sign_up_with_email);
-                    dialog.dismiss();
-                });
+        binding.llSignInWithEmail.setOnClickListener(
+                v -> navController.navigate(R.id.signUpWithEmailFragment));
 
-        binding.mbSignupPhone.setOnClickListener(
-                v -> {
-                    NavHostFragment.findNavController(requireParentFragment())
-                            .navigate(R.id.nav_graph_sign_up_with_phone);
-                    dialog.dismiss();
-                });
+        binding.llSignInWithPhone.setOnClickListener(
+                v -> navController.navigate(R.id.signUpWithPhoneNumberFragment));
 
-        return dialog;
+        binding.tvSignIn.setOnClickListener(v -> navController.popBackStack());
     }
 }

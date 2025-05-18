@@ -10,21 +10,20 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.optlab.banhangso.NavGraphSignUpWithPhoneDirections;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentSignUpWithPhoneNumberBinding;
-import com.optlab.banhangso.ui.authentication.viewmodel.SignUpWithPhoneNumberViewModel;
+import com.optlab.banhangso.ui.authentication.state.AuthValidationState;
+import com.optlab.banhangso.ui.authentication.viewmodel.SignUpViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class SignUpWithPhoneNumberFragment extends Fragment {
     private FragmentSignUpWithPhoneNumberBinding binding;
-    private SignUpWithPhoneNumberViewModel viewModel;
+    private SignUpViewModel viewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,10 +33,10 @@ public class SignUpWithPhoneNumberFragment extends Fragment {
 
     private void initViewModel() {
         NavBackStackEntry navBackStackEntry =
-                NavHostFragment.findNavController(this)
-                        .getBackStackEntry(R.id.nav_graph_sign_up_with_phone);
-        viewModel =
-                new ViewModelProvider(navBackStackEntry).get(SignUpWithPhoneNumberViewModel.class);
+                NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_sign_up);
+        viewModel = new ViewModelProvider(navBackStackEntry).get(SignUpViewModel.class);
+
+        viewModel.setAuthValidationState(new AuthValidationState(AuthValidationState.SIGNUP_PHONE));
     }
 
     @Override
@@ -51,8 +50,7 @@ public class SignUpWithPhoneNumberFragment extends Fragment {
     }
 
     public void onNextButtonClick(@NonNull View view) {
-        NavDirections action = NavGraphSignUpWithPhoneDirections.actionSignUpToSetUpPassword();
-        Navigation.findNavController(view).navigate(action);
+        Navigation.findNavController(view).navigate(R.id.setupPasswordFragment);
     }
 
     public void onSignInTextClick(@NonNull View view) {

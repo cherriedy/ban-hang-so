@@ -3,37 +3,72 @@ package com.optlab.banhangso.data.model;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
+import com.google.firebase.firestore.ServerTimestamp;
+import com.google.gson.annotations.SerializedName;
 import com.optlab.banhangso.BR;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import java.util.Date;
 
-@AllArgsConstructor
-@NoArgsConstructor
+/**
+ * @noinspection LombokGetterMayBeUsed, LombokSetterMayBeUsed
+ */
+@IgnoreExtraProperties
 public class User extends BaseObservable {
-    private String id;
-    private String name;
+    @Exclude private String id;
+
+    @SerializedName("contactName")
+    private String contactName;
+
+    @SerializedName("phone")
     private String phone;
+
+    @SerializedName("email")
     private String email;
+
+    @SerializedName("imageUrl")
     private String imageUrl;
 
-    @Bindable
-    public String getId() {
-        return id;
-    }
+    @SerializedName("rid")
+    private String role;
 
-    public void setId(String id) {
+    @ServerTimestamp
+    @SerializedName("createdAt")
+    private Date createdAt;
+
+    @ServerTimestamp
+    @SerializedName("updatedAt")
+    private Date updatedAt;
+
+    public User() {}
+
+    public User(
+            String id,
+            String contactName,
+            String phone,
+            String email,
+            String imageUrl,
+            String role,
+            Date createdAt,
+            Date updatedAt) {
         this.id = id;
-        notifyPropertyChanged(BR.id);
+        this.contactName = contactName;
+        this.phone = phone;
+        this.email = email;
+        this.imageUrl = imageUrl;
+        this.role = role;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     @Bindable
-    public String getName() {
-        return name;
+    public String getContactName() {
+        return contactName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
         notifyPropertyChanged(BR.name);
     }
 
@@ -57,13 +92,43 @@ public class User extends BaseObservable {
         notifyPropertyChanged(BR.email);
     }
 
-    @Bindable
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-        notifyPropertyChanged(BR.imageUrl);
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

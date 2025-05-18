@@ -2,7 +2,6 @@ package com.optlab.banhangso.ui;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,14 +38,6 @@ public class MainActivity extends AppCompatActivity {
                             systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
                     return insets;
                 });
-
-        initNavController();
-        // initBottomNavigation();
-        // addOnDestinationChangedListener();
-    }
-
-    private void initBottomNavigation() {
-        NavigationUI.setupWithNavController(binding.bottomNavigation, navController);
     }
 
     private void initNavController() {
@@ -80,29 +71,6 @@ public class MainActivity extends AppCompatActivity {
             Timber.e("NavHostFragment is null");
             finish();
         }
-    }
-
-    /**
-     * Adds a listener to the NavController to handle destination changes and show/hide the bottom
-     * navigation bar accordingly.
-     */
-    private void addOnDestinationChangedListener() {
-        navController.addOnDestinationChangedListener(
-                (navController, navDestination, bundle) -> {
-                    int destinationId = navDestination.getId();
-                    if (destinationId == R.id.productEditFragment
-                            || destinationId == R.id.productTabHostFragment) {
-                        binding.bottomNavigation.setVisibility(View.GONE);
-                    } else {
-                        binding.bottomNavigation.setVisibility(View.VISIBLE);
-                    }
-
-                    // if (destinationId == R.id.loginFragment) {
-                    //     binding.bottomNavigation.setVisibility(View.GONE);
-                    // } else {
-                    //     binding.bottomNavigation.setVisibility(View.VISIBLE);
-                    // }
-                });
     }
 
     @Override

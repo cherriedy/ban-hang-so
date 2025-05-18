@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.optlab.banhangso.ui.authentication.viewmodel.SignUpWithPhoneNumberViewModel" />
+            type="com.optlab.banhangso.ui.authentication.viewmodel.SignUpViewModel" />
 
         <variable
             name="fragment"
@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/open_sans"
                     android:onClick="@{fragment::onSignInTextClick}"
-                    android:text="@string/login"
+                    android:text="@string/sign_in"
                     android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                     android:textColor="?attr/colorPrimary"
                     android:textFontWeight="800" />

@@ -14,14 +14,15 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentSignUpWithEmailBinding;
-import com.optlab.banhangso.ui.authentication.viewmodel.SignUpWithEmailViewModel;
+import com.optlab.banhangso.ui.authentication.state.AuthValidationState;
+import com.optlab.banhangso.ui.authentication.viewmodel.SignUpViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class SignUpWithEmailFragment extends Fragment {
     private FragmentSignUpWithEmailBinding binding;
-    private SignUpWithEmailViewModel viewModel;
+    private SignUpViewModel viewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,9 +32,10 @@ public class SignUpWithEmailFragment extends Fragment {
 
     private void initViewModel() {
         NavBackStackEntry navBackStackEntry =
-                NavHostFragment.findNavController(this)
-                        .getBackStackEntry(R.id.nav_graph_sign_up_with_email);
-        viewModel = new ViewModelProvider(navBackStackEntry).get(SignUpWithEmailViewModel.class);
+                NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_sign_up);
+        viewModel = new ViewModelProvider(navBackStackEntry).get(SignUpViewModel.class);
+
+        viewModel.setAuthValidationState(new AuthValidationState(AuthValidationState.SIGNUP_EMAIL));
     }
 
     @Override
@@ -51,5 +53,13 @@ public class SignUpWithEmailFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    public void onNextButtonClick(@NonNull View view) {
+        NavHostFragment.findNavController(this).navigate(R.id.setupPasswordFragment);
+    }
+
+    public void onSignInTextClick(@NonNull View view) {
+        NavHostFragment.findNavController(this).navigateUp();
     }
 }

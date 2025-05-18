@@ -10,21 +10,20 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.optlab.banhangso.NavGraphSignUpWithPhoneDirections;
 import com.optlab.banhangso.R;
+import com.optlab.banhangso.data.model.AuthData;
 import com.optlab.banhangso.databinding.FragmentSetupPasswordBinding;
-import com.optlab.banhangso.ui.authentication.viewmodel.SignUpWithPhoneNumberViewModel;
+import com.optlab.banhangso.ui.authentication.viewmodel.SignUpViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class SetupPasswordFragment extends Fragment {
     private FragmentSetupPasswordBinding binding;
-    private SignUpWithPhoneNumberViewModel viewModel;
+    private SignUpViewModel viewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,10 +33,8 @@ public class SetupPasswordFragment extends Fragment {
 
     private void initViewModel() {
         NavBackStackEntry navBackStackEntry =
-                NavHostFragment.findNavController(this)
-                        .getBackStackEntry(R.id.nav_graph_sign_up_with_phone);
-        viewModel =
-                new ViewModelProvider(navBackStackEntry).get(SignUpWithPhoneNumberViewModel.class);
+                NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_sign_up);
+        viewModel = new ViewModelProvider(navBackStackEntry).get(SignUpViewModel.class);
     }
 
     @Override
@@ -53,11 +50,28 @@ public class SetupPasswordFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        showAuthData();
+    }
+
+    private void showAuthData() {
+        AuthData authData = viewModel.getAuthData().getValue();
+        NavBackStackEntry previousBackStackEntry =
+                NavHostFragment.findNavController(this).getPreviousBackStackEntry();
+
+        // Check if authData and previousBackStackEntry are not null
+        if (authData == null || previousBackStackEntry == null) return;
+
+        // Get the destination ID of the previous back stack entry
+        int previousDestinationId = previousBackStackEntry.getDestination().getId();
+        // Set the text based on the previous destination ID
+        if (previousDestinationId == R.id.signUpWithEmailFragment)
+            binding.tvPhoneNumberOrEmail.setText(authData.getEmail());
+        else if (previousDestinationId == R.id.signUpWithPhoneNumberFragment) {
+            binding.tvPhoneNumberOrEmail.setText(authData.getPhoneNumber());
+        }
     }
 
     public void onNextButtonClick(@NonNull View view) {
-        NavDirections action =
-                NavGraphSignUpWithPhoneDirections.actionSetUpPasswordToRegisterAccount();
-        Navigation.findNavController(view).navigate(action);
+        Navigation.findNavController(view).navigate(R.id.registerAccountFragment);
     }
 }

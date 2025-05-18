@@ -6,6 +6,10 @@
     app:startDestination="@id/signInPrimaryFragment">
 
     <action
+        android:id="@+id/action_signIn_to_signUp"
+        app:destination="@id/nav_graph_sign_up" />
+
+    <action
         android:id="@+id/action_loginWithPhone_to_verification"
         app:destination="@id/otpVerificationFragment">
 
@@ -20,12 +24,11 @@
 
     <action
         android:id="@+id/action_signInPrimary_to_signUpPrimary"
-        app:destination="@id/nav_graph_sign_up_with_phone" />
+        app:destination="@id/nav_graph_sign_up" />
 
     <fragment
         android:id="@+id/signInPrimaryFragment"
         android:name="com.optlab.banhangso.ui.authentication.view.SignInPrimaryFragment"
-        android:label="@string/login"
         tools:layout="@layout/fragment_sign_in_primary" />
 
     <fragment
@@ -51,9 +54,4 @@
             android:name="verificationId"
             app:argType="string" />
     </fragment>
-
-    <dialog
-        android:id="@+id/sign_up_method_selection"
-        android:name="com.optlab.banhangso.ui.authentication.view.SignUpMethodSelectionFragment"
-        tools:layout="@layout/fragment_sign_up_method_selection" />
 </navigation>

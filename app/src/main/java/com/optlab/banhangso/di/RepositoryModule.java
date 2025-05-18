@@ -2,17 +2,21 @@ package com.optlab.banhangso.di;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.data.repository.BrandRepository;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.ProductRepository;
 import com.optlab.banhangso.data.repository.SortOptionRepository;
+import com.optlab.banhangso.data.repository.UserRepository;
 import com.optlab.banhangso.data.repository.impl.BrandRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.BrandSortOptionRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.CategoryRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.CategorySortOptionRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.ProductRepositoryImpl;
 import com.optlab.banhangso.data.repository.impl.ProductSortOptionRepositoryImpl;
+import com.optlab.banhangso.data.repository.impl.UserRepositoryImpl;
 import com.optlab.banhangso.data.repository.qualifier.BrandSortSelection;
 import com.optlab.banhangso.data.repository.qualifier.CategorySortSelection;
 import com.optlab.banhangso.data.repository.qualifier.ProductSortSelection;
@@ -76,5 +80,11 @@ public class RepositoryModule {
     public static UserPreferenceManager provideUserPreferenceManager(
             @ApplicationContext Context context) {
         return new UserPreferenceManager(context);
+    }
+
+    @Provides
+    @Singleton
+    public static UserRepository provideUserRepository(@NonNull FirebaseFirestore firestore) {
+        return new UserRepositoryImpl(firestore);
     }
 }

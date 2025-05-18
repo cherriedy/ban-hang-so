@@ -6,38 +6,145 @@
 
     </data>
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/spacing_large">
+        android:layout_margin="@dimen/spacing_mxlarge"
+        app:cardCornerRadius="15dp"
+        app:strokeWidth="0dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/open_sans"
-            android:layout_marginBottom="@dimen/spacing_medium"
-            android:text="@string/choose_sign_up_method"
-            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-            android:textColor="@color/black"
-            android:textFontWeight="800" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/mb_signup_phone"
+        <LinearLayout
+            android:id="@+id/ll_sign_in_with_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_small"
-            android:text="@string/signup_with_phone"
-            android:textFontWeight="800"
-            app:cornerRadius="@dimen/spacing_medium" />
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/spacing_middle">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/mb_signup_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/signup_with_email"
-            android:textFontWeight="800"
-            app:cornerRadius="@dimen/spacing_medium" />
-    </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_mlarge"
+                android:paddingTop="@dimen/spacing_large"
+                android:paddingEnd="@dimen/spacing_mlarge"
+                android:paddingBottom="@dimen/spacing_large">
+
+
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="@dimen/spacing_large"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_color_phone"
+                    app:civ_border_color="@color/white"
+                    app:civ_border_width="1dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/open_sans"
+                        android:maxLines="1"
+                        android:padding="8dp"
+                        android:text="@string/signup_with_phone"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textColor="@color/black"
+                        android:textFontWeight="800" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/open_sans"
+                        android:maxLines="1"
+                        android:padding="8dp"
+                        android:text="Mã xác thực sẽ được gửi tới số điện thoại"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                        android:textFontWeight="800" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_sign_in_with_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_mlarge"
+                android:paddingTop="@dimen/spacing_large"
+                android:paddingEnd="@dimen/spacing_mlarge"
+                android:paddingBottom="@dimen/spacing_large">
+
+                <ImageView
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="@dimen/spacing_large"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_color_email" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/open_sans"
+                        android:maxLines="1"
+                        android:padding="8dp"
+                        android:text="@string/signup_with_email"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textColor="@color/black"
+                        android:textFontWeight="800" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/open_sans"
+                        android:maxLines="1"
+                        android:padding="8dp"
+                        android:text="Nhanh chóng, không cần mã xác thực"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                        android:textFontWeight="800" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/athens_gray"
+                android:gravity="center"
+                app:cardCornerRadius="15dp">
+
+                <TextView
+                    android:id="@+id/tv_sign_in"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sign_in"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="?attr/colorPrimary" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
 </layout>

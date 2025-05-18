@@ -107,7 +107,7 @@
             android:fontFamily="@font/open_sans"
             android:onClick="@{fragment::onLoginButtonClick}"
             android:padding="12dp"
-            android:text="@string/login"
+            android:text="@string/sign_in"
             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
             android:textFontWeight="800"
             app:cornerRadius="4dp"

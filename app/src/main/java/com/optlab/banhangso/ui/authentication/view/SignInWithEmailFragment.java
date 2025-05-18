@@ -12,6 +12,7 @@ import androidx.databinding.Observable;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -20,10 +21,10 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.data.model.AuthData;
 import com.optlab.banhangso.databinding.FragmentSignInWithEmailBinding;
-import com.optlab.banhangso.ui.common.view.AnimationLoadingDialog;
 import com.optlab.banhangso.ui.authentication.common.FirebaseAuthProvider;
 import com.optlab.banhangso.ui.authentication.state.AuthValidationState;
 import com.optlab.banhangso.ui.authentication.viewmodel.SignInWithEmailViewModel;
+import com.optlab.banhangso.ui.common.view.AnimationLoadingDialog;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -52,6 +53,8 @@ public class SignInWithEmailFragment extends Fragment {
     }
 
     private void initViewModel() {
+        NavBackStackEntry navBackStackEntry =
+                NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_sign_in);
         viewModel = new ViewModelProvider(this).get(SignInWithEmailViewModel.class);
     }
 

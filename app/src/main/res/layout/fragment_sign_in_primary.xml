@@ -114,7 +114,7 @@
                 android:layout_marginStart="@dimen/spacing_middle"
                 android:layout_marginEnd="@dimen/spacing_middle"
                 android:layout_weight="0"
-                android:text="@string/or" />
+                android:text="@string/or_sign_in_with" />
 
             <View
                 android:layout_width="0dp"
