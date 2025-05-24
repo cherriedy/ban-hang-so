@@ -1,6 +1,6 @@
 package com.optlab.banhangso.data.repository;
 
-import com.optlab.banhangso.data.model.SortOption;
+import com.optlab.banhangso.data.model.app.SortOption;
 
 import java.util.List;
 

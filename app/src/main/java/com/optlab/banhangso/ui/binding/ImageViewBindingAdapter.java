@@ -16,4 +16,9 @@ public class ImageViewBindingAdapter {
                 .error(R.drawable.ic_error)
                 .into(imageView);
     }
+
+    @BindingAdapter("imageResource")
+    public static void setImageResource(ImageView imageView, String imageUrl) {
+        Glide.with(imageView.getContext()).load(imageUrl).error(R.drawable.ic_error).into(imageView);
+    }
 }

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
-        <import type="com.optlab.banhangso.data.model.SortOption" />
+        <import type="com.optlab.banhangso.data.model.app.SortOption" />
 
         <variable
             name="option"
-            type="com.optlab.banhangso.data.model.SortOption" />
+            type="com.optlab.banhangso.data.model.app.SortOption" />
 
     </data>
 

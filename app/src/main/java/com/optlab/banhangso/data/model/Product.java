@@ -10,6 +10,7 @@ import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.PropertyName;
 import com.google.firebase.firestore.ServerTimestamp;
+import com.optlab.banhangso.data.model.app.SortOption;
 
 import java.util.Date;
 

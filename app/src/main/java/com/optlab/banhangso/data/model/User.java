@@ -1,5 +1,8 @@
 package com.optlab.banhangso.data.model;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
@@ -8,15 +11,15 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
 import com.google.gson.annotations.SerializedName;
 import com.optlab.banhangso.BR;
+import com.optlab.banhangso.R;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
-/**
- * @noinspection LombokGetterMayBeUsed, LombokSetterMayBeUsed
- */
 @IgnoreExtraProperties
 public class User extends BaseObservable {
-    @Exclude private String id;
+    private String id;
 
     @SerializedName("contactName")
     private String contactName;
@@ -30,8 +33,8 @@ public class User extends BaseObservable {
     @SerializedName("imageUrl")
     private String imageUrl;
 
-    @SerializedName("rid")
-    private String role;
+    @SerializedName("stores")
+    private List<Store> stores;
 
     @ServerTimestamp
     @SerializedName("createdAt")
@@ -43,23 +46,8 @@ public class User extends BaseObservable {
 
     public User() {}
 
-    public User(
-            String id,
-            String contactName,
-            String phone,
-            String email,
-            String imageUrl,
-            String role,
-            Date createdAt,
-            Date updatedAt) {
-        this.id = id;
-        this.contactName = contactName;
-        this.phone = phone;
-        this.email = email;
-        this.imageUrl = imageUrl;
-        this.role = role;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public void setStores(List<Store> stores) {
+        this.stores = stores;
     }
 
     @Bindable
@@ -92,6 +80,7 @@ public class User extends BaseObservable {
         notifyPropertyChanged(BR.email);
     }
 
+    @Exclude
     public String getId() {
         return id;
     }
@@ -108,12 +97,54 @@ public class User extends BaseObservable {
         this.imageUrl = imageUrl;
     }
 
-    public String getRole() {
-        return role;
+    public List<Store> getStores() {
+        return stores;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    @NonNull
+    @Override
+    public String toString() {
+        return "User{"
+                + "id='"
+                + id
+                + '\''
+                + ", contactName='"
+                + contactName
+                + '\''
+                + ", phone='"
+                + phone
+                + '\''
+                + ", email='"
+                + email
+                + '\''
+                + ", imageUrl='"
+                + imageUrl
+                + '\''
+                + ", stores="
+                + stores
+                + ", createdAt="
+                + createdAt
+                + ", updatedAt="
+                + updatedAt
+                + '}';
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj instanceof User that) {
+            if (this == that) {
+                return true;
+            }
+            return Objects.equals(this.id, that.id)
+                    && Objects.equals(this.contactName, that.contactName)
+                    && Objects.equals(this.phone, that.phone)
+                    && Objects.equals(this.email, that.email)
+                    && Objects.equals(this.imageUrl, that.imageUrl)
+                    && Objects.equals(this.stores, that.stores)
+                    && Objects.equals(this.createdAt, that.createdAt)
+                    && Objects.equals(this.updatedAt, that.updatedAt);
+        }
+        return false;
     }
 
     public Date getCreatedAt() {
@@ -130,5 +161,100 @@ public class User extends BaseObservable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, contactName, phone, email, imageUrl, stores, createdAt, updatedAt);
+    }
+
+    @IgnoreExtraProperties
+    public static class Store extends BaseObservable {
+        public static final String ADMIN = "ADMIN";
+        public static final String STAFF = "STAFF";
+
+        @SerializedName("id")
+        private String id;
+
+        @SerializedName("rid")
+        private String role = ADMIN;
+
+        public Store() {}
+
+        public Store(String id) {
+            this.id = id;
+        }
+
+        public Store(String id, String role) {
+            this.id = id;
+            this.role = role;
+        }
+
+        @Bindable
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+            notifyPropertyChanged(BR.id);
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        @Exclude
+        @StringRes
+        public int getDisplayRoleResId() {
+            return role.equals(ADMIN) ? R.string.role_store_owner : R.string.role_store_staff;
+        }
+    }
+
+    public static class Builder {
+        private String contactName;
+        private String phone;
+        private String email;
+        private String imageUrl;
+        private List<Store> stores;
+
+        public Builder setContactName(String contactName) {
+            this.contactName = contactName;
+            return this;
+        }
+
+        public Builder setPhone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+            return this;
+        }
+
+        public Builder setStores(List<Store> stores) {
+            this.stores = stores;
+            return this;
+        }
+
+        public User build() {
+            User user = new User();
+            user.contactName = contactName;
+            user.phone = phone;
+            user.email = email;
+            user.imageUrl = imageUrl;
+            user.stores = stores;
+            return user;
+        }
     }
 }

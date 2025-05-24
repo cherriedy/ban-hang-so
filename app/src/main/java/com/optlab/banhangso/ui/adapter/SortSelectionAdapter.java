@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.optlab.banhangso.data.model.SortOption;
+import com.optlab.banhangso.data.model.app.SortOption;
 import com.optlab.banhangso.databinding.ListItemSortSelectionBinding;
 import com.optlab.banhangso.ui.listener.OnSortSelectListener;
 

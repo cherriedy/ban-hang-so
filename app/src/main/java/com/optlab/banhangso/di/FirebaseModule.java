@@ -1,33 +1,34 @@
 package com.optlab.banhangso.di;
 
-import android.content.Context;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.optlab.banhangso.ui.authentication.common.FirebaseAuthProvider;
+import com.optlab.banhangso.data.remote.service.FirebaseStoreService;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
-import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 
 @Module
 @InstallIn(SingletonComponent.class)
 public class FirebaseModule {
     @Provides
+    @Singleton
     public static FirebaseFirestore provideFirebaseFirestore() {
         return FirebaseFirestore.getInstance();
     }
 
     @Provides
+    @Singleton
     public static FirebaseAuth provideFirebaseAuth() {
         return FirebaseAuth.getInstance();
     }
 
     @Provides
-    public static FirebaseAuthProvider provideFirebaseAuthProvider(
-            @ApplicationContext Context context, FirebaseAuth firebaseAuth) {
-        return new FirebaseAuthProvider(context, firebaseAuth);
+    @Singleton
+    public static FirebaseStoreService provideFirebaseStoreService(FirebaseFirestore firestore) {
+        return new FirebaseStoreService(firestore);
     }
 }

@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.optlab.banhangso.R;
 
-public class BrandValidator {
+public final class BrandValidator {
     private final Context context;
 
     public BrandValidator(Context context) {

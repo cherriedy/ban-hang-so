@@ -1,120 +1,157 @@
 package com.optlab.banhangso.ui.authentication.state;
 
-import android.text.TextUtils;
-
-import lombok.NonNull;
+import androidx.annotation.NonNull;
 
 /**
- * @noinspection LombokGetterMayBeUsed, LombokSetterMayBeUsed
+ * Represents the validation state for authentication forms (sign in, sign up, forget password).
+ * Holds error messages for each field and provides a flag indicating if the form is valid. Used by
+ * the ViewModel to emit validation errors to the UI.
  */
 public class AuthValidationState {
-    public static final String LOGIN_PHONE = "LOGIN_PHONE";
-    public static final String LOGIN_EMAIL = "LOGIN_EMAIL";
-    public static final String SIGNUP_PHONE = "SIGNUP_PHONE";
-    public static final String SIGNUP_EMAIL = "SIGNUP_EMAIL";
-    public static final String FORGET_PASSWORD_PHONE = "FORGET_PASSWORD_PHONE";
+    public static final String SIGN_IN_EMAIL = "SIGN_IN_EMAIL";
+    public static final String SIGN_UP_EMAIL = "SIGN_UP_EMAIL";
     public static final String FORGET_PASSWORD_EMAIL = "FORGET_PASSWORD_EMAIL";
 
-    @NonNull private final String type;
-
+    private String type;
     private String emailError;
-    private String phoneError;
     private String passwordError;
     private String confirmPasswordError;
-    private String otpError;
-    private boolean hasNoError;
+    private boolean hasNoError = false;
 
+    /**
+     * Constructor initializing the validation state for a given type.
+     *
+     * @param type The type of authentication form (sign in, sign up, forget password)
+     */
     public AuthValidationState(@NonNull String type) {
         this.type = type;
+        updateHasNoError();
     }
 
-    public void validateFields() {
-        switch (type) {
-            case LOGIN_PHONE ->
-                    hasNoError = TextUtils.isEmpty(phoneError) && TextUtils.isEmpty(passwordError);
-            case LOGIN_EMAIL ->
-                    hasNoError = TextUtils.isEmpty(emailError) && TextUtils.isEmpty(passwordError);
-            case FORGET_PASSWORD_PHONE ->
-                    hasNoError = TextUtils.isEmpty(phoneError) && TextUtils.isEmpty(otpError);
-            case FORGET_PASSWORD_EMAIL ->
-                    hasNoError = TextUtils.isEmpty(emailError) && TextUtils.isEmpty(otpError);
-            case SIGNUP_PHONE ->
-                    hasNoError =
-                            TextUtils.isEmpty(phoneError)
-                                    && TextUtils.isEmpty(passwordError)
-                                    && TextUtils.isEmpty(confirmPasswordError);
-            case SIGNUP_EMAIL ->
-                    hasNoError =
-                            TextUtils.isEmpty(emailError)
-                                    && TextUtils.isEmpty(passwordError)
-                                    && TextUtils.isEmpty(confirmPasswordError);
-            default -> throw new IllegalStateException("Invalid type: " + type);
-        }
+    /**
+     * Validates the fields based on the type and updates the hasNoError flag.
+     *
+     * @param type The type of authentication form
+     */
+    public void validateFields(String type) {
+        this.type = type;
+        updateHasNoError();
     }
 
-    public @NonNull String getType() {
+    /**
+     * @return The type of authentication form
+     */
+    @NonNull
+    public String getType() {
         return type;
     }
 
+    /**
+     * @return Error message for email field, or null if no error
+     */
     public String getEmailError() {
         return emailError;
     }
 
+    /**
+     * Sets the error message for the email field and updates the hasNoError flag.
+     *
+     * @param emailError Error message or null
+     */
     public void setEmailError(String emailError) {
         this.emailError = emailError;
-        areFieldsValid();
+        updateHasNoError();
     }
 
-    private void areFieldsValid() {
-        hasNoError =
-                TextUtils.isEmpty(emailError)
-                        && TextUtils.isEmpty(phoneError)
-                        && TextUtils.isEmpty(passwordError)
-                        && TextUtils.isEmpty(confirmPasswordError)
-                        && TextUtils.isEmpty(otpError);
-    }
-
-    public String getPhoneError() {
-        return phoneError;
-    }
-
-    public void setPhoneError(String phoneError) {
-        this.phoneError = phoneError;
-        areFieldsValid();
-    }
-
+    /**
+     * @return Error message for password field, or null if no error
+     */
     public String getPasswordError() {
         return passwordError;
     }
 
+    /**
+     * Sets the error message for the password field and updates the hasNoError flag.
+     *
+     * @param passwordError Error message or null
+     */
     public void setPasswordError(String passwordError) {
         this.passwordError = passwordError;
-        areFieldsValid();
+        updateHasNoError();
     }
 
-    public String getConfirmPasswordError() {
-        return confirmPasswordError;
-    }
+    /**
+     * @return Error message for confirm password field, or null if no error
+     */
+  public String getConfirmPasswordError() {
+      return confirmPasswordError;
+  }
 
+    /**
+     * Sets the error message for the confirm password field and updates the hasNoError flag.
+     *
+     * @param confirmPasswordError Error message or null
+     */
     public void setConfirmPasswordError(String confirmPasswordError) {
         this.confirmPasswordError = confirmPasswordError;
-        areFieldsValid();
+        updateHasNoError();
     }
 
-    public String getOtpError() {
-        return otpError;
+    /**
+     * @return true if there are no errors in any relevant field for the current type
+   */
+  public boolean hasNoError() {
+      return hasNoError;
+  }
+
+    /**
+     * Updates the hasNoError flag based on current error fields and type.
+     */
+    private void updateHasNoError() {
+        switch (type) {
+            case SIGN_IN_EMAIL:
+            case FORGET_PASSWORD_EMAIL:
+                hasNoError = isEmpty(emailError) && isEmpty(passwordError);
+                break;
+            case SIGN_UP_EMAIL:
+                hasNoError = isEmpty(emailError) && isEmpty(passwordError) && isEmpty(confirmPasswordError);
+                break;
+            default:
+                hasNoError = false;
+        }
     }
 
-    public void setOtpError(String otpError) {
-        this.otpError = otpError;
-        areFieldsValid();
+    /**
+     * Utility method to check if a string is null or empty after trimming.
+     *
+     * @param s The string to check
+     * @return true if null or empty
+     */
+    private boolean isEmpty(String s) {
+        if (s == null) {
+            return false;
+        }
+        return s.trim().isEmpty();
     }
 
-    public void setHasNoError(boolean hasNoError) {
-        this.hasNoError = hasNoError;
-    }
-
-    public boolean isHasNoError() {
-        return hasNoError;
-    }
+    @NonNull
+    @Override
+    public String toString() {
+        return "AuthValidationState{"
+                + "type='"
+                + type
+                + '\''
+                + ", emailError='"
+                + emailError
+                + '\''
+                + ", passwordError='"
+                + passwordError
+                + '\''
+                + ", confirmPasswordError='"
+                + confirmPasswordError
+                + '\''
+                + ", hasNoError="
+        + hasNoError
+        + '}';
+  }
 }

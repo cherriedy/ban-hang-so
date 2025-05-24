@@ -208,4 +208,34 @@
     <string name="remember_me">Ghi nhớ tài khoản</string>
     <string name="sign_up">Đăng ký</string>
     <string name="sign_in_with_google">Đăng nhập bằng Google</string>
+    <string name="or_sign_up_with">Hoặc đăng nhập với</string>
+    <string name="error_auth_data_null">Dữ liệu xác thực bị thiếu. Vui lòng thử lại.</string>
+    <string name="error_email_password_null">Email hoặc mật khẩu không được để trống.</string>
+    <string name="error_sign_in_failed">Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập của bạn và thử lại.</string>
+    <string name="contact_information">Thông tin liên lạc</string>
+    <string name="store_information">Thông tin cửa hàng</string>
+    <string name="store_owner">Chủ quán</string>
+    <string name="store_code">Mã cửa hàng</string>
+    <string name="description">Mô tả</string>
+    <string name="hint_store_description">Ví dụ: Chuyên bán hoa quả,…</string>
+    <string name="alert_store_name_not_null">Tên cửa hàng không được để trống</string>
+    <string name="alert_store_name_min_chars">Tên cửa hàng phải có ít nhất 3 ký tự</string>
+    <string name="alert_store_name_max_chars">Tên cửa hàng không được quá 50 ký tự</string>
+    <string name="alert_store_description_not_null">Mô tả cửa hàng không được để trống</string>
+    <string name="alert_store_description_min_chars">Mô tả cửa hàng phải có ít nhất 3 ký tự</string>
+    <string name="alert_store_description_max_chars">Mô tả cửa hàng không được quá 100 ký tự</string>
+    <string name="alert_contact_name_not_null">Tên liên hệ không được để trống</string>
+    <string name="alert_contact_name_min_chars">Tên liên hệ phải có ít nhất 3 ký tự</string>
+    <string name="alert_contact_name_max_chars">Tên liên hệ không được quá 50 ký tự</string>
+    <string name="alert_store_code_not_null">Mã cửa hàng không được để trống</string>
+    <string name="alert_agree_terms_and_conditions">Bạn cần đồng ý với Điều khoản và Điều kiện sử dụng của ứng dụng</string>
+    <string name="error_email_already_in_use">Địa chỉ email này đã được sử dụng.</string>
+    <string name="error_invalid_email">Vui lòng nhập địa chỉ email hợp lệ.</string>
+    <string name="error_network">Lỗi mạng. Vui lòng kiểm tra kết nối của bạn.</string>
+    <string name="error_too_many_requests">Quá nhiều yêu cầu. Vui lòng thử lại sau.</string>
+    <string name="error_operation_not_allowed">Chức năng đăng ký hiện đang bị vô hiệu hóa. Vui lòng liên hệ bộ phận hỗ trợ.</string>
+    <string name="error_auth_failed">Xác thực thất bại. Vui lòng thử lại.</string>
+    <string name="role_store_owner">Chủ sở hữu cửa hàng</string>
+    <string name="role_store_staff">Nhân viên cửa hàng</string>
 </resources>
+

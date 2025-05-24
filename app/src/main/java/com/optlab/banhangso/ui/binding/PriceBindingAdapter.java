@@ -11,14 +11,14 @@ import androidx.databinding.InverseBindingAdapter;
 import androidx.databinding.InverseBindingListener;
 
 import com.optlab.banhangso.R;
-import com.optlab.banhangso.util.PriceFormatUtils;
+import com.optlab.banhangso.util.PriceFormatter;
 
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 
 public class PriceBindingAdapter {
 
-    private static final DecimalFormat DECIMAL_FORMAT = PriceFormatUtils.getInstance();
+    private static final DecimalFormat DECIMAL_FORMAT = PriceFormatter.getInstance();
 
     @BindingAdapter("price")
     public static void setPrice(@NonNull EditText view, double value) {

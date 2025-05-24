@@ -19,14 +19,27 @@ public class UserRepositoryImpl implements UserRepository {
         this.firestore = firestore;
     }
 
+    /**
+     * Create a new user in the Firestore database
+     *
+     * <p>This method takes a unique identifier (UUID) and a User object, and attempts to create a
+     * new user in the Firestore database. If the operation is successful, it invokes the callback
+     * with true. If it fails, it invokes the callback with false.
+     *
+     * @param uuid the unique identifier for the user
+     * @param user the User object to be created
+     * @param callback a callback to handle success or failure
+     */
     @Override
-    public void createUser(@NonNull User user, @NonNull Consumer<Boolean> callback) {
+    public void createUser(
+            @NonNull String uuid, @NonNull User user, @NonNull Consumer<Boolean> callback) {
         firestore
                 .collection(COLLECTION_PATH)
-                .add(user)
+                .document(uuid)
+                .set(user)
                 .addOnSuccessListener(
-                        docRef -> {
-                            Timber.d("User created with ID: %s", docRef.getId());
+                        aVoid -> {
+                            Timber.d("User created with ID: %s", uuid);
                             callback.accept(true);
                         })
                 .addOnFailureListener(

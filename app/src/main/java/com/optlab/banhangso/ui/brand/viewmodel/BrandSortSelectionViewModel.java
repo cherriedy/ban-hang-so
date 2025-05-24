@@ -5,10 +5,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Brand;
-import com.optlab.banhangso.data.model.SortOption;
+import com.optlab.banhangso.data.model.app.SortOption;
+import com.optlab.banhangso.data.reference.UserPreferenceManager;
+import com.optlab.banhangso.data.repository.PreferenceRepository;
 import com.optlab.banhangso.data.repository.SortOptionRepository;
 import com.optlab.banhangso.data.repository.qualifier.BrandSortSelection;
-import com.optlab.banhangso.util.UserPreferenceManager;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 @HiltViewModel
 public class BrandSortSelectionViewModel extends ViewModel {
     private final SortOptionRepository repository;
-    private final UserPreferenceManager userPreferenceManager;
+    private final PreferenceRepository preferenceRepository;
     private final MutableLiveData<List<SortOption<Brand.SortField>>> sortOptions =
             new MutableLiveData<>();
     private final MutableLiveData<Integer> sortOptionIndex = new MutableLiveData<>();
@@ -30,9 +31,9 @@ public class BrandSortSelectionViewModel extends ViewModel {
     @Inject
     public BrandSortSelectionViewModel(
             @NonNull @BrandSortSelection SortOptionRepository repository,
-            @NonNull UserPreferenceManager userPreferenceManager) {
+            @NonNull PreferenceRepository preferenceRepository) {
         this.repository = repository;
-        this.userPreferenceManager = userPreferenceManager;
+        this.preferenceRepository = preferenceRepository;
 
         // Set the sort options based on the repository
         sortOptions.setValue(repository.getSortOptions());
@@ -40,8 +41,7 @@ public class BrandSortSelectionViewModel extends ViewModel {
         // Set the sort option index based on the user's preference
         sortOptionIndex.setValue(
                 repository.getPosition(
-                        userPreferenceManager.getSortOption(
-                                UserPreferenceManager.KEY_BRAND_SORT_OPTION)));
+                        preferenceRepository.getSortOption(UserPreferenceManager.KEY_BRAND_SORT_OPTION)));
     }
 
     public MutableLiveData<List<SortOption<Brand.SortField>>> getSortOptions() {
@@ -49,8 +49,7 @@ public class BrandSortSelectionViewModel extends ViewModel {
     }
 
     public void setSortOptionIndex(SortOption<Brand.SortField> sortOption) {
-        userPreferenceManager.setSortOption(
-                sortOption, UserPreferenceManager.KEY_BRAND_SORT_OPTION);
+        preferenceRepository.setSortOption(sortOption, UserPreferenceManager.KEY_BRAND_SORT_OPTION);
         sortOptionIndex.setValue(repository.getPosition(sortOption));
     }
 

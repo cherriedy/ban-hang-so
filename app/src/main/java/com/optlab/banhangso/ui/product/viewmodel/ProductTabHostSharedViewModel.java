@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel;
 import com.optlab.banhangso.data.model.Brand;
 import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.Product;
-import com.optlab.banhangso.data.model.SortOption;
-
-import dagger.hilt.android.lifecycle.HiltViewModel;
+import com.optlab.banhangso.data.model.app.SortOption;
 
 import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class ProductTabHostSharedViewModel extends ViewModel {

@@ -19,5 +19,6 @@ public interface ProductRepository {
     void updateProduct(Product updatedProduct, Consumer<Boolean> callback);
 
     void deleteProduct(Product deletedProduct, Consumer<Boolean> callback);
+
     void createProduct(Product creatingProduct, Consumer<Boolean> callback);
 }

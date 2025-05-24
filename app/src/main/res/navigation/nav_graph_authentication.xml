@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_authentication"
+    app:startDestination="@id/authenticationFragment">
+
+    <fragment
+        android:id="@+id/authenticationFragment"
+        android:name="com.optlab.banhangso.ui.authentication.view.AuthenticationFragment"
+        tools:layout="@layout/fragment_authentication">
+
+        <action
+            android:id="@+id/action_authentication_to_signUp"
+            app:destination="@id/signUpFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.optlab.banhangso.ui.authentication.view.SignUpFragment"
+        tools:layout="@layout/fragment_sign_up">
+
+        <argument
+            android:name="email"
+            app:argType="string" />
+
+        <argument
+            android:name="password"
+            app:argType="string" />
+    </fragment>
+
+</navigation>

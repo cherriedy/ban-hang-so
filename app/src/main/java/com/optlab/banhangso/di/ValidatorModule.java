@@ -2,7 +2,7 @@ package com.optlab.banhangso.di;
 
 import android.content.Context;
 
-import com.optlab.banhangso.util.validator.AccountValidator;
+import com.optlab.banhangso.util.validator.AuthValidator;
 import com.optlab.banhangso.util.validator.BrandValidator;
 import com.optlab.banhangso.util.validator.CategoryValidator;
 import com.optlab.banhangso.util.validator.ProductValidator;
@@ -32,7 +32,7 @@ public class ValidatorModule {
     }
 
     @Provides
-    public static AccountValidator provideAccountValidator(@ApplicationContext Context context) {
-        return new AccountValidator(context);
+    public static AuthValidator provideAccountValidator(@ApplicationContext Context context) {
+        return new AuthValidator(context);
     }
 }

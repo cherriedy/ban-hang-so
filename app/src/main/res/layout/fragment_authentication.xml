@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="fragment"
+            type="com.optlab.banhangso.ui.authentication.view.AuthenticationFragment" />
+
+        <variable
+            name="viewModel"
+            type="com.optlab.banhangso.ui.authentication.viewmodel.AuthenticationViewModel" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fitsSystemWindows="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/statusBar"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/bg_top_dashboard" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.75"
+                android:background="@drawable/bg_top_dashboard"
+                android:gravity="start|bottom"
+                android:orientation="vertical"
+                android:padding="25dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:text="Chào mừng đến với"
+                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:text="Bán Hàng Số!"
+                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_middle"
+                    android:fontFamily="@font/open_sans"
+                    android:text="Đăng nhập/Đăng ký để tận hưởng trải nghiệm quản lý tốt nhất."
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                    android:textColor="@color/white"
+                    android:textFontWeight="800" />
+
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_mxlarge">
+
+                    <RadioGroup
+                        android:id="@+id/rg_methods"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_marginBottom="@dimen/spacing_mlarge"
+                        android:background="@drawable/bg_radio_group_rounded_20dp"
+                        android:checkedButton="@id/mrb_sign_in"
+                        android:gravity="center"
+                        android:onCheckedChanged="@{fragment::onUserRoleSelected}"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/mrb_sign_in"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/spacing_medium"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_sign_in_radio"
+                            android:button="@android:color/transparent"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center"
+                            android:text="@string/sign_in"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                            android:textColor="?attr/colorPrimary"
+                            android:textFontWeight="800" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/mrb_sign_up"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_sign_up_radio"
+                            android:button="@android:color/transparent"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center"
+                            android:text="@string/sign_up"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                            android:textColor="@color/million_gray"
+                            android:textFontWeight="800" />
+                    </RadioGroup>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/spacing_medium"
+                                    android:fontFamily="@font/open_sans"
+                                    android:text="@string/email"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                                    android:textFontWeight="800"
+                                    app:syncFocusColor="@{tieEmail}" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/spacing_medium"
+                                    android:text="@string/asterisk"
+                                    android:textColor="?attr/colorError" />
+                            </LinearLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:endIconMode="clear_text"
+                                app:error="@{viewModel.validationState.emailError}"
+                                app:hintEnabled="false"
+                                app:startIconDrawable="@drawable/ic_start_email"
+                                app:startIconTint="?attr/colorPrimary">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/tie_email"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:fontFamily="@font/open_sans"
+                                    android:hint="@string/hint_email"
+                                    android:inputType="textEmailAddress"
+                                    android:text="@={viewModel.authData.email}"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textFontWeight="800" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_large"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/spacing_medium"
+                                    android:fontFamily="@font/open_sans"
+                                    android:text="@string/password"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                                    android:textFontWeight="800"
+                                    app:syncFocusColor="@{tiePassword}" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/spacing_medium"
+                                    android:text="@string/asterisk"
+                                    android:textColor="?attr/colorError" />
+
+                            </LinearLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:endIconMode="password_toggle"
+                                app:error="@{viewModel.validationState.passwordError}"
+                                app:hintEnabled="false"
+                                app:startIconDrawable="@drawable/ic_start_password"
+                                app:startIconTint="?attr/colorPrimary">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/tie_password"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/open_sans"
+                                    android:hint="@string/hint_password"
+                                    android:inputType="textPassword"
+                                    android:text="@={viewModel.authData.password}"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textFontWeight="800" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/ll_confirm_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_large"
+                            android:orientation="vertical"
+                            android:visibility="@{viewModel.isSignIn ? View.GONE : View.VISIBLE}">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="@dimen/spacing_medium"
+                                    android:fontFamily="@font/open_sans"
+                                    android:text="@string/confirm_password"
+                                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                                    android:textFontWeight="800"
+                                    app:syncFocusColor="@{tieConfirmPassword}" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/spacing_medium"
+                                    android:text="@string/asterisk"
+                                    android:textColor="?attr/colorError" />
+                            </LinearLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:endIconMode="password_toggle"
+                                app:error="@{viewModel.validationState.confirmPasswordError}"
+                                app:hintEnabled="false"
+                                app:startIconDrawable="@drawable/ic_start_password"
+                                app:startIconTint="?attr/colorPrimary">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/tie_confirm_password"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/open_sans"
+                                    android:hint="@string/hint_password"
+                                    android:inputType="textPassword"
+                                    android:text="@={viewModel.authData.confirmPassword}"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                                    android:textFontWeight="800" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_options"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:gravity="center_vertical"
+                        android:visibility="@{viewModel.isSignIn ? View.VISIBLE : View.GONE}">
+
+                        <CheckBox
+                            android:id="@+id/cb_remember_me"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:checked="true"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@string/remember_me"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textFontWeight="800" />
+
+
+                        <TextView
+                            android:id="@+id/tv_forget_password"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@string/forget_password"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textColor="?attr/colorPrimary"
+                            android:textFontWeight="800"
+                            tools:ignore="RelativeOverlap" />
+
+                    </RelativeLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mb_authenticate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:enabled="@{viewModel.validationState.hasNoError}"
+                        android:fontFamily="@font/open_sans"
+                        android:padding="15dp"
+                        android:text="@{viewModel.isSignIn ? @string/sign_in : @string/sign_up}"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textFontWeight="800"
+                        app:cornerRadius="@dimen/spacing_medium" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_mxlarge"
+                        android:layout_marginBottom="@dimen/spacing_mxlarge"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="?attr/colorControlHighlight" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_large"
+                            android:layout_marginEnd="@dimen/spacing_large"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@string/or_sign_up_with"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textFontWeight="800" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            android:background="?attr/colorControlHighlight" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/mb_sign_in_with_google"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="@android:color/transparent"
+                            android:fontFamily="@font/open_sans"
+                            android:onClick="@{fragment::onGoogleSignInButtonClick}"
+                            android:padding="15dp"
+                            android:text="@string/sign_in_with_google"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textColor="@color/mariner"
+                            android:textFontWeight="800"
+                            app:cornerRadius="@dimen/spacing_medium"
+                            app:icon="@drawable/googleg_standard_color_18"
+                            app:iconGravity="start"
+                            app:iconTint="?attr/colorPrimary"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:strokeColor="@color/mariner"
+                            app:strokeWidth="1dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>
+

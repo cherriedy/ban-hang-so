@@ -9,20 +9,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.optlab.banhangso.data.model.Category;
 import com.optlab.banhangso.data.model.Product;
-import com.optlab.banhangso.data.model.SortOption;
+import com.optlab.banhangso.data.model.app.SortOption;
 import com.optlab.banhangso.data.repository.CategoryRepository;
 import com.optlab.banhangso.data.repository.ProductRepository;
-import com.optlab.banhangso.util.SortFieldUtils;
-
-import dagger.hilt.android.lifecycle.HiltViewModel;
-
-import timber.log.Timber;
+import com.optlab.banhangso.util.SortingUtils;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import timber.log.Timber;
 
 @HiltViewModel
 public class ProductListViewModel extends ViewModel {
@@ -93,7 +92,7 @@ public class ProductListViewModel extends ViewModel {
         SortOption<Product.SortField> selectedSortOption = sortOption.getValue();
         if (selectedSortOption != null) {
             updatedList.sort(
-                    SortFieldUtils.getComparator(
+                    SortingUtils.getComparator(
                             selectedSortOption.getSortField(), selectedSortOption.isAscending()));
         }
 

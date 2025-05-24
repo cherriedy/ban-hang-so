@@ -9,11 +9,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.BindingAdapter;
 
-import com.optlab.banhangso.R;
 import com.google.android.material.textfield.TextInputLayout;
+import com.optlab.banhangso.R;
 
 import timber.log.Timber;
 
@@ -59,8 +60,8 @@ public class TextViewBindingAdapter {
         editText.addTextChangedListener(
                 new TextWatcher() {
                     @Override
-                    public void beforeTextChanged(
-                            CharSequence s, int start, int count, int after) {}
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
 
                     @Override
                     public void afterTextChanged(Editable s) {
@@ -120,5 +121,13 @@ public class TextViewBindingAdapter {
         } else {
             view.setPaintFlags(view.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
         }
+    }
+
+    @BindingAdapter("stringResource")
+    public static void setStringRes(TextView view, @StringRes int stringResource) {
+        if (stringResource == 0) {
+            view.setText("");
+        }
+        view.setText(view.getContext().getString(stringResource));
     }
 }

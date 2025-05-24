@@ -8,17 +8,17 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.data.model.Category;
-import com.optlab.banhangso.data.model.SortOption;
+import com.optlab.banhangso.data.model.app.SortOption;
 import com.optlab.banhangso.data.repository.CategoryRepository;
-import com.optlab.banhangso.util.SortFieldUtils;
-
-import dagger.hilt.android.lifecycle.HiltViewModel;
+import com.optlab.banhangso.util.SortingUtils;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class CategoryListViewModel extends ViewModel {
@@ -58,7 +58,7 @@ public class CategoryListViewModel extends ViewModel {
         SortOption<Category.SortField> selectedSortOption = sortOption.getValue();
         if (selectedSortOption != null) {
             updatedList.sort(
-                    SortFieldUtils.getComparator(
+                    SortingUtils.getComparator(
                             selectedSortOption.getSortField(), selectedSortOption.isAscending()));
         }
 

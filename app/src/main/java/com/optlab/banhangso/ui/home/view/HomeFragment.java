@@ -4,64 +4,82 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentHomeBinding;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class HomeFragment extends Fragment {
-    private FragmentHomeBinding binding;
+  @Inject
+  protected FirebaseAuth firebaseAuth;
+  private FragmentHomeBinding binding;
 
-    public static class QuickShortcutClickHandler {
-        public void onSellShortcutClick(View view) {}
+  @Override
+  public View onCreateView(
+          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    binding = FragmentHomeBinding.inflate(inflater, container, false);
+    return binding.getRoot();
+  }
 
-        public void onOrderShortcutClick(View view) {}
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    NavController navController = NavHostFragment.findNavController(this);
+    NavigationUI.setupWithNavController(binding.bnv, navController);
+    binding.ivLogOut.setOnClickListener(
+            v -> {
+              if (firebaseAuth.getCurrentUser() != null) {
+                firebaseAuth.signOut();
+              }
+              NavController controller = NavHostFragment.findNavController(this);
+              controller.navigate(
+                      R.id.action_to_authentication,
+                      null,
+                      new NavOptions.Builder().setPopUpTo(R.id.homeFragment, true).build());
+            });
+  }
 
-        public void onCustomerShortcutClick(View view) {}
+  public void onDestroyView() {
+    super.onDestroyView();
+    binding = null;
+  }
 
-        public void onReportShortcutClick(View view) {}
-
-        public void onWarehouseShortcutClick(View view) {}
-
-        public void onMoreShortcutClick(View view) {}
-
-        public void onEmployeeShortcutClick(View view) {}
-
-        public void onStoreShortcutClick(View view) {}
+  public static class QuickShortcutClickHandler {
+    public void onSellShortcutClick(View view) {
     }
 
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+    public void onOrderShortcutClick(View view) {
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        NavController navController = NavHostFragment.findNavController(this);
-        NavigationUI.setupWithNavController(binding.bnv, navController);
-        configureStatusBar();
+    public void onCustomerShortcutClick(View view) {
     }
 
-    private void configureStatusBar() {
-        Window window = requireActivity().getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.boston_blue));
+    public void onReportShortcutClick(View view) {
     }
 
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onWarehouseShortcutClick(View view) {
     }
+
+    public void onMoreShortcutClick(View view) {
+    }
+
+    public void onEmployeeShortcutClick(View view) {
+    }
+
+    public void onStoreShortcutClick(View view) {
+    }
+  }
 }

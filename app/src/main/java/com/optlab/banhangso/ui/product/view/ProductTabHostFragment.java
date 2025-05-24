@@ -20,18 +20,19 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.optlab.banhangso.R;
+import com.optlab.banhangso.data.repository.PreferenceRepository;
 import com.optlab.banhangso.databinding.FragmentProductTabHostBinding;
 import com.optlab.banhangso.ui.adapter.ProductViewPagerAdapter;
 import com.optlab.banhangso.ui.product.viewmodel.ProductTabHostSharedViewModel;
-import com.optlab.banhangso.util.UserPreferenceManager;
-
-import dagger.hilt.android.AndroidEntryPoint;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 @AndroidEntryPoint
 public class ProductTabHostFragment extends Fragment {
-    @Inject protected UserPreferenceManager userPreferenceManager;
+    @Inject
+    protected PreferenceRepository preferenceRepository;
 
     private FragmentProductTabHostBinding binding;
     private ProductTabHostSharedViewModel viewModel;
@@ -202,7 +203,7 @@ public class ProductTabHostFragment extends Fragment {
 
     private boolean onProductMenuItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_toggle_layout) {
-            userPreferenceManager.setLayoutMode(viewModel.toggleProductLayout());
+            //            userPreferenceRepository.setLayoutMode(viewModel.toggleProductLayout());
         } else {
             navController.navigate(R.id.productSortSelectionFragment);
         }

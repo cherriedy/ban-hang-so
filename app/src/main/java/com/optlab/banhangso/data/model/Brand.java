@@ -8,6 +8,7 @@ import androidx.databinding.library.baseAdapters.BR;
 
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.ServerTimestamp;
+import com.optlab.banhangso.data.model.app.SortOption;
 
 import java.util.Date;
 

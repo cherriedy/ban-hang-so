@@ -8,7 +8,7 @@
 
         <import
             alias="Formatter"
-            type="com.optlab.banhangso.util.PriceFormatUtils" />
+            type="com.optlab.banhangso.util.PriceFormatter" />
 
         <variable
             name="product"
