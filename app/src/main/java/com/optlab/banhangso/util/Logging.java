@@ -10,18 +10,21 @@ import com.optlab.banhangso.BuildConfig;
 import timber.log.Timber;
 
 public class Logging {
-
     public static void configTimber() {
+        // Plant the appropriate Timber tree based on build type
         if (BuildConfig.DEBUG) {
             Timber.plant(new DebugTreeWithTag());
+            // Add a debug log to verify that debug tree is being planted
+            Log.d("Logging", "Debug tree planted. DEBUG=" + BuildConfig.DEBUG);
         } else {
             Timber.plant(new ReleaseTree());
+            Log.d("Logging", "Release tree planted");
         }
     }
 
     private static class DebugTreeWithTag extends Timber.DebugTree {
         @Override
-        protected String createStackElementTag(StackTraceElement element) {
+        protected String createStackElementTag(@NonNull StackTraceElement element) {
             return super.createStackElementTag(element) + ": " + element.getLineNumber();
         }
     }
@@ -33,7 +36,9 @@ public class Logging {
         @Override
         @SuppressWarnings("deprecation")
         protected boolean isLoggable(int priority) {
-            return priority != Log.VERBOSE && priority != Log.DEBUG && priority != Log.INFO;
+            // Allow all logs (including DEBUG) in release builds to troubleshoot the issue
+            // Once fixed, you can restore the original filtering logic
+            return true; // priority != Log.VERBOSE && priority != Log.DEBUG && priority != Log.INFO;
         }
 
         @Override

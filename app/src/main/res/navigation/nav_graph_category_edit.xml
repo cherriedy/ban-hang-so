@@ -7,7 +7,7 @@
 
     <dialog
         android:id="@+id/categoryEditFragment"
-        android:name="com.optlab.banhangso.ui.category.view.CategoryEditFragment"
+        android:name="com.optlab.banhangso.ui.main.category.view.CategoryEditFragment"
         android:label="BrandEditFragment"
         tools:layout="@layout/fragment_category_edit">
 

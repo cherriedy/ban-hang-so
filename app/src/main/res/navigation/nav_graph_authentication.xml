@@ -7,8 +7,12 @@
 
     <fragment
         android:id="@+id/authenticationFragment"
-        android:name="com.optlab.banhangso.ui.authentication.view.AuthenticationFragment"
+        android:name="com.optlab.banhangso.ui.main.authentication.view.AuthenticationFragment"
         tools:layout="@layout/fragment_authentication">
+
+        <action
+            android:id="@+id/action_authentication_to_selectStore"
+            app:destination="@id/selectStoreFragment" />
 
         <action
             android:id="@+id/action_authentication_to_signUp"
@@ -16,8 +20,13 @@
     </fragment>
 
     <fragment
+        android:id="@+id/selectStoreFragment"
+        android:name="com.optlab.banhangso.ui.main.store.SelectStoreFragment"
+        tools:layout="@layout/fragment_select_store" />
+
+    <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.optlab.banhangso.ui.authentication.view.SignUpFragment"
+        android:name="com.optlab.banhangso.ui.main.authentication.view.SignUpFragment"
         tools:layout="@layout/fragment_sign_up">
 
         <argument

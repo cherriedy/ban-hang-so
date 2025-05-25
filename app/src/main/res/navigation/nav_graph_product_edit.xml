@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/productEditFragment"
-        android:name="com.optlab.banhangso.ui.product.view.ProductEditFragment"
+        android:name="com.optlab.banhangso.ui.main.product.view.ProductEditFragment"
         tools:layout="@layout/fragment_product_list">
 
         <argument
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/brandSelectionFragment"
-        android:name="com.optlab.banhangso.ui.brand.view.BrandSelectionFragment"
+        android:name="com.optlab.banhangso.ui.main.brand.view.BrandSelectionFragment"
         android:label="fragment_option_selection"
         tools:layout="@layout/fragment_option_selection">
 
@@ -41,7 +41,7 @@
 
     <fragment
         android:id="@+id/categorySelectionFragment"
-        android:name="com.optlab.banhangso.ui.category.view.CategorySelectionFragment"
+        android:name="com.optlab.banhangso.ui.main.category.view.CategorySelectionFragment"
         android:label="CategorySelectionFragment"
         tools:layout="@layout/fragment_option_selection">
 

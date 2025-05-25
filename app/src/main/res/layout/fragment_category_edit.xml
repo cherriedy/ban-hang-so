@@ -7,11 +7,11 @@
 
         <variable
             name="viewModel"
-            type="com.optlab.banhangso.ui.category.viewmodel.CategoryEditViewModel" />
+            type="com.optlab.banhangso.ui.main.category.viewmodel.CategoryEditViewModel" />
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.category.view.CategoryEditFragment" />
+            type="com.optlab.banhangso.ui.main.category.view.CategoryEditFragment" />
 
         <variable
             name="isCreateMode"

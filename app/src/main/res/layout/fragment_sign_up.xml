@@ -9,11 +9,11 @@
 
         <variable
             name="viewModel"
-            type="com.optlab.banhangso.ui.authentication.viewmodel.SignUpViewModel" />
+            type="com.optlab.banhangso.ui.main.authentication.viewmodel.SignUpViewModel" />
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.authentication.view.SignUpFragment" />
+            type="com.optlab.banhangso.ui.main.authentication.view.SignUpFragment" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -372,7 +372,7 @@
                             android:fontFamily="@font/open_sans"
                             android:inputType="text"
                             android:maxLines="1"
-                            android:text="@={viewModel.userStore.id}"
+                            android:text="@={viewModel.nestedStore.id}"
                             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                             android:textColor="@color/raven"
                             android:textFontWeight="800" />

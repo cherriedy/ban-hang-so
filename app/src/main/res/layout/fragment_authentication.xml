@@ -9,11 +9,11 @@
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.authentication.view.AuthenticationFragment" />
+            type="com.optlab.banhangso.ui.main.authentication.view.AuthenticationFragment" />
 
         <variable
             name="viewModel"
-            type="com.optlab.banhangso.ui.authentication.viewmodel.AuthenticationViewModel" />
+            type="com.optlab.banhangso.ui.main.authentication.viewmodel.AuthenticationViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -26,12 +26,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <View
-                android:id="@+id/statusBar"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="@drawable/bg_top_dashboard" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -334,6 +328,7 @@
                         android:enabled="@{viewModel.validationState.hasNoError}"
                         android:fontFamily="@font/open_sans"
                         android:padding="15dp"
+                        android:onClick="@{viewModel::onAuthenticateButtonClick}"
                         android:text="@{viewModel.isSignIn ? @string/sign_in : @string/sign_up}"
                         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                         android:textFontWeight="800"
@@ -382,7 +377,6 @@
                             android:layout_weight="1"
                             android:backgroundTint="@android:color/transparent"
                             android:fontFamily="@font/open_sans"
-                            android:onClick="@{fragment::onGoogleSignInButtonClick}"
                             android:padding="15dp"
                             android:text="@string/sign_in_with_google"
                             android:textAppearance="@style/TextAppearance.Material3.TitleMedium"

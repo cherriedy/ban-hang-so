@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.common.view.AnimationLoadingDialog">
+    tools:context=".ui.base.view.AnimationLoadingDialog">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/loading_animation_view"

@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.optlab.banhangso.R;
-import com.optlab.banhangso.data.model.Brand;
-import com.optlab.banhangso.data.model.Category;
+import com.optlab.banhangso.domain.model.Brand;
+import com.optlab.banhangso.domain.model.Category;
 
 import javax.inject.Inject;
 

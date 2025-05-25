@@ -5,9 +5,19 @@
 
     <data>
 
+        <import type="com.optlab.banhangso.R" />
+
         <variable
             name="handler"
-            type="com.optlab.banhangso.ui.home.view.HomeFragment.QuickShortcutClickHandler" />
+            type="com.optlab.banhangso.ui.main.home.HomeFragment" />
+
+        <variable
+            name="prefRepo"
+            type="com.optlab.banhangso.domain.repository.PreferenceRepository" />
+
+        <variable
+            name="fragment"
+            type="com.optlab.banhangso.ui.main.home.HomeFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,7 +44,8 @@
                 android:id="@+id/civ_avatar"
                 android:layout_width="@dimen/spacing_xxlarge"
                 android:layout_height="@dimen/spacing_xxlarge"
-                android:src="@drawable/cat"
+                app:defaultImageResource="@{R.drawable.ic_default_user}"
+                app:imageResource="@{prefRepo.authenticatedUserAvatar}"
                 app:civ_border_color="@color/white"
                 app:civ_border_width="1dp" />
 
@@ -48,7 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/open_sans"
-                    android:text="@string/welcome"
+                    android:text="@{@string/welcome + ` ` + prefRepo.authenticatedContactName}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="@color/white"
                     android:textFontWeight="800"
@@ -67,7 +78,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/open_sans"
-                        android:text="@string/store_name"
+                        android:text="@{prefRepo.selectedStoreName}"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                         android:textColor="@color/white"
                         android:textFontWeight="800"
@@ -93,6 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/spacing_middle"
                     android:background="@android:color/transparent"
+                    android:importantForAccessibility="no"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_setting"
                     app:layout_constraintBottom_toBottomOf="@id/iv_log_out"
@@ -105,6 +117,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
+                    android:importantForAccessibility="no"
+                    android:onClick="@{fragment::onLogOutImageViewClick}"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_log_out"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -159,7 +173,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_small"
                         android:fontFamily="@font/open_sans"
-                        android:text="@{@string/today + `: ` + `30/4/2025`}"
                         android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                         android:textFontWeight="800"
                         app:layout_constraintStart_toStartOf="@id/tv_overview"

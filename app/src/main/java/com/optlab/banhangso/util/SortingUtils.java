@@ -1,8 +1,8 @@
 package com.optlab.banhangso.util;
 
-import com.optlab.banhangso.data.model.Brand;
-import com.optlab.banhangso.data.model.Category;
-import com.optlab.banhangso.data.model.Product;
+import com.optlab.banhangso.domain.model.Brand;
+import com.optlab.banhangso.domain.model.Category;
+import com.optlab.banhangso.domain.model.Product;
 
 import java.util.Comparator;
 

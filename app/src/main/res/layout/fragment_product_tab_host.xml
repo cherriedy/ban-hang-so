@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:background="@color/athens_gray"
         android:orientation="vertical"
-        tools:context=".ui.product.view.ProductTabHostFragment">
+        tools:context=".ui.main.product.view.ProductTabHostFragment">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/tool_bar"

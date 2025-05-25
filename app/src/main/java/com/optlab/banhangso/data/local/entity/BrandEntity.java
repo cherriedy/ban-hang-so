@@ -9,8 +9,8 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.google.android.gms.common.internal.Objects;
-import com.optlab.banhangso.data.local.entity.converter.DateConverter;
-import com.optlab.banhangso.data.model.Brand;
+import com.optlab.banhangso.data.local.converter.DateConverter;
+import com.optlab.banhangso.domain.model.Brand;
 
 import java.util.Date;
 

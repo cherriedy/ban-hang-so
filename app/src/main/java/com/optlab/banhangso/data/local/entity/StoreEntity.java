@@ -8,8 +8,8 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.optlab.banhangso.data.local.entity.converter.DateConverter;
-import com.optlab.banhangso.data.model.Store;
+import com.optlab.banhangso.data.local.converter.DateConverter;
+import com.optlab.banhangso.domain.model.Store;
 
 import java.util.Date;
 import java.util.Objects;

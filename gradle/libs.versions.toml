@@ -7,8 +7,6 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
-mapstruct = "1.5.5.Final"
-mapstructProcessor = "1.5.5.Final"
 material = "1.12.0"
 constraintlayout = "2.2.0"
 navigationFragment = "2.8.5"
@@ -35,6 +33,7 @@ lifecycleLivedataKtx = "2.8.7"
 lifecycleViewmodelKtx = "2.8.7"
 rxandroid = "3.0.2"
 rxjava = "3.1.10"
+firebaseFunctions = "21.2.1"
 
 [libraries]
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
@@ -44,8 +43,6 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstructProcessor" }
-mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
@@ -73,6 +70,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 rxandroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = "rxandroid" }
 rxjava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxjava" }
 androidx-room-rxjava3 = { group = "androidx.room", name = "room-rxjava3", version.ref = "roomVersion" }
+firebase-functions = { group = "com.google.firebase", name = "firebase-functions", version.ref = "firebaseFunctions" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

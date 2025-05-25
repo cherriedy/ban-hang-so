@@ -67,6 +67,7 @@ dependencies {
 
     // Room & KSP
     implementation(libs.room.runtime)
+    implementation(libs.firebase.functions)
     ksp(libs.androidx.room.compiler)
 
     // Hilt

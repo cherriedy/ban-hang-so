@@ -12,7 +12,7 @@
 
         <variable
             name="product"
-            type="com.optlab.banhangso.data.model.Product" />
+            type="com.optlab.banhangso.domain.model.Product" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

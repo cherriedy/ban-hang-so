@@ -6,7 +6,7 @@
 
         <variable
             name="brand"
-            type="com.optlab.banhangso.data.model.Brand" />
+            type="com.optlab.banhangso.domain.model.Brand" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

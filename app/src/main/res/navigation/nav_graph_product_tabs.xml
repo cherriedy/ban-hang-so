@@ -46,37 +46,37 @@
 
     <fragment
         android:id="@+id/productTabHostFragment"
-        android:name="com.optlab.banhangso.ui.product.view.ProductTabHostFragment"
+        android:name="com.optlab.banhangso.ui.main.product.view.ProductTabHostFragment"
         tools:layout="@layout/fragment_product_tab_host" />
 
     <fragment
         android:id="@+id/categoryListFragment"
-        android:name="com.optlab.banhangso.ui.category.view.CategoryListFragment"
+        android:name="com.optlab.banhangso.ui.main.category.view.CategoryListFragment"
         tools:layout="@layout/fragment_category_list" />
 
     <fragment
         android:id="@+id/brandListFragment"
-        android:name="com.optlab.banhangso.ui.brand.view.BrandListFragment"
+        android:name="com.optlab.banhangso.ui.main.brand.view.BrandListFragment"
         tools:layout="@layout/fragment_brand_list" />
 
     <fragment
         android:id="@+id/productListFragment"
-        android:name="com.optlab.banhangso.ui.product.view.ProductListFragment"
+        android:name="com.optlab.banhangso.ui.main.product.view.ProductListFragment"
         tools:layout="@layout/fragment_product_list" />
 
     <dialog
         android:id="@+id/productSortSelectionFragment"
-        android:name="com.optlab.banhangso.ui.product.view.ProductSortSelectionFragment"
+        android:name="com.optlab.banhangso.ui.main.product.view.ProductSortSelectionFragment"
         tools:layout="@layout/list_item_sort_selection" />
 
     <dialog
         android:id="@+id/brandSortSelectionFragment"
-        android:name="com.optlab.banhangso.ui.brand.view.BrandSortSelectionFragment"
+        android:name="com.optlab.banhangso.ui.main.brand.view.BrandSortSelectionFragment"
         tools:layout="@layout/list_item_sort_selection" />
 
     <dialog
         android:id="@+id/categorySortSelectionFragment"
-        android:name="com.optlab.banhangso.ui.category.view.CategorySortSelectionFragment"
+        android:name="com.optlab.banhangso.ui.main.category.view.CategorySortSelectionFragment"
         tools:layout="@layout/list_item_sort_selection" />
 
 </navigation>

@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.stock.view.StockListFragment">
+        tools:context=".ui.main.stock.StockListFragment">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tool_bar"
@@ -26,7 +26,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainerView"
-            android:name="com.optlab.banhangso.ui.product.view.ProductListFragment"
+            android:name="com.optlab.banhangso.ui.main.product.view.ProductListFragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"

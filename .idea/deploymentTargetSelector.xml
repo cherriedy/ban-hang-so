@@ -4,22 +4,9 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-21T14:29:52.707944850Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/cherriedyy/.var/app/com.google.AndroidStudio/config/.android/avd/Pixel_6_Pro.avd" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection>
-          <targets>
-            <Target type="DEFAULT_BOOT">
-              <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=/home/cherriedy/.var/app/com.google.AndroidStudio/config/.android/avd/Pixel_6_Pro.avd" />
-              </handle>
-            </Target>
-          </targets>
-        </DialogSelection>
+      </SelectionState>
+      <SelectionState runConfigName="release">
+        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>

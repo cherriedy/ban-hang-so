@@ -3,13 +3,14 @@ package com.optlab.banhangso.di;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.data.remote.service.FirebaseStoreService;
-
-import javax.inject.Singleton;
+import com.optlab.banhangso.data.remote.service.FirebaseUserService;
 
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
+
+import javax.inject.Singleton;
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -30,5 +31,11 @@ public class FirebaseModule {
     @Singleton
     public static FirebaseStoreService provideFirebaseStoreService(FirebaseFirestore firestore) {
         return new FirebaseStoreService(firestore);
+    }
+
+    @Provides
+    @Singleton
+    public static FirebaseUserService provideFirebaseUserService(FirebaseFirestore firestore) {
+        return new FirebaseUserService(firestore);
     }
 }

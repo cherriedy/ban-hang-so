@@ -237,5 +237,8 @@
     <string name="error_auth_failed">Xác thực thất bại. Vui lòng thử lại.</string>
     <string name="role_store_owner">Chủ sở hữu cửa hàng</string>
     <string name="role_store_staff">Nhân viên cửa hàng</string>
+    <string name="choose_store">Chọn cửa hàng</string>
+    <string name="choose_one_store">Chọn một cửa hàng để tiếp tục</string>
+    <string name="chain_of_stores">Chuỗi cửa hàng của</string>
 </resources>
 

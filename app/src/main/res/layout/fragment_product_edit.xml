@@ -6,19 +6,19 @@
 
         <import
             alias="Converter"
-            type="com.optlab.banhangso.ui.binding.BindingAdapterConverters" />
+            type="com.optlab.banhangso.ui.base.binding.BindingAdapterConverters" />
 
-        <import type="com.optlab.banhangso.data.model.Product" />
+        <import type="com.optlab.banhangso.domain.model.Product" />
 
         <import type="android.view.View" />
 
         <variable
             name="viewModel"
-            type="com.optlab.banhangso.ui.product.viewmodel.ProductEditViewModel" />
+            type="com.optlab.banhangso.ui.main.product.viewmodel.ProductEditViewModel" />
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.product.view.ProductEditFragment" />
+            type="com.optlab.banhangso.ui.main.product.view.ProductEditFragment" />
 
         <variable
             name="isCreateMode"

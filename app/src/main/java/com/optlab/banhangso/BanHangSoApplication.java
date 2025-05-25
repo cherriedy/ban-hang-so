@@ -1,9 +1,7 @@
 package com.optlab.banhangso;
 
 import android.app.Application;
-
 import com.optlab.banhangso.util.Logging;
-
 import dagger.hilt.android.HiltAndroidApp;
 
 @HiltAndroidApp
