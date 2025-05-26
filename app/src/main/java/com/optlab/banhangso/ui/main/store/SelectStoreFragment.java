@@ -4,14 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.data.local.database.BanHangSoDatabase;
@@ -22,17 +25,23 @@ import com.optlab.banhangso.ui.base.adapter.StoreListAdapter;
 import com.optlab.banhangso.ui.base.decoration.LinearSpacingStrategy;
 import com.optlab.banhangso.ui.base.decoration.SpacingItemDecoration;
 import com.optlab.banhangso.util.NavigationUtils;
-import dagger.hilt.android.AndroidEntryPoint;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
 
 @AndroidEntryPoint
 public class SelectStoreFragment extends Fragment {
-    @Inject protected FirebaseAuth firebaseAuth;
-    @Inject protected PreferenceRepository preferenceRepository;
-    @Inject protected BanHangSoDatabase database;
+    @Inject
+    protected FirebaseAuth firebaseAuth;
+    @Inject
+    protected PreferenceRepository preferenceRepository;
+    @Inject
+    protected BanHangSoDatabase database;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -54,10 +63,10 @@ public class SelectStoreFragment extends Fragment {
             return;
         }
         preferenceRepository.setSelectedStoreId(store.getId());
-//        preferenceRepository.setSelectedStoreName(store.getName());
-//        Snackbar.make(requireView(), store.getName(), Snackbar.LENGTH_SHORT).show();
+        preferenceRepository.setSelectedStoreName(store.getName());
         NavOptions options = NavigationUtils.getNavOptions(R.id.selectStoreFragment, true);
-        NavHostFragment.findNavController(this).navigate(R.id.homeFragment, options);
+        NavDirections action = SelectStoreFragmentDirections.actionSelectStoreHome();
+        NavHostFragment.findNavController(this).navigate(action, options);
     }
 
     private void disableBackNavigation() {
@@ -67,7 +76,8 @@ public class SelectStoreFragment extends Fragment {
                         this,
                         new OnBackPressedCallback(true) {
                             @Override
-                            public void handleOnBackPressed() {}
+                            public void handleOnBackPressed() {
+                            }
                         });
     }
 

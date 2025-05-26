@@ -22,7 +22,12 @@
     <fragment
         android:id="@+id/selectStoreFragment"
         android:name="com.optlab.banhangso.ui.main.store.SelectStoreFragment"
-        tools:layout="@layout/fragment_select_store" />
+        tools:layout="@layout/fragment_select_store">
+
+        <action
+            android:id="@+id/action_select_store_home"
+            app:destination="@id/homeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/signUpFragment"

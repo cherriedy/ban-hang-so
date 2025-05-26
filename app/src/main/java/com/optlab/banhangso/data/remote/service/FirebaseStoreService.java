@@ -1,6 +1,7 @@
 package com.optlab.banhangso.data.remote.service;
 
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
@@ -17,10 +18,12 @@ import java.util.Map;
 
 public class FirebaseStoreService {
     private final FirebaseFirestore firestore;
+    private final FirebaseAuth firebaseAuth;
     private static final String STORE_COLLECTION = "stores";
 
-    public FirebaseStoreService(FirebaseFirestore firestore) {
+    public FirebaseStoreService(FirebaseFirestore firestore, FirebaseAuth firebaseAuth) {
         this.firestore = firestore;
+        this.firebaseAuth = firebaseAuth;
     }
 
     /** Get all stores from Firebase */
@@ -62,41 +65,52 @@ public class FirebaseStoreService {
                         return;
                     }
 
-                    // Create data to pass to the function - using HashMap
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("userId", userId);
+                    if (firebaseAuth.getCurrentUser() == null) {
+                        Timber.e("getAllStoresByUserId failed: User is not authenticated");
+                        emitter.onError(new Exception("User is not authenticated"));
+                        return;
+                    }
 
-                    FirebaseFunctions.getInstance()
-                            .getHttpsCallable("get_user_stores")
-                            .call(data)
-                            .addOnSuccessListener(result -> {
-                                if (result != null && result.getData() instanceof List) {
-                                    List<Map<String, Object>> resultData =
-                                            (List<Map<String, Object>>) result.getData();
-                                    List<StoreDto> stores = new ArrayList<>();
-                                    for (Map<String, Object> item : resultData) {
-                                        try {
-                                            StoreDto store = new StoreDto();
-                                            // Populate StoreDto fields from the map
-                                            store.setId((String) item.get("id"));
-                                            store.setName((String) item.get("name"));
-                                            store.setDescription((String) item.get("description"));
-                                            stores.add(store);
-                                        } catch (Exception e) {
-                                            Timber.e(e, "Error parsing store data: %s", item);
-                                        }
-                                    }
-                                    Timber.d("Successfully retrieved %d stores", stores.size());
-                                    emitter.onSuccess(stores);
-                                } else {
-                                    Timber.e("getAllStoresByUserId failed: Invalid data format");
-                                    emitter.onError(new Exception("Invalid data format"));
-                                }
-                            })
-                            .addOnFailureListener(exception -> {
-                                Timber.e(exception, "getAllStoresByUserId failed: %s", exception.getMessage());
-                                emitter.onError(exception);
-                            });
+                    firebaseAuth.getCurrentUser().getIdToken(true)
+                                    .addOnSuccessListener(tokenResult -> {
+
+                                        // Create data to pass to the function - using HashMap
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("userId", userId);
+
+                                        FirebaseFunctions.getInstance()
+                                                .getHttpsCallable("get_user_stores")
+                                                .call(data)
+                                                .addOnSuccessListener(result -> {
+                                                    if (result != null && result.getData() instanceof List) {
+                                                        List<Map<String, Object>> resultData =
+                                                                (List<Map<String, Object>>) result.getData();
+                                                        List<StoreDto> stores = new ArrayList<>();
+                                                        for (Map<String, Object> item : resultData) {
+                                                            try {
+                                                                StoreDto store = new StoreDto();
+                                                                // Populate StoreDto fields from the map
+                                                                store.setId((String) item.get("id"));
+                                                                store.setName((String) item.get("name"));
+                                                                store.setDescription((String) item.get("description"));
+                                                                stores.add(store);
+                                                            } catch (Exception e) {
+                                                                Timber.e(e, "Error parsing store data: %s", item);
+                                                            }
+                                                        }
+                                                        Timber.d("Successfully retrieved %d stores", stores.size());
+                                                        emitter.onSuccess(stores);
+                                                    } else {
+                                                        Timber.e("getAllStoresByUserId failed: Invalid data format");
+                                                        emitter.onError(new Exception("Invalid data format"));
+                                                    }
+                                                })
+                                                .addOnFailureListener(exception -> {
+                                                    Timber.e(exception, "getAllStoresByUserId failed: %s", exception.getMessage());
+                                                    emitter.onError(exception);
+                                                });
+                                    });
+
                 });
     }
 

@@ -39,7 +39,9 @@ public class StoreRepositoryImpl implements StoreRepository {
         this.preferenceRepository = preferenceRepository;
     }
 
-    /** Get all stores with network bound resource */
+    /**
+     * Get all stores with network bound resource
+     */
     @NonNull
     @Override
     public Flowable<Resource<List<Store>>> getAllStores() {
@@ -58,11 +60,11 @@ public class StoreRepositoryImpl implements StoreRepository {
             @NonNull
             @Override
             protected Single<List<StoreDto>> fetchFromNetworkSource() {
-                //                String uuid = preferenceRepository.getAuthenticatedUserId();
-                //                Timber.d("Fetching stores from Firebase for userId: %s", uuid);
-                //                return firebaseStoreService.getAllStoresByUserId(uuid);
-                return firebaseStoreService
-                        .getAllStores(); // For testing purposes, fetch all stores
+                String uuid = preferenceRepository.getAuthenticatedUserId();
+                Timber.d("Fetching stores from Firebase for userId: %s", uuid);
+                return firebaseStoreService.getAllStoresByUserId(uuid);
+//                return firebaseStoreService
+//                        .getAllStores(); // For testing purposes, fetch all stores
             }
 
             @Override
@@ -99,7 +101,9 @@ public class StoreRepositoryImpl implements StoreRepository {
         }
     }
 
-    /** Get a specific store by ID with network bound resource */
+    /**
+     * Get a specific store by ID with network bound resource
+     */
     @NonNull
     @Override
     public Flowable<Resource<Store>> getStoreById(@NonNull String storeId) {
@@ -246,7 +250,9 @@ public class StoreRepositoryImpl implements StoreRepository {
                 .andThen(Flowable.just(Resource.success(updatedEntity)));
     }
 
-    /** Delete a store from both local database and Firebase */
+    /**
+     * Delete a store from both local database and Firebase
+     */
     @NonNull
     @Override
     public Flowable<Resource<Boolean>> deleteStore(@NonNull String storeId) {

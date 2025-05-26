@@ -29,8 +29,8 @@ public class FirebaseModule {
 
     @Provides
     @Singleton
-    public static FirebaseStoreService provideFirebaseStoreService(FirebaseFirestore firestore) {
-        return new FirebaseStoreService(firestore);
+    public static FirebaseStoreService provideFirebaseStoreService(FirebaseFirestore firestore, FirebaseAuth firebaseAuth) {
+        return new FirebaseStoreService(firestore, firebaseAuth);
     }
 
     @Provides
