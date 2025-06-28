@@ -14,8 +14,7 @@ android {
     defaultConfig {
         applicationId = "com.optlab.banhangso"
         minSdk = 30
-        //noinspection ExpiredTargetSdkVersion
-        targetSdk = 30
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -59,18 +58,27 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.androidx.swiperefreshlayout)
+
+    // ReactiveStreams bridge for LiveData
+    implementation(libs.androidx.lifecycle.reactivestreams)
+
+    // Data Binding
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.rxjava3)
+
+    // AutoDispose for RxJava lifecycle handling
+    implementation(libs.autodispose.core)
+    implementation(libs.autodispose.android)
+    implementation(libs.autodispose.lifecycle)
+    implementation(libs.autodispose.androidx.lifecycle)
 
     // RxJava3 (RxAndroid)
     implementation(libs.rxandroid)
     implementation(libs.rxjava)
-    implementation(libs.androidx.room.rxjava3)
-
-    // Room & KSP
-    implementation(libs.room.runtime)
     implementation(libs.firebase.functions)
     ksp(libs.androidx.room.compiler)
 
-    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 
@@ -91,8 +99,17 @@ dependencies {
     implementation(libs.lottie)
     implementation(libs.circleimageview)
 
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // Retrofit with RxJava
+    implementation(libs.retrofit)
+    implementation(libs.retrofit2.converter.gson)
+    implementation(libs.retrofit2.adapter.rxjava3)
+    implementation(libs.okhttp3.logging.interceptor)
 }

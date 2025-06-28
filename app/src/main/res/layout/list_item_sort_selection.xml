@@ -4,11 +4,11 @@
 
     <data>
 
-        <import type="com.optlab.banhangso.domain.util.SortOption" />
+        <import type="com.optlab.banhangso.models.application.SortOption" />
 
         <variable
             name="option"
-            type="com.optlab.banhangso.domain.util.SortOption" />
+            type="com.optlab.banhangso.models.application.SortOption" />
 
     </data>
 

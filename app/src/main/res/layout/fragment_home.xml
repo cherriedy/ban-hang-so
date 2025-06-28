@@ -8,16 +8,12 @@
         <import type="com.optlab.banhangso.R" />
 
         <variable
-            name="handler"
-            type="com.optlab.banhangso.ui.main.home.HomeFragment" />
-
-        <variable
             name="prefRepo"
-            type="com.optlab.banhangso.domain.repository.PreferenceRepository" />
+            type="com.optlab.banhangso.repositories.interfaces.PreferenceRepository" />
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.main.home.HomeFragment" />
+            type="com.optlab.banhangso.features.main.home.HomeFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +25,7 @@
             android:id="@+id/view_header"
             android:layout_width="match_parent"
             android:layout_height="165dp"
-            android:background="?attr/colorPrimary"
+            android:background="@drawable/bg_top_dashboard"
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
@@ -44,10 +40,10 @@
                 android:id="@+id/civ_avatar"
                 android:layout_width="@dimen/spacing_xxlarge"
                 android:layout_height="@dimen/spacing_xxlarge"
-                app:defaultImageResource="@{R.drawable.ic_default_user}"
-                app:imageResource="@{prefRepo.authenticatedUserAvatar}"
                 app:civ_border_color="@color/white"
-                app:civ_border_width="1dp" />
+                app:civ_border_width="1dp"
+                app:defaultImageResource="@{R.drawable.ic_default_user}"
+                app:imageResource="@{prefRepo.user.imageUrl}" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -59,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/open_sans"
-                    android:text="@{@string/welcome + ` ` + prefRepo.authenticatedContactName}"
+                    android:text="@{@string/welcome + ` ` + prefRepo.user.name}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="@color/white"
                     android:textFontWeight="800"
@@ -78,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/open_sans"
-                        android:text="@{prefRepo.selectedStoreName}"
+                        android:text="@{prefRepo.store.name}"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                         android:textColor="@color/white"
                         android:textFontWeight="800"
@@ -86,10 +82,12 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageButton
+                        android:id="@+id/ib_stores"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:background="@android:color/transparent"
                         android:importantForAccessibility="no"
+                        android:onClick="@{fragment}"
                         android:scaleType="centerCrop"
                         android:src="@drawable/ic_dropdown"
                         app:layout_constraintBottom_toBottomOf="@id/tv_store_name"
@@ -182,7 +180,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/open_sans"
+                        android:fontFamily="@font.open_sans"
                         android:text="@string/view_more"
                         android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                         android:textFontWeight="800"
@@ -227,10 +225,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/open_sans"
-                            android:text="300.000"
+                            android:text="0"
                             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                             android:textColor="@color/black"
-                            android:textFontWeight="800" />
+                            android:textFontWeight="800"
+                            tools:text="300.000" />
 
                     </LinearLayout>
 
@@ -260,10 +259,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/open_sans"
-                            android:text="300"
+                            android:text="0"
                             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                             android:textColor="@color/black"
-                            android:textFontWeight="800" />
+                            android:textFontWeight="800"
+                            tools:text="300" />
 
                     </LinearLayout>
 
@@ -294,10 +294,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/open_sans"
-                            android:text="30"
+                            android:text="0"
                             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                             android:textColor="@color/black"
-                            android:textFontWeight="800" />
+                            android:textFontWeight="800"
+                            tools:text="30" />
 
                     </LinearLayout>
 
@@ -335,7 +336,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/open_sans"
                         android:text="@string/for_you"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                         android:textColor="@color/black"
                         android:textFontWeight="800" />
 
@@ -353,14 +354,19 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clipToPadding="false"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_sell"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_weight="0.33"
                         app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp">
 
                         <LinearLayout
@@ -390,13 +396,14 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_order"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_marginStart="@dimen/spacing_middle"
                         android:layout_marginEnd="@dimen/spacing_middle"
                         android:layout_weight="0.33"
-                        android:elevation="3dp"
                         app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp"
                         tools:elevation="3dp">
 
@@ -427,11 +434,12 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_customer"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_weight="0.33"
-                        android:elevation="3dp"
                         app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp"
                         tools:elevation="3dp">
 
@@ -452,7 +460,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/spacing_xmedium"
-                                android:fontFamily="@font/open_sans"
+                                android:fontFamily="@font.open_sans"
                                 android:text="@string/customer"
                                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                                 android:textColor="@color/black"
@@ -467,15 +475,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_middle"
+                    android:clipToPadding="false"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_warehouse"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_weight="0.33"
-                        android:elevation="3dp"
                         app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp"
                         tools:elevation="3dp">
 
@@ -496,7 +508,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/spacing_xmedium"
-                                android:fontFamily="@font/open_sans"
+                                android:fontFamily="@font.open_sans"
                                 android:text="@string/warehouse"
                                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                                 android:textColor="@color/black"
@@ -506,13 +518,14 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_report"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_marginStart="@dimen/spacing_middle"
                         android:layout_marginEnd="@dimen/spacing_middle"
                         android:layout_weight="0.33"
-                        android:elevation="3dp"
                         app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp"
                         tools:elevation="3dp">
 
@@ -533,7 +546,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/spacing_xmedium"
-                                android:fontFamily="@font/open_sans"
+                                android:fontFamily="@font.open_sans"
                                 android:text="@string/report"
                                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                                 android:textColor="@color/black"
@@ -543,11 +556,12 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_employee"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_weight="0.33"
-                        android:elevation="3dp"
                         app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp"
                         tools:elevation="3dp">
 
@@ -568,7 +582,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/spacing_xmedium"
-                                android:fontFamily="@font/open_sans"
+                                android:fontFamily="@font.open_sans"
                                 android:text="@string/employee"
                                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                                 android:textColor="@color/black"
@@ -584,15 +598,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_middle"
+                    android:clipToPadding="false"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_store"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_weight="0.33"
-                        android:elevation="3dp"
+                        android:onClick="@{fragment}"
                         app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp"
                         tools:elevation="3dp">
 
@@ -613,7 +632,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/spacing_xmedium"
-                                android:fontFamily="@font/open_sans"
+                                android:fontFamily="@font.open_sans"
                                 android:text="@string/store"
                                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                                 android:textColor="@color/black"
@@ -623,12 +642,13 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/card_more"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_marginStart="@dimen/spacing_middle"
                         android:layout_weight="0.33"
-                        android:elevation="3dp"
                         app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
                         app:strokeWidth="0dp"
                         tools:elevation="3dp">
 
@@ -649,13 +669,27 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/spacing_xmedium"
-                                android:fontFamily="@font/open_sans"
+                                android:fontFamily="@font.open_sans"
                                 android:text="@string/view_more"
                                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                                 android:textColor="@color/black"
                                 android:textFontWeight="800" />
 
                         </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="75dp"
+                        android:layout_height="96dp"
+                        android:layout_marginStart="@dimen/spacing_middle"
+                        android:layout_weight="0.33"
+                        android:visibility="invisible"
+                        app:cardCornerRadius="5dp"
+                        app:cardElevation="3dp"
+                        app:strokeWidth="0dp"
+                        tools:elevation="3dp">
+
                     </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>

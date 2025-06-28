@@ -7,11 +7,11 @@
 
         <variable
             name="viewModel"
-            type="com.optlab.banhangso.ui.main.brand.viewmodel.BrandEditViewModel" />
+            type="com.optlab.banhangso.features.main.brand.viewmodel.BrandEditViewModel" />
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.main.brand.view.BrandEditFragment" />
+            type="com.optlab.banhangso.features.main.brand.view.BrandEditFragment" />
 
         <variable
             name="isCreateMode"

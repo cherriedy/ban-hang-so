@@ -7,34 +7,96 @@
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.main.product.view.ProductListFragment" />
+            type="com.optlab.banhangso.features.main.product.views.ProductListFragment" />
+
+        <variable
+            name="viewModel"
+            type="com.optlab.banhangso.features.main.product.viewmodels.ProductListViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.main.product.view.ProductListFragment">
+        tools:context=".features.main.product.views.ProductListFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_category"
+        <LinearLayout
+            android:id="@+id/ll_toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_margin="8dp"
             android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/list_item_category_tag" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_product"
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.85"
+                app:cardCornerRadius="8dp"
+                app:strokeColor="?attr/colorSurfaceVariant"
+                app:strokeWidth="1dp">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/sv_product"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    app:iconifiedByDefault="false"
+                    app:query="@{viewModel.searchQuery}"
+                    app:queryHint="@string/hint_query_product" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:layout_marginStart="@dimen/spacing_middle"
+                android:layout_weight="0.15"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/ib_sort"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_action_sort"
+                    app:tint="?attr/colorOnSurfaceVariant" />
+
+                <ImageButton
+                    android:onClick="@{viewModel::toggleLayout}"
+                    android:id="@+id/ib_type"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="@dimen/spacing_middle"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_action_list"
+                    app:tint="?attr/colorOnSurfaceVariant" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/srl_products"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_category"
-            tools:listitem="@layout/list_item_horizontal_product" />
+            app:layout_constraintTop_toBottomOf="@id/ll_toolbar">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_products"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                tools:listitem="@layout/list_item_product" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_actions"

@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".BanHangSoApplication"
+        android:name=".BanHangSo"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
@@ -16,7 +16,7 @@
         android:theme="@style/Theme.BanHangSo"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.optlab.banhangso.ui.main.MainActivity"
+            android:name="com.optlab.banhangso.features.main.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>

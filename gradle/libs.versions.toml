@@ -7,6 +7,8 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+lifecycleReactivestreams = "2.9.1"
+lombok = "1.18.38"
 material = "1.12.0"
 constraintlayout = "2.2.0"
 navigationFragment = "2.8.5"
@@ -14,6 +16,7 @@ navigationUi = "2.8.5"
 glide = "5.0.0-rc01"
 activity = "1.9.3"
 roomVersion = "2.7.1"
+swiperefreshlayout = "1.1.0"
 timber = "4.7.1"
 kotlin = "2.1.20"
 coreKtx = "1.15.0"
@@ -34,8 +37,16 @@ lifecycleViewmodelKtx = "2.8.7"
 rxandroid = "3.0.2"
 rxjava = "3.1.10"
 firebaseFunctions = "21.2.1"
+retrofit = "2.9.0"
+retrofit2RxJava3 = "2.9.0"
+okhttp3LoggingInterceptor = "4.12.0"
+paging = "3.3.0"
+autodispose = "2.2.1"
+ktlint = "1.31.1"
 
 [libraries]
+androidx-lifecycle-reactivestreams = { module = "androidx.lifecycle:lifecycle-reactivestreams", version.ref = "lifecycleReactivestreams" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
@@ -43,6 +54,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
@@ -71,9 +83,19 @@ rxandroid = { group = "io.reactivex.rxjava3", name = "rxandroid", version.ref = 
 rxjava = { group = "io.reactivex.rxjava3", name = "rxjava", version.ref = "rxjava" }
 androidx-room-rxjava3 = { group = "androidx.room", name = "room-rxjava3", version.ref = "roomVersion" }
 firebase-functions = { group = "com.google.firebase", name = "firebase-functions", version.ref = "firebaseFunctions" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit2-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+retrofit2-adapter-rxjava3 = { group = "com.squareup.retrofit2", name = "adapter-rxjava3", version.ref = "retrofit2RxJava3" }
+okhttp3-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3LoggingInterceptor" }
+androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
+androidx-paging-rxjava3 = { group = "androidx.paging", name = "paging-rxjava3", version.ref = "paging" }
+autodispose-core = { group = "com.uber.autodispose2", name = "autodispose", version.ref = "autodispose" }
+autodispose-android = { group = "com.uber.autodispose2", name = "autodispose-android", version.ref = "autodispose" }
+autodispose-lifecycle = { group = "com.uber.autodispose2", name = "autodispose-lifecycle", version.ref = "autodispose" }
+autodispose-androidx-lifecycle = { group = "com.uber.autodispose2", name = "autodispose-androidx-lifecycle", version.ref = "autodispose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
-
+spotless = "com.diffplug.spotless: 6.25.0"

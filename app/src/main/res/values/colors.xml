@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FF0000</color>
-    <color name="color_warning">#B00020</color>
+
+    <!-- Legacy colors required by existing layouts -->
     <color name="boston_blue">#3881C4</color>
     <color name="raven">#7b818b</color>
     <color name="mariner">#346ecd</color>
@@ -11,4 +13,56 @@
     <color name="athens_gray">#F2F3F5</color>
     <color name="alto">#E0E0E0</color>
     <color name="million_gray">#999999</color>
+    <color name="color_warning">#B00020</color>
+
+    <!-- New Modern Color Palette 2025 -->
+    <!-- Primary Colors -->
+    <color name="midnight_blue">#103667</color>
+    <color name="sapphire">#1A5FB4</color>
+    <color name="azure">#3584E4</color>
+    <color name="sky_blue">#62A0EA</color>
+    <color name="light_blue">#99C1F1</color>
+    <color name="pale_blue">#D1E3FA</color>
+
+    <!-- Secondary/Accent Colors -->
+    <color name="amethyst">#7A59A6</color>
+    <color name="purple_heart">#9141AC</color>
+    <color name="fuchsia">#C061CB</color>
+    <color name="light_purple">#DC8ADD</color>
+
+    <!-- Complementary Colors -->
+    <color name="emerald">#33B076</color>
+    <color name="mint">#57E389</color>
+    <color name="coral">#E95420</color>
+    <color name="amber">#F6B352</color>
+
+    <!-- Neutral Colors - Light Mode -->
+    <color name="light_background">#FAFBFC</color>
+    <color name="light_surface">#FFFFFF</color>
+    <color name="light_card">#F6F8FA</color>
+    <color name="light_divider">#E4E7EB</color>
+
+    <!-- Text Colors - Light Mode -->
+    <color name="light_text_primary">#2C3E50</color>
+    <color name="light_text_secondary">#5D6D7E</color>
+    <color name="light_text_hint">#8596A5</color>
+    <color name="light_text_disabled">#BDC3C7</color>
+
+    <!-- Neutral Colors - Dark Mode -->
+    <color name="dark_background">#121212</color>
+    <color name="dark_surface">#1E1E1E</color>
+    <color name="dark_card">#242424</color>
+    <color name="dark_divider">#383838</color>
+
+    <!-- Text Colors - Dark Mode -->
+    <color name="dark_text_primary">#E0E0E0</color>
+    <color name="dark_text_secondary">#B0B0B0</color>
+    <color name="dark_text_hint">#707070</color>
+    <color name="dark_text_disabled">#505050</color>
+
+    <!-- Status Colors -->
+    <color name="success">#2ECC71</color>
+    <color name="error">#E74C3C</color>
+    <color name="warning">#F39C12</color>
+    <color name="info">#3498DB</color>
 </resources>

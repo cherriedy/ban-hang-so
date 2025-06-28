@@ -7,9 +7,13 @@
 
     <dialog
         android:id="@+id/categoryEditFragment"
-        android:name="com.optlab.banhangso.ui.main.category.view.CategoryEditFragment"
+        android:name="com.optlab.banhangso.features.main.category.view.CategoryEditFragment"
         android:label="BrandEditFragment"
-        tools:layout="@layout/fragment_category_edit">
+        tools:layout="@layout/fragment_category_edit"
+        app:enterAnim="@anim/anim_slide_in_right"
+        app:exitAnim="@anim/anim_slide_out_left"
+        app:popEnterAnim="@anim/anim_slide_in_left"
+        app:popExitAnim="@anim/anim_slide_out_right">
 
         <argument
             android:name="categoryId"
@@ -20,3 +24,4 @@
             app:argType="boolean" />
     </dialog>
 </navigation>
+

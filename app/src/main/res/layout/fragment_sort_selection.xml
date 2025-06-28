@@ -13,7 +13,7 @@
         android:background="@color/white"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"
-        tools:context=".ui.main.product.view.ProductSortSelectionFragment">
+        tools:context=".features.main.product.views.ProductSortSelectionFragment">
 
         <TextView
             android:id="@+id/tv_app_name"

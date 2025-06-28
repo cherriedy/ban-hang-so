@@ -6,7 +6,7 @@
 
         <variable
             name="category"
-            type="com.optlab.banhangso.domain.model.Category" />
+            type="com.optlab.banhangso.models.domain.Category" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

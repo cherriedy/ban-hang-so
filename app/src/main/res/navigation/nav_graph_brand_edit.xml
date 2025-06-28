@@ -7,9 +7,13 @@
 
     <dialog
         android:id="@+id/brandEditFragment"
-        android:name="com.optlab.banhangso.ui.main.brand.view.BrandEditFragment"
+        android:name="com.optlab.banhangso.features.main.brand.view.BrandEditFragment"
         android:label="BrandEditFragment"
-        tools:layout="@layout/fragment_brand_edit">
+        tools:layout="@layout/fragment_brand_edit"
+        app:enterAnim="@anim/anim_slide_in_right"
+        app:exitAnim="@anim/anim_slide_out_left"
+        app:popEnterAnim="@anim/anim_slide_in_left"
+        app:popExitAnim="@anim/anim_slide_out_right">
 
         <argument
             android:name="brandId"
@@ -20,3 +24,4 @@
             app:argType="boolean" />
     </dialog>
 </navigation>
+

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="8dp"
-    tools:context=".ui.base.view.ExitConfirmationDialog">
+    tools:context=".features.shared.view.ExitConfirmationDialog">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".ui.main.brand.view.BrandSelectionFragment">
+        tools:context=".features.main.brand.view.BrandSelectionFragment">
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/sv_keyword"
@@ -24,7 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:queryHint="@string/hint_query_search_keyword" />
+            app:queryHint="@string/hint_query_product" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_option"

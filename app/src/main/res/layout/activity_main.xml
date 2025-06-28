@@ -31,9 +31,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navGraph="@navigation/nav_graph" />
+            app:navGraph="@navigation/app_navigation" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:id="@+id/navigationBar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"/>
     </LinearLayout>
 
 </layout>

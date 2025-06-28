@@ -7,13 +7,15 @@
 
         <import type="android.view.View" />
 
+        <import type="com.optlab.banhangso.internal.utilities.Constants" />
+
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.main.authentication.view.AuthenticationFragment" />
+            type="com.optlab.banhangso.features.main.authentication.view.AuthenticationFragment" />
 
         <variable
             name="viewModel"
-            type="com.optlab.banhangso.ui.main.authentication.viewmodel.AuthenticationViewModel" />
+            type="com.optlab.banhangso.features.main.authentication.viewmodel.AuthenticationViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -158,7 +160,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 app:endIconMode="clear_text"
-                                app:error="@{viewModel.validationState.emailError}"
+                                app:error="@{viewModel.errors[Constants.Auth.ERROR_EMAIL]}"
                                 app:hintEnabled="false"
                                 app:startIconDrawable="@drawable/ic_start_email"
                                 app:startIconTint="?attr/colorPrimary">
@@ -170,7 +172,7 @@
                                     android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_email"
                                     android:inputType="textEmailAddress"
-                                    android:text="@={viewModel.authData.email}"
+                                    android:text="@={viewModel.inputs[Constants.Auth.KEY_EMAIL]}"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                     android:textFontWeight="800" />
                             </com.google.android.material.textfield.TextInputLayout>
@@ -211,7 +213,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 app:endIconMode="password_toggle"
-                                app:error="@{viewModel.validationState.passwordError}"
+                                app:error="@{viewModel.errors[Constants.Auth.ERROR_PASSWORD]}"
                                 app:hintEnabled="false"
                                 app:startIconDrawable="@drawable/ic_start_password"
                                 app:startIconTint="?attr/colorPrimary">
@@ -223,7 +225,7 @@
                                     android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_password"
                                     android:inputType="textPassword"
-                                    android:text="@={viewModel.authData.password}"
+                                    android:text="@={viewModel.inputs[Constants.Auth.KEY_PASSWORD]}"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                     android:textFontWeight="800" />
                             </com.google.android.material.textfield.TextInputLayout>
@@ -265,7 +267,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 app:endIconMode="password_toggle"
-                                app:error="@{viewModel.validationState.confirmPasswordError}"
+                                app:error="@{viewModel.errors[Constants.Auth.ERROR_CONFIRM_PASSWORD]}"
                                 app:hintEnabled="false"
                                 app:startIconDrawable="@drawable/ic_start_password"
                                 app:startIconTint="?attr/colorPrimary">
@@ -277,7 +279,7 @@
                                     android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_password"
                                     android:inputType="textPassword"
-                                    android:text="@={viewModel.authData.confirmPassword}"
+                                    android:text="@={viewModel.inputs[Constants.Auth.KEY_CONFIRM_PASSWORD]}"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                     android:textFontWeight="800" />
                             </com.google.android.material.textfield.TextInputLayout>
@@ -325,10 +327,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_large"
-                        android:enabled="@{viewModel.validationState.hasNoError}"
+                        android:enabled="@{viewModel.canAuthenticate}"
                         android:fontFamily="@font/open_sans"
+                        android:onClick="@{viewModel::onAuthenticate}"
                         android:padding="15dp"
-                        android:onClick="@{viewModel::onAuthenticateButtonClick}"
                         android:text="@{viewModel.isSignIn ? @string/sign_in : @string/sign_up}"
                         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                         android:textFontWeight="800"
@@ -398,4 +400,3 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>
-

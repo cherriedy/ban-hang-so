@@ -17,18 +17,21 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white"
+            android:layout_height="wrap_content"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="?attr/colorOnSurface"
+            android:background="@drawable/bg_top_dashboard"
             android:elevation="4dp">
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/search_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_marginVertical="8dp"
                 android:background="@drawable/bg_search_view"
                 app:iconifiedByDefault="false"
-                app:queryHint="@string/hint_query_search_keyword" />
+                app:queryHint="@string/hint_query_product" />
 
         </com.google.android.material.appbar.MaterialToolbar>
 
@@ -39,7 +42,8 @@
             android:background="@color/white"
             app:tabIndicatorColor="?attr/colorPrimary"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="?attr/colorPrimary"
+            app:tabSelectedTextColor="@color/boston_blue"
+            app:tabTextAppearance="@style/TabTextAppearance"
             app:tabTextColor="@color/raven" />
 
         <androidx.viewpager2.widget.ViewPager2
@@ -48,4 +52,5 @@
             android:layout_height="match_parent" />
 
     </LinearLayout>
+
 </layout>

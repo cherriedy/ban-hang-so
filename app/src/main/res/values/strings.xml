@@ -86,7 +86,7 @@
 
     <string name="error_field_is_not_nullable">Thông tin bắt buộc</string>
     <string name="asterisk">*</string>
-    <string name="hint_query_search_keyword">Nhập nội dung tìm kiếm…</string>
+    <string name="hint_query_product">Nhập nội dung tìm kiếm…</string>
     <string name="hint_query_category">Tìm tên danh mục</string>
     <string name="hint_query_brand">Tìm tên thương hiệu</string>
     <string name="tab_title_product">Sản phẩm</string>
@@ -240,5 +240,11 @@
     <string name="choose_store">Chọn cửa hàng</string>
     <string name="choose_one_store">Chọn một cửa hàng để tiếp tục</string>
     <string name="chain_of_stores">Chuỗi cửa hàng của</string>
+    <string name="error_invalid_auth_data">Thông tin đăng nhập không chính xác</string>
+    <string name="add_store">Thêm cửa hàng</string>
+    <string name="edit_store">Chỉnh sửa cửa hàng</string>
+    <string name="create_store">Tạo cửa hàng</string>
+    <string name="notify_create_store_successful">Tạo cửa hàng thành công</string>
+    <string name="notify_create_store_fail">Tạo cửa hàng thất bại</string>
 </resources>
 

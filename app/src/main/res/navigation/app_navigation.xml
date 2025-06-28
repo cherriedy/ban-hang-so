@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_graph_authentication">
+
+    <action
+        android:id="@+id/action_to_edit_store"
+        app:destination="@id/storeEditFragment"
+        app:enterAnim="@anim/anim_slide_in_right"
+        app:exitAnim="@anim/anim_slide_out_left"
+        app:popEnterAnim="@anim/anim_slide_in_left"
+        app:popExitAnim="@anim/anim_slide_out_right" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.optlab.banhangso.features.main.home.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_to_product_tabs"
+            app:destination="@id/nav_graph_product_tabs"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
+        <action
+            android:id="@+id/action_to_authentication"
+            app:destination="@id/nav_graph_authentication"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
+        <action
+            android:id="@+id/action_to_select_fragment"
+            app:destination="@+id/selectStoreFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right">
+
+            <argument
+                android:name="disableNavigationButton"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/selectStoreFragment"
+        android:name="com.optlab.banhangso.features.main.store.view.SelectStoreFragment"
+        tools:layout="@layout/fragment_select_store">
+
+        <argument
+            android:name="disableNavigationButton"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/storeEditFragment"
+        android:name="com.optlab.banhangso.features.main.store.view.StoreEditFragment"
+        tools:layout="@layout/fragment_store_edit">
+
+        <argument
+            android:name="storeId"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="isCreateMode"
+            app:argType="boolean" />
+    </fragment>
+
+    <include app:graph="@navigation/nav_graph_authentication" />
+    <include app:graph="@navigation/nav_graph_product_tabs" />
+    <include app:graph="@navigation/nav_graph_product_edit" />
+    <include app:graph="@navigation/nav_graph_brand_edit" />
+    <include app:graph="@navigation/nav_graph_category_edit" />
+</navigation>

@@ -6,167 +6,474 @@
 
         <import
             alias="Converter"
-            type="com.optlab.banhangso.ui.base.binding.BindingAdapterConverters" />
+            type="com.optlab.banhangso.features.main.product.binding.ProductBindingAdapter" />
 
-        <import type="com.optlab.banhangso.domain.model.Product" />
+        <import type="com.optlab.banhangso.models.domain.Product" />
 
         <import type="android.view.View" />
 
+        <import type="com.optlab.banhangso.internal.utilities.Constants" />
+
         <variable
             name="viewModel"
-            type="com.optlab.banhangso.ui.main.product.viewmodel.ProductEditViewModel" />
+            type="com.optlab.banhangso.features.main.product.viewmodels.ProductEditViewModel" />
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.main.product.view.ProductEditFragment" />
+            type="com.optlab.banhangso.features.main.product.views.ProductEditFragment" />
 
-        <variable
-            name="isCreateMode"
-            type="boolean" />
     </data>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/athens_gray"
-            android:orientation="vertical">
+            android:background="@drawable/bg_top_dashboard"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="?attr/colorSurfaceVariant" />
 
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:visibility="gone" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="12dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_upload_images"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:backgroundTint="@android:color/transparent"
-                    android:padding="16dp"
-                    android:text="@string/attr_upload_image"
-                    android:textColor="@color/mariner"
-                    android:textStyle="bold"
-                    app:cornerRadius="10dp"
-                    app:icon="@drawable/ic_add_image"
-                    app:iconGravity="start"
-                    app:iconTint="@color/mariner"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:strokeColor="@color/mariner"
-                    app:strokeWidth="1dp" />
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_take_picture"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@android:color/transparent"
-                    android:padding="16dp"
-                    android:text="@string/attr_take_a_pic"
-                    android:textColor="@color/mariner"
-                    android:textStyle="bold"
-                    app:cornerRadius="10dp"
-                    app:icon="@drawable/ic_take_new_photo"
-                    app:iconGravity="start"
-                    app:iconTint="@color/mariner"
-                    app:layout_constraintEnd_toEndOf="@id/btn_upload_images"
-                    app:layout_constraintStart_toStartOf="@id/btn_upload_images"
-                    app:layout_constraintTop_toBottomOf="@id/btn_upload_images"
-                    app:strokeColor="@color/mariner"
-                    app:strokeWidth="1dp" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:background="@color/athens_gray"
+                android:orientation="vertical">
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:visibility="gone" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_upload_images"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:backgroundTint="@android:color/transparent"
+                        android:onClick="@{fragment::pickImage}"
+                        android:padding="16dp"
+                        android:text="@string/attr_upload_image"
+                        android:textColor="@color/mariner"
+                        android:textStyle="bold"
+                        app:cornerRadius="10dp"
+                        app:icon="@drawable/ic_add_image"
+                        app:iconGravity="start"
+                        app:iconTint="@color/mariner"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:strokeColor="@color/mariner"
+                        app:strokeWidth="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_take_picture"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:padding="16dp"
+                        android:text="@string/attr_take_a_pic"
+                        android:textColor="@color/mariner"
+                        android:textStyle="bold"
+                        app:cornerRadius="10dp"
+                        app:icon="@drawable/ic_take_new_photo"
+                        app:iconGravity="start"
+                        app:iconTint="@color/mariner"
+                        app:layout_constraintEnd_toEndOf="@id/btn_upload_images"
+                        app:layout_constraintStart_toStartOf="@id/btn_upload_images"
+                        app:layout_constraintTop_toBottomOf="@id/btn_upload_images"
+                        app:strokeColor="@color/mariner"
+                        app:strokeWidth="1dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="vertical">
+                    android:background="@android:color/white"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:text="@string/attr_product_detail"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp">
+                        android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/tv_title_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/attr_product_name"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@color/raven"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:syncFocusColor="@{etName}" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:layout_toEndOf="@id/tv_title_name"
-                            android:text="@string/asterisk"
-                            android:textColor="@color/red"
-                            app:layout_constraintBottom_toBottomOf="@id/tv_title_name"
-                            app:layout_constraintStart_toEndOf="@id/tv_title_name" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:endIconMode="clear_text"
-                        app:error="@{viewModel.validationState.nameError}"
-                        app:hintEnabled="false">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_product_name"
-                            android:inputType="text"
-                            android:text="@={viewModel.product.name}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginBottom="16dp"
+                            android:text="@string/attr_product_detail"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp">
+
+                            <TextView
+                                android:id="@+id/tv_title_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/attr_product_name"
+                                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                                android:textColor="@color/raven"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:syncFocusColor="@{etName}" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_toEndOf="@id/tv_title_name"
+                                android:text="@string/asterisk"
+                                android:textColor="@color/red"
+                                app:layout_constraintBottom_toBottomOf="@id/tv_title_name"
+                                app:layout_constraintStart_toEndOf="@id/tv_title_name" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:endIconMode="clear_text"
+                            app:error="@{viewModel.errors[Constants.Product.KEY_NAME]}"
+                            app:hintEnabled="false">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/hint_product_name"
+                                android:inputType="text"
+                                android:text="@={viewModel.productUiModel.name}"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp">
+
+                                <TextView
+                                    android:id="@+id/tv_title_selling_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/attr_product_out_price"
+                                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                                    android:textColor="@color/raven"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:syncFocusColor="@{etSellingPrice}" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_toEndOf="@id/tv_title_selling_price"
+                                    android:text="@string/asterisk"
+                                    android:textColor="@color/red"
+                                    app:layout_constraintBottom_toBottomOf="@id/tv_title_selling_price"
+                                    app:layout_constraintStart_toEndOf="@id/tv_title_selling_price" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_selling_price"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:endIconMode="clear_text"
+                                app:error="@{viewModel.errors[Constants.Product.KEY_SELLING_PRICE]}"
+                                app:hintEnabled="false">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_selling_price"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/hint_product_price"
+                                    android:inputType="numberDecimal"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                    app:price="@={viewModel.productUiModel.sellingPrice}" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="16dp"
+                            android:layout_height="wrap_content" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tv_title_purchase_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:text="@string/attr_product_in_price"
+                                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                                android:textColor="@color/raven" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_purchase_price"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:endIconMode="clear_text"
+                                app:error="@{viewModel.errors[Constants.Product.KEY_PURCHASE_PRICE]}"
+                                app:hintEnabled="false">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_purchase_price"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="@string/hint_product_price"
+                                    android:inputType="numberDecimal"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                    app:price="@={viewModel.productUiModel.purchasePrice}" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title_discount_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/attr_product_discount"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textColor="@color/raven" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_discount_price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:endIconMode="clear_text"
+                            app:error="@{viewModel.errors[Constants.Product.KEY_DISCOUNT_PRICE]}"
+                            app:hintEnabled="false">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_discount_price"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="@string/hint_product_price"
+                                android:inputType="number"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                app:price="@={viewModel.productUiModel.discountPrice}" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="14dp"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/attr_product_inventory"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginBottom="12dp"
+                            android:text="@string/attr_product_status"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textColor="@color/raven" />
+
+                        <RadioGroup
+                            android:id="@+id/rg_stock_status"
+                            android:layout_width="145dp"
+                            android:layout_height="38dp"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/bg_radio_group_rounded"
+                            android:checkedButton="@={Converter.statusToButtonId(viewModel.productUiModel.status)}"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/rb_in_stock"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="4dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/selector_in_stock_radio"
+                                android:button="@android:color/transparent"
+                                android:gravity="center"
+                                android:text="@string/value_in_stock"
+                                android:textColor="@color/boston_blue"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/rb_out_stock"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/selector_out_stock_radio"
+                                android:button="@android:color/transparent"
+                                android:gravity="center"
+                                android:text="@string/value_out_stock"
+                                android:textColor="?attr/colorError"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                        </RadioGroup>
+
+                    </RelativeLayout>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/attr_product_sku"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textColor="@color/raven" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_sku"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:endIconMode="clear_text">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_sku"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:enabled="false" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp"
+                        android:text="@string/attr_product_more_info"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="14dp"
+                        android:orientation="vertical">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="8dp">
+
+                            <TextView
+                                android:id="@+id/tv_title_brand"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/attr_product_brand"
+                                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                                android:textColor="@color/raven"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_toEndOf="@id/tv_title_brand"
+                                android:text="@string/asterisk"
+                                android:textColor="@color/red"
+                                app:layout_constraintBottom_toBottomOf="@id/tv_title_brand"
+                                app:layout_constraintStart_toEndOf="@id/tv_title_brand" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_brand"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:error="@{viewModel.errors[Constants.Product.KEY_BRAND]}"
+                            app:hintEnabled="false">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/actv_brand"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:clickable="false"
+                                android:hint="@string/hint_product_brand"
+                                android:inputType="none"
+                                android:onClick="@{fragment::onBrandSelectionClick}"
+                                app:brand="@{viewModel.productUiModel.brand}" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
                         android:orientation="vertical">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
@@ -175,502 +482,208 @@
                             android:layout_marginBottom="8dp">
 
                             <TextView
-                                android:id="@+id/tv_title_selling_price"
+                                android:id="@+id/tv_title_category"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/attr_product_out_price"
+                                android:text="@string/attr_product_type"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                                 android:textColor="@color/raven"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:syncFocusColor="@{etSellingPrice}" />
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="4dp"
-                                android:layout_toEndOf="@id/tv_title_selling_price"
+                                android:layout_toEndOf="@id/tv_title_category"
                                 android:text="@string/asterisk"
                                 android:textColor="@color/red"
-                                app:layout_constraintBottom_toBottomOf="@id/tv_title_selling_price"
-                                app:layout_constraintStart_toEndOf="@id/tv_title_selling_price" />
+                                app:layout_constraintBottom_toBottomOf="@id/tv_title_category"
+                                app:layout_constraintStart_toEndOf="@id/tv_title_category" />
+
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/til_selling_price"
+                            android:id="@+id/til_category"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:endIconMode="clear_text"
-                            app:error="@{viewModel.validationState.sellingPriceError}"
+                            app:error="@{viewModel.errors[Constants.Product.KEY_CATEGORY]}"
                             app:hintEnabled="false">
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/et_selling_price"
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/actv_category"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/hint_product_price"
-                                android:inputType="numberDecimal"
+                                android:layout_weight="1"
+                                android:hint="@string/hint_product_category"
+                                android:inputType="none"
+                                android:onClick="@{fragment::onCategorySelectionClick}"
                                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                                app:price="@={viewModel.product.sellingPrice}" />
+                                app:category="@{viewModel.productUiModel.category}" />
                         </com.google.android.material.textfield.TextInputLayout>
-
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="16dp"
-                        android:layout_height="wrap_content" />
-
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginBottom="16dp"
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/tv_title_purchase_price"
+                            android:id="@+id/tv_title_barcode"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
-                            android:text="@string/attr_product_in_price"
+                            android:text="@string/attr_product_barcode"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                             android:textColor="@color/raven" />
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/til_purchase_price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/ed_barcode"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="text"
+                                android:text="@={viewModel.productUiModel.barcode}" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_title_description"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/attr_product_description"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textColor="@color/raven" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/til_description"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            app:boxStrokeColor="?attr/colorPrimary"
+                            app:boxStrokeErrorColor="?attr/colorError"
+                            app:counterEnabled="true"
+                            app:counterMaxLength="120"
                             app:endIconMode="clear_text"
-                            app:error="@{viewModel.validationState.purchasePriceError}"
+                            app:error="@{viewModel.errors[Constants.Product.KEY_DESCRIPTION]}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/et_purchase_price"
+                                android:id="@+id/et_description"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="@string/hint_product_price"
-                                android:inputType="numberDecimal"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                                app:price="@={viewModel.product.purchasePrice}" />
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:gravity="top|start"
+                                android:hint="@string/txt_mocked_product_description"
+                                android:imeOptions="flagNoEnterAction"
+                                android:inputType="textMultiLine"
+                                android:lineSpacingExtra="4dp"
+                                android:scrollbars="vertical"
+                                android:text="@={viewModel.productUiModel.description}"
+                                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                                app:endIconMode="clear_text" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_title_discount_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/attr_product_discount"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                        android:textColor="@color/raven" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_discount_price"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:endIconMode="clear_text"
-                        app:error="@{viewModel.validationState.discountPriceError}"
-                        app:hintEnabled="false">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_discount_price"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_product_price"
-                            android:inputType="number"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                            app:price="@={viewModel.product.discountPrice}" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/attr_product_inventory"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginBottom="12dp"
-                        android:text="@string/attr_product_status"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                        android:textColor="@color/raven" />
-
-                    <RadioGroup
-                        android:id="@+id/rg_stock_status"
-                        android:layout_width="145dp"
-                        android:layout_height="38dp"
-                        android:layout_alignParentEnd="true"
-                        android:background="@drawable/bg_radio_group_rounded"
-                        android:checkedButton="@={Converter.statusToButtonId(viewModel.product.status)}"
-                        android:orientation="horizontal">
-
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rb_in_stock"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginEnd="4dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/selector_in_stock_radio"
-                            android:button="@android:color/transparent"
-                            android:gravity="center"
-                            android:text="@string/value_in_stock"
-                            android:textColor="@color/boston_blue"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rb_out_stock"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/selector_out_stock_radio"
-                            android:button="@android:color/transparent"
-                            android:gravity="center"
-                            android:text="@string/value_out_stock"
-                            android:textColor="?attr/colorError"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                    </RadioGroup>
-
-                </RelativeLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/attr_product_sku"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                        android:textColor="@color/raven" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_sku"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:endIconMode="clear_text">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_sku"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:enabled="false" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp"
-                    android:text="@string/attr_product_more_info"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp"
-                    android:orientation="vertical">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="8dp">
+                        android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/tv_title_brand"
+                            android:id="@+id/tv_title_note"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/attr_product_brand"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/attr_product_note"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                             android:textColor="@color/raven"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:layout_toEndOf="@id/tv_title_brand"
-                            android:text="@string/asterisk"
-                            android:textColor="@color/red"
-                            app:layout_constraintBottom_toBottomOf="@id/tv_title_brand"
-                            app:layout_constraintStart_toEndOf="@id/tv_title_brand" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_brand"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:error="@{viewModel.validationState.brandError}"
-                        app:hintEnabled="false">
-
-                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                            android:id="@+id/actv_brand"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:clickable="false"
-                            android:hint="@string/hint_product_brand"
-                            android:inputType="none"
-                            android:onClick="@{fragment::onBrandSelectionClick}"
-                            app:brand="@{viewModel.product.brand}" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="vertical">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp">
-
-                        <TextView
-                            android:id="@+id/tv_title_category"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/attr_product_type"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@color/raven"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:layout_toEndOf="@id/tv_title_category"
-                            android:text="@string/asterisk"
-                            android:textColor="@color/red"
-                            app:layout_constraintBottom_toBottomOf="@id/tv_title_category"
-                            app:layout_constraintStart_toEndOf="@id/tv_title_category" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_category"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:error="@{viewModel.validationState.categoryError}"
-                        app:hintEnabled="false">
-
-                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                            android:id="@+id/actv_category"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="@string/hint_product_category"
-                            android:inputType="none"
-                            android:onClick="@{fragment::onCategorySelectionClick}"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                            app:category="@{viewModel.product.category}" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_title_barcode"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/attr_product_barcode"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                        android:textColor="@color/raven" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/ed_barcode"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:text="@={viewModel.product.barcode}" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_title_description"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/attr_product_description"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                        android:textColor="@color/raven" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:boxStrokeColor="?attr/colorPrimary"
-                        app:boxStrokeErrorColor="?attr/colorError"
-                        app:counterEnabled="true"
-                        app:counterMaxLength="120"
-                        app:endIconMode="clear_text"
-                        app:error="@{viewModel.validationState.descriptionError}"
-                        app:hintEnabled="false">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_description"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
-                            android:gravity="top|start"
-                            android:hint="@string/txt_mocked_product_description"
-                            android:imeOptions="flagNoEnterAction"
-                            android:inputType="textMultiLine"
-                            android:lineSpacingExtra="4dp"
-                            android:scrollbars="vertical"
-                            android:text="@={viewModel.product.description}"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                             app:endIconMode="clear_text" />
-                    </com.google.android.material.textfield.TextInputLayout>
 
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:boxStrokeColor="?attr/colorPrimary"
+                            app:boxStrokeErrorColor="?attr/colorError"
+                            app:counterEnabled="true"
+                            app:counterMaxLength="50"
+                            app:endIconMode="clear_text"
+                            app:error="@{viewModel.errors[Constants.Product.KEY_NOTE]}"
+                            app:hintEnabled="false">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/et_note"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:gravity="top|start"
+                                android:imeOptions="flagNoEnterAction"
+                                android:inputType="textMultiLine"
+                                android:text="@={viewModel.productUiModel.note}" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layout_action_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/tv_title_note"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:text="@string/attr_product_note"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                        android:textColor="@color/raven"
-                        app:endIconMode="clear_text" />
-
-                    <com.google.android.material.textfield.TextInputLayout
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_delete"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxStrokeColor="?attr/colorPrimary"
-                        app:boxStrokeErrorColor="?attr/colorError"
-                        app:counterEnabled="true"
-                        app:counterMaxLength="50"
-                        app:endIconMode="clear_text"
-                        app:error="@{viewModel.validationState.noteError}"
-                        app:hintEnabled="false">
+                        android:layout_weight="1"
+                        android:onClick="@{fragment::onDeleteButtonClick}"
+                        android:padding="16dp"
+                        android:text="@string/delete"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:visibility="@{viewModel.isCreateMode ? View.GONE : View.VISIBLE}"
+                        app:backgroundTint="@android:color/transparent"
+                        app:cornerRadius="5dp"
+                        app:strokeColor="@android:color/holo_red_light"
+                        app:strokeWidth="1dp" />
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_note"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
-                            android:gravity="top|start"
-                            android:imeOptions="flagNoEnterAction"
-                            android:inputType="textMultiLine"
-                            android:text="@={viewModel.product.note}" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                    <View
+                        android:id="@+id/tl_login_method"
+                        android:layout_width="16dp"
+                        android:layout_height="match_parent"
+                        android:visibility="@{viewModel.isCreateMode ? View.GONE : View.VISIBLE}" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_update"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/boston_blue"
+                        android:enabled="@{viewModel.canSubmit}"
+                        android:onClick="@{viewModel.isCreateMode ? viewModel::onCreate : viewModel::onUpdate}"
+                        android:padding="16dp"
+                        android:text="@{viewModel.isCreateMode ? @string/complete : @string/update}"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="5dp" />
                 </LinearLayout>
             </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/layout_action_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="horizontal"
-                android:padding="16dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_delete"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:onClick="@{fragment::onDeleteButtonClick}"
-                    android:padding="16dp"
-                    android:text="@string/delete"
-                    android:textColor="@android:color/holo_red_light"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:visibility="@{isCreateMode ? View.GONE : View.VISIBLE}"
-                    app:backgroundTint="@android:color/transparent"
-                    app:cornerRadius="5dp"
-                    app:strokeColor="@android:color/holo_red_light"
-                    app:strokeWidth="1dp" />
-
-                <View
-                    android:id="@+id/tl_login_method"
-                    android:layout_width="16dp"
-                    android:layout_height="match_parent"
-                    android:visibility="@{isCreateMode ? View.GONE : View.VISIBLE}" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_update"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:backgroundTint="@color/boston_blue"
-                    android:enabled="@{viewModel.updateButtonState}"
-                    android:onClick="@{isCreateMode ? viewModel::onCreateButtonClick : viewModel::onUpdateButtonClick}"
-                    android:padding="16dp"
-                    android:text="@{isCreateMode ? @string/complete : @string/update}"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:cornerRadius="5dp" />
-            </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
 </layout>

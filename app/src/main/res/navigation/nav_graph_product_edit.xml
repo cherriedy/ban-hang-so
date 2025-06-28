@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/productEditFragment"
-        android:name="com.optlab.banhangso.ui.main.product.view.ProductEditFragment"
+        android:name="com.optlab.banhangso.features.main.product.views.ProductEditFragment"
         tools:layout="@layout/fragment_product_list">
 
         <argument
@@ -20,16 +20,24 @@
 
         <action
             android:id="@+id/action_to_brand_selection"
-            app:destination="@id/brandSelectionFragment" />
+            app:destination="@id/brandSelectionFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
 
         <action
             android:id="@+id/action_to_category_selection"
-            app:destination="@id/categorySelectionFragment" />
+            app:destination="@id/categorySelectionFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
     </fragment>
 
     <fragment
         android:id="@+id/brandSelectionFragment"
-        android:name="com.optlab.banhangso.ui.main.brand.view.BrandSelectionFragment"
+        android:name="com.optlab.banhangso.features.main.brand.view.BrandSelectionFragment"
         android:label="fragment_option_selection"
         tools:layout="@layout/fragment_option_selection">
 
@@ -41,7 +49,7 @@
 
     <fragment
         android:id="@+id/categorySelectionFragment"
-        android:name="com.optlab.banhangso.ui.main.category.view.CategorySelectionFragment"
+        android:name="com.optlab.banhangso.features.main.category.view.CategorySelectionFragment"
         android:label="CategorySelectionFragment"
         tools:layout="@layout/fragment_option_selection">
 
@@ -51,3 +59,4 @@
             app:nullable="true" />
     </fragment>
 </navigation>
+

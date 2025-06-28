@@ -7,7 +7,7 @@
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.ui.main.brand.view.BrandListFragment" />
+            type="com.optlab.banhangso.features.main.brand.view.BrandListFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
