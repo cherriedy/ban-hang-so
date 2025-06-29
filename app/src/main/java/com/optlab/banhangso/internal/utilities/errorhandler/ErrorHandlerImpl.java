@@ -4,28 +4,31 @@ import androidx.annotation.NonNull;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.optlab.banhangso.models.application.AppError;
 import com.optlab.banhangso.models.exceptions.ApiResponseException;
+import timber.log.Timber;
 
 public class ErrorHandlerImpl implements ErrorHandler {
 
-    @Override
-    public AppError getError(@NonNull Throwable throwable) {
-        if (throwable instanceof FirebaseFirestoreException firestoreException) {
-            return switch (firestoreException.getCode()) {
-                case INVALID_ARGUMENT -> new AppError.InvalidArgument();
-                case NOT_FOUND -> new AppError.NotFoundError();
-                default -> new AppError.UnknownError();
-            };
-        }
+  @Override
+  public AppError getError(@NonNull Throwable throwable) {
+    Timber.e("Original exception: %s", throwable.getMessage());
 
-        if (throwable instanceof ApiResponseException apiResponseException) {
-            // Handle API exceptions with appropriate AppError types
-            if (apiResponseException.getCode() == 404) {
-                return new AppError.NotFoundError();
-            } else {
-                return new AppError.NetServiceError();
-            }
-        }
-
-        return new AppError.UnknownError();
+    if (throwable instanceof FirebaseFirestoreException firestoreException) {
+      return switch (firestoreException.getCode()) {
+        case INVALID_ARGUMENT -> new AppError.InvalidArgument();
+        case NOT_FOUND -> new AppError.NotFoundError();
+        default -> new AppError.UnknownError();
+      };
     }
+
+    if (throwable instanceof ApiResponseException apiResponseException) {
+      return switch (apiResponseException.getCode()) {
+        case 404 -> new AppError.NotFoundError();
+        case 201 -> new AppError.InvalidArgument();
+        case 409 -> new AppError.DuplicateError();
+        default -> new AppError.UnknownError();
+      };
+    }
+
+    return new AppError.UnknownError();
+  }
 }

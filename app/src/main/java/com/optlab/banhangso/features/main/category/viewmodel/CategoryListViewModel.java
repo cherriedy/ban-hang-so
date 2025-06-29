@@ -17,74 +17,74 @@ import javax.inject.Inject;
 
 @HiltViewModel
 public class CategoryListViewModel extends ViewModel {
-    private final CategoryRepository repository;
-    private final MutableLiveData<List<Category>> categories = new MutableLiveData<>();
-    private final MediatorLiveData<List<Category>> categoryMediator = new MediatorLiveData<>();
-    private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
-    private final MutableLiveData<SortOption<Category.SortField>> sortOption =
-            new MutableLiveData<>();
+  private final CategoryRepository repository;
+  private final MutableLiveData<List<Category>> categories = new MutableLiveData<>();
+  private final MediatorLiveData<List<Category>> categoryMediator = new MediatorLiveData<>();
+  private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
+  private final MutableLiveData<SortOption<Category.SortField>> sortOption =
+      new MutableLiveData<>();
 
-    @Inject
-    public CategoryListViewModel(@NonNull CategoryRepository repository) {
-        this.repository = repository;
-        retrieveCategories();
+  @Inject
+  public CategoryListViewModel(@NonNull CategoryRepository repository) {
+    this.repository = repository;
+    retrieveCategories();
 
-        categoryMediator.addSource(categories, unused -> updateCategories());
-        categoryMediator.addSource(searchQuery, unused -> updateCategories());
-        categoryMediator.addSource(sortOption, unused -> updateCategories());
+    categoryMediator.addSource(categories, unused -> updateCategories());
+    categoryMediator.addSource(searchQuery, unused -> updateCategories());
+    categoryMediator.addSource(sortOption, unused -> updateCategories());
+  }
+
+  public MutableLiveData<List<Category>> getCategories() {
+    return categoryMediator;
+  }
+
+  private void updateCategories() {
+    List<Category> updatedList = categories.getValue();
+    if (updatedList == null) {
+      categoryMediator.setValue(Collections.emptyList());
+      return;
     }
 
-    public MutableLiveData<List<Category>> getCategories() {
-        return categoryMediator;
+    String query = searchQuery.getValue();
+    if (!TextUtils.isEmpty(query)) {
+      updatedList = filterByQuery(updatedList, query);
     }
 
-    private void updateCategories() {
-        List<Category> updatedList = categories.getValue();
-        if (updatedList == null) {
-            categoryMediator.setValue(Collections.emptyList());
-            return;
-        }
-
-        String query = searchQuery.getValue();
-        if (!TextUtils.isEmpty(query)) {
-            updatedList = filterByQuery(updatedList, query);
-        }
-
-        SortOption<Category.SortField> selectedSortOption = sortOption.getValue();
-        if (selectedSortOption != null) {
-            updatedList.sort(
-                    SortingUtils.getComparator(
-                            selectedSortOption.getSortField(), selectedSortOption.isAscending()));
-        }
-
-        categoryMediator.setValue(updatedList);
+    SortOption<Category.SortField> selectedSortOption = sortOption.getValue();
+    if (selectedSortOption != null) {
+      updatedList.sort(
+          SortingUtils.getComparator(
+              selectedSortOption.getSortField(), selectedSortOption.isAscending()));
     }
 
-    private List<Category> filterByQuery(List<Category> updatedList, String query) {
-        return updatedList.stream()
-                .filter(category -> containQuery(category.getName(), query))
-                .collect(Collectors.toList());
-    }
+    categoryMediator.setValue(updatedList);
+  }
 
-    private boolean containQuery(@NonNull String name, @NonNull String query) {
-        return name.toLowerCase().contains(query.toLowerCase());
-    }
+  private List<Category> filterByQuery(List<Category> updatedList, String query) {
+    return updatedList.stream()
+        .filter(category -> containQuery(category.getName(), query))
+        .collect(Collectors.toList());
+  }
 
-    private void retrieveCategories() {
-        repository.getCategories().observeForever(categories::setValue);
-    }
+  private boolean containQuery(@NonNull String name, @NonNull String query) {
+    return name.toLowerCase().contains(query.toLowerCase());
+  }
 
-    @Override
-    protected void onCleared() {
-        repository.getCategories().removeObserver(categories::setValue);
-        super.onCleared();
-    }
+  private void retrieveCategories() {
+    repository.getCategories().observeForever(categories::setValue);
+  }
 
-    public void setSearchQuery(String query) {
-        searchQuery.setValue(query);
-    }
+  @Override
+  protected void onCleared() {
+    repository.getCategories().removeObserver(categories::setValue);
+    super.onCleared();
+  }
 
-    public void setSortOption(SortOption<Category.SortField> sortOption) {
-        this.sortOption.setValue(sortOption);
-    }
+  public void setSearchQuery(String query) {
+    searchQuery.setValue(query);
+  }
+
+  public void setSortOption(SortOption<Category.SortField> sortOption) {
+    this.sortOption.setValue(sortOption);
+  }
 }

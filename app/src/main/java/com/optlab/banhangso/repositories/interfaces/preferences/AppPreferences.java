@@ -1,67 +1,78 @@
 package com.optlab.banhangso.repositories.interfaces.preferences;
 
 import android.content.SharedPreferences;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.optlab.banhangso.models.application.SortOption;
 import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.domain.store.RoleStore;
 
 public interface AppPreferences {
-    String PREFS_NAME = "user_preferences";
-    String KEY_PRODUCT_SORT_OPTION = "product_sort_option";
-    String KEY_BRAND_SORT_OPTION = "brand_sort_option";
-    String KEY_CATEGORY_SORT_OPTION = "category_sort_option";
-    String KEY_PRODUCT_LAYOUT_MODE = "product_layout_mode";
-    String KEY_CURRENT_STORE = "current_store";
-    String KEY_CURRENT_USER = "current_user";
+  String PREFS_NAME = "user_preferences";
+  String KEY_PRODUCT_SORT_OPTION = "product_sort_option";
+  String KEY_BRAND_SORT_OPTION = "brand_sort_option";
+  String KEY_CATEGORY_SORT_OPTION = "category_sort_option";
+  String KEY_PRODUCT_LAYOUT_MODE = "product_layout_mode";
+  String KEY_CURRENT_STORE = "current_store";
+  String KEY_CURRENT_USER = "current_user";
 
-    void registerPreferencesChangeListener(SharedPreferences.OnSharedPreferenceChangeListener listener);
+  /**
+   * Registers a listener for changes in the shared preferences.
+   *
+   * @param listener The listener to register
+   */
+  void registerPreferencesChangeListener(
+      SharedPreferences.OnSharedPreferenceChangeListener listener);
 
-    /**
-     * Sets a sort option in the preferences.
-     *
-     * @param sortOption The sort option to save
-     * @param key The preference key to use
-     */
-    void setSortOption(SortOption<? extends Enum<?>> sortOption, String key);
+  /**
+   * Unregisters a listener for changes in the shared preferences.
+   *
+   * @param listener The listener to unregister
+   */
+  void unregisterPreferencesChangeListener(
+      SharedPreferences.OnSharedPreferenceChangeListener listener);
 
-    /**
-     * Gets a sort option from the preferences.
-     *
-     * @param key The preference key to retrieve
-     * @return The stored sort option, or null if not found
-     */
-    SortOption<?> getSortOption(String key);
+  /**
+   * Sets a sort option in the preferences.
+   *
+   * @param sortOption The sort option to save
+   * @param key The preference key to use
+   */
+  void setSortOption(SortOption<? extends Enum<?>> sortOption, String key);
 
-    /**
-     * Sets the layout mode for products.
-     *
-     * @param isGrid True for grid layout, false for list layout
-     */
-    void setLayoutMode(Boolean isGrid);
+  /**
+   * Gets a sort option from the preferences.
+   *
+   * @param key The preference key to retrieve
+   * @return The stored sort option, or null if not found
+   */
+  SortOption<?> getSortOption(String key);
 
-    /**
-     * Gets the layout mode for products.
-     *
-     * @return True for grid layout, false for list layout
-     */
-    Boolean getLayoutMode();
+  /**
+   * Sets the layout mode for products.
+   *
+   * @param isGrid True for grid layout, false for list layout
+   */
+  void setLayoutMode(Boolean isGrid);
 
-    void setStore(@NonNull RoleStore roleStore);
+  /**
+   * Gets the layout mode for products.
+   *
+   * @return True for grid layout, false for list layout
+   */
+  Boolean getLayoutMode();
 
-    @Nullable RoleStore getStore();
+  void setStore(@NonNull RoleStore roleStore);
 
-    /**
-     * Clears all user preferences. This should be called when a user logs in to prevent data
-     * leakage between different user sessions.
-     */
-    void clearPreferences();
+  @Nullable RoleStore getStore();
 
-    void setUser(@NonNull User user);
+  /**
+   * Clears all user preferences. This should be called when a user logs in to prevent data leakage
+   * between different user sessions.
+   */
+  void clearPreferences();
 
-    @Nullable
-    User getUser();
+  void setUser(@NonNull User user);
+
+  @Nullable User getUser();
 }

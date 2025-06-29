@@ -7,51 +7,66 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.optlab.banhangso.services.interfaces.FirebaseAuthService;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.core.SingleEmitter;
 import timber.log.Timber;
 
 public class FirebaseAuthServiceImpl implements FirebaseAuthService {
 
-    private final FirebaseAuth firebaseAuth;
+  private final FirebaseAuth firebaseAuth;
 
-    public FirebaseAuthServiceImpl(FirebaseAuth firebaseAuth) {
-        this.firebaseAuth = firebaseAuth;
-    }
+  public FirebaseAuthServiceImpl(FirebaseAuth firebaseAuth) {
+    this.firebaseAuth = firebaseAuth;
+  }
 
-    @Override
-    public Single<String> logInWithEmailAndPassword(
-            @NonNull String email, @NonNull String password) {
-        return Single.create(
-                emitter ->
-                        firebaseAuth
-                                .signInWithEmailAndPassword(email, password)
-                                .addOnCompleteListener(
-                                        task ->
-                                                onLogInWithEmailAndPasswordComplete(
-                                                        emitter, task)));
-    }
+  @Override
+  public Single<String> logInWithEmailAndPassword(@NonNull String email, @NonNull String password) {
+    return Single.create(
+        emitter ->
+            firebaseAuth
+                .signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> onLogInWithEmailAndPasswordComplete(emitter, task)));
+  }
 
-    @Override
-    public Single<Boolean> isLoggedIn() {
-        return Single.fromCallable(() -> firebaseAuth.getCurrentUser() != null);
-    }
+  @Override
+  public Observable<Boolean> isAuthenticated() {
+    return Observable.create(
+        emitter -> {
+          FirebaseAuth.AuthStateListener authStateListener =
+              firebaseAuth -> {
+                boolean isAuthenticated = firebaseAuth.getCurrentUser() != null;
+                if (!emitter.isDisposed()) {
+                  emitter.onNext(isAuthenticated);
+                }
+              };
 
-    private void onLogInWithEmailAndPasswordComplete(
-            SingleEmitter<String> emitter, @NonNull Task<AuthResult> task) {
-        Timber.d("onLogInWithEmailAndPasswordComplete: %s", task.isSuccessful());
-        if (task.isSuccessful()) {
-            FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-            if (firebaseUser == null) {
-                emitter.onError(
-                        new FirebaseAuthException(
-                                "ERROR_NO_CURRENT_USER",
-                                "No current user found after successful login."));
-                return;
-            }
-            emitter.onSuccess(firebaseUser.getUid());
-        } else {
-            emitter.onError(task.getException());
-        }
+          firebaseAuth.addAuthStateListener(authStateListener);
+
+          emitter.setCancellable(() -> firebaseAuth.removeAuthStateListener(authStateListener));
+        });
+  }
+
+  @Override
+  public Completable signOut() {
+    return Completable.fromAction(firebaseAuth::signOut);
+  }
+
+  private void onLogInWithEmailAndPasswordComplete(
+      SingleEmitter<String> emitter, @NonNull Task<AuthResult> task) {
+    Timber.d("onLogInWithEmailAndPasswordComplete: %s", task.isSuccessful());
+    if (task.isSuccessful()) {
+      FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+      if (firebaseUser == null) {
+        emitter.onError(
+            new FirebaseAuthException(
+                "ERROR_NO_CURRENT_USER", "No current user found after successful login."));
+        return;
+      }
+      emitter.onSuccess(firebaseUser.getUid());
+    } else {
+      emitter.onError(task.getException());
     }
+  }
 }

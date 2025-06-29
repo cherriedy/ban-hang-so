@@ -5,84 +5,108 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-import com.google.firebase.auth.FirebaseAuth;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentHomeBinding;
+import com.optlab.banhangso.features.shared.view.AnimationLoadingDialog;
 import com.optlab.banhangso.internal.utilities.NavigationUtils;
-import com.optlab.banhangso.repositories.interfaces.PreferenceRepository;
 import dagger.hilt.android.AndroidEntryPoint;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
-import javax.inject.Inject;
 
 @AndroidEntryPoint
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
-    @Inject FirebaseAuth firebaseAuth;
-    @Inject PreferenceRepository preferenceRepository;
-    private FragmentHomeBinding binding;
+  private final AnimationLoadingDialog loadingDialog = new AnimationLoadingDialog();
+  private FragmentHomeBinding binding;
+  private HomeViewModel viewModel;
+  private NavController navController;
 
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        binding.setLifecycleOwner(getViewLifecycleOwner());
-        binding.setPrefRepo(preferenceRepository);
-        binding.setFragment(this);
-        return binding.getRoot();
-    }
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+  }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        NavController navController = NavHostFragment.findNavController(this);
-        NavigationUI.setupWithNavController(binding.bnv, navController);
-        setCurrentDate();
-    }
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    binding = FragmentHomeBinding.inflate(inflater, container, false);
+    binding.setLifecycleOwner(getViewLifecycleOwner());
+    binding.setViewModel(viewModel);
+    binding.setFragment(this);
+    return binding.getRoot();
+  }
 
-    @Override
-    public void onClick(View v) {
-        NavController controller = Navigation.findNavController(v);
-        int viewId = v.getId();
-        if (viewId == R.id.ib_stores) {
-            NavOptions options = NavigationUtils.getNavOptions(R.id.homeFragment, true);
-            NavDirections action = HomeFragmentDirections.actionToSelectFragment();
-            controller.navigate(action, options);
-        }
-    }
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
 
-    @SuppressLint("SetTextI18n")
-    private void setCurrentDate() {
-        ZoneId zoneId = ZoneId.of(TimeZone.getDefault().getID());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String currentDate = LocalDate.now(zoneId).format(formatter);
-        binding.tvDay.setText(getString(R.string.today) + ": " + currentDate);
-    }
+    navController = NavHostFragment.findNavController(this);
+    NavigationUI.setupWithNavController(binding.bnv, navController);
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
+    setCurrentDate();
+    observeViewModel();
+  }
 
-    public void onLogOutImageViewClick(View view) {
-        if (firebaseAuth.getCurrentUser() != null) {
-            firebaseAuth.signOut();
-            preferenceRepository.clearPreferences();
-            NavOptions options = NavigationUtils.getNavOptions(R.id.homeFragment, true);
-            Navigation.findNavController(view)
-                    .navigate(R.id.action_to_authentication, null, options);
-        }
+  @Override
+  public void onClick(View v) {
+    NavController controller = Navigation.findNavController(v);
+    int viewId = v.getId();
+    if (viewId == R.id.ib_stores) {
+      NavOptions options = NavigationUtils.getNavOptions(R.id.homeFragment, true);
+      NavDirections action = HomeFragmentDirections.actionToSelectFragment();
+      controller.navigate(action, options);
     }
+  }
+
+  @SuppressLint("SetTextI18n")
+  private void setCurrentDate() {
+    ZoneId zoneId = ZoneId.of(TimeZone.getDefault().getID());
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    String currentDate = LocalDate.now(zoneId).format(formatter);
+    binding.tvDay.setText(getString(R.string.today) + ": " + currentDate);
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    binding = null;
+  }
+
+  private void observeViewModel() {
+    viewModel.getSignOutResult().observe(getViewLifecycleOwner(), this::handleSignOutResult);
+    viewModel.isLoading().observe(getViewLifecycleOwner(), this::handleLoadingState);
+  }
+
+  private void handleLoadingState(@NonNull Boolean result) {
+    if (result) {
+      loadingDialog.show(
+          getParentFragmentManager(), "loadingDialog_" + this.getClass().getSimpleName());
+    } else if (loadingDialog.isAdded()) {
+      loadingDialog.dismiss();
+    }
+  }
+
+  private void handleSignOutResult(@NonNull Boolean result) {
+    if (result) {
+      NavOptions options = NavigationUtils.getNavOptions(R.id.homeFragment, true);
+      navController.navigate(R.id.action_to_authentication, null, options);
+    } else {
+      Toast.makeText(requireContext(), getString(R.string.error_sign_out), Toast.LENGTH_SHORT)
+          .show();
+    }
+  }
 }

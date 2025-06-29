@@ -13,11 +13,11 @@ import java.util.List;
  */
 public interface StoreRepository {
 
-    @NonNull Single<Result<List<RoleStore>>> getUserStores(@NonNull String userId);
+  @NonNull Single<Result<List<RoleStore>>> getUserStores(@NonNull String userId);
 
-    Single<Result<Store>> getStore(@NonNull String storeId);
+  Single<Result<Store>> getStore(@NonNull String storeId);
 
-    @NonNull Single<Result<String>> setStore(@NonNull String userId, @NonNull Store store);
+  @NonNull Single<Result<String>> setStore(@NonNull String userId, @NonNull Store store);
 
-    @NonNull Single<Result<Void>> deleteStore(@NonNull String storeId);
+  @NonNull Single<Result<Void>> deleteStore(@NonNull String storeId);
 }

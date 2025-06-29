@@ -5,11 +5,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.optlab.banhangso.models.application.SortOption;
 import com.optlab.banhangso.models.domain.Product;
-import com.optlab.banhangso.repositories.interfaces.PreferenceRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
 import com.optlab.banhangso.repositories.interfaces.SortOptionRepository;
-import com.optlab.banhangso.repositories.perferences.AppPreferencesImpl;
+import com.optlab.banhangso.repositories.interfaces.preferences.AppPreferences;
 import com.optlab.banhangso.repositories.sortoption.qualifier.ProductSortSelection;
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -18,37 +19,51 @@ import javax.inject.Inject;
  */
 @HiltViewModel
 public class ProductSortSelectionViewModel extends ViewModel {
-    private final SortOptionRepository repository;
-    private final PreferenceRepository preferenceRepository;
-    private final MutableLiveData<List<SortOption<Product.SortField>>> sortOptions =
-            new MutableLiveData<>();
-    private final MutableLiveData<Integer> sortOptionIndex = new MutableLiveData<>();
+  private final SortOptionRepository repository;
+  private final PreferencesRepository preferenceRepository;
+  private final MutableLiveData<List<SortOption<Product.SortField>>> sortOptions =
+      new MutableLiveData<>();
+  private final MutableLiveData<Integer> sortOptionIndex = new MutableLiveData<>();
+  private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    @Inject
-    public ProductSortSelectionViewModel(
-            @ProductSortSelection SortOptionRepository repository,
-            PreferenceRepository preferenceRepository) {
-        this.repository = repository;
-        this.preferenceRepository = preferenceRepository;
+  @Inject
+  public ProductSortSelectionViewModel(
+      @ProductSortSelection SortOptionRepository repository,
+      PreferencesRepository preferenceRepository) {
+    this.repository = repository;
+    this.preferenceRepository = preferenceRepository;
 
-        sortOptions.setValue(repository.getSortOptions());
+    sortOptions.setValue(repository.getSortOptions());
 
-        sortOptionIndex.setValue(
-                repository.getPosition(
-                        preferenceRepository.getSortOption(
-                                AppPreferencesImpl.KEY_PRODUCT_SORT_OPTION)));
-    }
+    // Handle reactive getSortOption call
+    compositeDisposable.add(
+        preferenceRepository
+            .getSortOption(AppPreferences.KEY_PRODUCT_SORT_OPTION)
+            .subscribe(
+                sortOption -> sortOptionIndex.setValue(repository.getPosition(sortOption)),
+                throwable -> sortOptionIndex.setValue(0) // Default to first option if not found
+                ));
+  }
 
-    public List<SortOption<Product.SortField>> getSortOptions() {
-        return sortOptions.getValue();
-    }
+  public List<SortOption<Product.SortField>> getSortOptions() {
+    return sortOptions.getValue();
+  }
 
-    public void setSortOptionIndex(SortOption<Product.SortField> sortOption) {
-        preferenceRepository.setSortOption(sortOption, AppPreferencesImpl.KEY_PRODUCT_SORT_OPTION);
-        sortOptionIndex.setValue(repository.getPosition(sortOption));
-    }
+  public void setSortOptionIndex(SortOption<Product.SortField> sortOption) {
+    compositeDisposable.add(
+        preferenceRepository
+            .setSortOption(sortOption, AppPreferences.KEY_PRODUCT_SORT_OPTION)
+            .subscribe());
+    sortOptionIndex.setValue(repository.getPosition(sortOption));
+  }
 
-    public LiveData<Integer> getSortOptionIndex() {
-        return sortOptionIndex;
-    }
+  public LiveData<Integer> getSortOptionIndex() {
+    return sortOptionIndex;
+  }
+
+  @Override
+  protected void onCleared() {
+    super.onCleared();
+    compositeDisposable.clear();
+  }
 }

@@ -21,73 +21,73 @@ import javax.inject.Inject;
  */
 @HiltViewModel
 public class BrandListViewModel extends ViewModel {
-    private final BrandRepository repository;
-    private final MutableLiveData<List<Brand>> brands = new MutableLiveData<>();
-    private final MediatorLiveData<List<Brand>> brandMediator = new MediatorLiveData<>();
-    private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
-    private final MutableLiveData<SortOption<Brand.SortField>> sortOption = new MutableLiveData<>();
+  private final BrandRepository repository;
+  private final MutableLiveData<List<Brand>> brands = new MutableLiveData<>();
+  private final MediatorLiveData<List<Brand>> brandMediator = new MediatorLiveData<>();
+  private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
+  private final MutableLiveData<SortOption<Brand.SortField>> sortOption = new MutableLiveData<>();
 
-    @Inject
-    public BrandListViewModel(@Nonnull BrandRepository repository) {
-        this.repository = repository;
-        retrieveBrands();
+  @Inject
+  public BrandListViewModel(@Nonnull BrandRepository repository) {
+    this.repository = repository;
+    retrieveBrands();
 
-        brandMediator.addSource(brands, unused -> updateBrands());
-        brandMediator.addSource(searchQuery, unused -> updateBrands());
-        brandMediator.addSource(sortOption, unused -> updateBrands());
+    brandMediator.addSource(brands, unused -> updateBrands());
+    brandMediator.addSource(searchQuery, unused -> updateBrands());
+    brandMediator.addSource(sortOption, unused -> updateBrands());
+  }
+
+  private void updateBrands() {
+    List<Brand> updatedList = brands.getValue();
+    if (updatedList == null) {
+      brandMediator.setValue(Collections.emptyList());
+      return;
     }
 
-    private void updateBrands() {
-        List<Brand> updatedList = brands.getValue();
-        if (updatedList == null) {
-            brandMediator.setValue(Collections.emptyList());
-            return;
-        }
-
-        String query = searchQuery.getValue();
-        if (!TextUtils.isEmpty(query)) {
-            updatedList = filterByQuery(updatedList, query);
-        }
-
-        SortOption<Brand.SortField> selectedSortOption = sortOption.getValue();
-        if (selectedSortOption != null) {
-            updatedList.sort(
-                    SortingUtils.getComparator(
-                            selectedSortOption.getSortField(), selectedSortOption.isAscending()));
-        }
-
-        brandMediator.setValue(updatedList);
+    String query = searchQuery.getValue();
+    if (!TextUtils.isEmpty(query)) {
+      updatedList = filterByQuery(updatedList, query);
     }
 
-    private List<Brand> filterByQuery(List<Brand> updatedList, String query) {
-        return updatedList.stream()
-                .filter(brand -> containQuery(brand.getName(), query))
-                .collect(Collectors.toList());
+    SortOption<Brand.SortField> selectedSortOption = sortOption.getValue();
+    if (selectedSortOption != null) {
+      updatedList.sort(
+          SortingUtils.getComparator(
+              selectedSortOption.getSortField(), selectedSortOption.isAscending()));
     }
 
-    private boolean containQuery(@NonNull String name, @NonNull String query) {
-        return name.toLowerCase().contains(query.toLowerCase());
-    }
+    brandMediator.setValue(updatedList);
+  }
 
-    private void retrieveBrands() {
-        repository.getBrands().observeForever(brands::setValue);
-    }
+  private List<Brand> filterByQuery(List<Brand> updatedList, String query) {
+    return updatedList.stream()
+        .filter(brand -> containQuery(brand.getName(), query))
+        .collect(Collectors.toList());
+  }
 
-    @Override
-    protected void onCleared() {
-        repository.getBrands().removeObserver(brands::setValue);
-        super.onCleared();
-    }
+  private boolean containQuery(@NonNull String name, @NonNull String query) {
+    return name.toLowerCase().contains(query.toLowerCase());
+  }
 
-    public MutableLiveData<List<Brand>> getBrands() {
-        return brandMediator;
-    }
+  private void retrieveBrands() {
+    repository.getBrands().observeForever(brands::setValue);
+  }
 
-    public void setSearchQuery(String query) {
-        searchQuery.setValue(query);
-    }
+  @Override
+  protected void onCleared() {
+    repository.getBrands().removeObserver(brands::setValue);
+    super.onCleared();
+  }
 
-    public void setSortOption(SortOption<Brand.SortField> sortOption) {
-        this.sortOption.setValue(sortOption);
-    }
+  public MutableLiveData<List<Brand>> getBrands() {
+    return brandMediator;
+  }
+
+  public void setSearchQuery(String query) {
+    searchQuery.setValue(query);
+  }
+
+  public void setSortOption(SortOption<Brand.SortField> sortOption) {
+    this.sortOption.setValue(sortOption);
+  }
 }

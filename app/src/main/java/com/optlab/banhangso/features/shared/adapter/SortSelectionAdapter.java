@@ -11,71 +11,72 @@ import com.optlab.banhangso.features.shared.listener.OnSortSelectListener;
 import com.optlab.banhangso.models.application.SortOption;
 
 public class SortSelectionAdapter<T extends Enum<T>>
-        extends ListAdapter<SortOption<T>, SortSelectionAdapter<T>.ViewHolder> {
-    private final OnSortSelectListener<T> listener;
-    private int selectedPosition = RecyclerView.NO_POSITION;
+    extends ListAdapter<SortOption<T>, SortSelectionAdapter<T>.ViewHolder> {
+  private final OnSortSelectListener<T> listener;
+  private int selectedPosition = RecyclerView.NO_POSITION;
 
-    public SortSelectionAdapter(@NonNull OnSortSelectListener<T> listener) {
-        super(
-                new DiffUtil.ItemCallback<>() {
-                    @Override
-                    public boolean areItemsTheSame(
-                            @NonNull SortOption<T> oldItem, @NonNull SortOption<T> newItem) {
-                        return oldItem.getDisplayName().equals(newItem.getDisplayName());
-                    }
+  public SortSelectionAdapter(@NonNull OnSortSelectListener<T> listener) {
+    super(
+        new DiffUtil.ItemCallback<>() {
+          @Override
+          public boolean areItemsTheSame(
+              @NonNull SortOption<T> oldItem, @NonNull SortOption<T> newItem) {
+            return oldItem.getDisplayName().equals(newItem.getDisplayName());
+          }
 
-                    @Override
-                    public boolean areContentsTheSame(
-                            @NonNull SortOption<T> oldItem, @NonNull SortOption<T> newItem) {
-                        return oldItem.equals(newItem);
-                    }
-                });
-        this.listener = listener;
+          @Override
+          public boolean areContentsTheSame(
+              @NonNull SortOption<T> oldItem, @NonNull SortOption<T> newItem) {
+            return oldItem.equals(newItem);
+          }
+        });
+    this.listener = listener;
+  }
+
+  @NonNull @Override
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+    ListItemSortSelectionBinding binding =
+        ListItemSortSelectionBinding.inflate(inflater, parent, false);
+    return new ViewHolder(binding);
+  }
+
+  @Override
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    holder.bind(getItem(position));
+  }
+
+  public void setCheckedPosition(int newPosition) {
+    if (selectedPosition == newPosition) return;
+
+    int previousPosition = selectedPosition;
+    if (selectedPosition != RecyclerView.NO_POSITION) {
+      notifyItemChanged(previousPosition);
     }
 
-    @NonNull @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ListItemSortSelectionBinding binding =
-                ListItemSortSelectionBinding.inflate(inflater, parent, false);
-        return new ViewHolder(binding);
+    selectedPosition = newPosition;
+    notifyItemChanged(newPosition);
+  }
+
+  public class ViewHolder extends RecyclerView.ViewHolder {
+    private final ListItemSortSelectionBinding binding;
+
+    public ViewHolder(@NonNull ListItemSortSelectionBinding binding) {
+      super(binding.getRoot());
+      this.binding = binding;
+      binding
+          .getRoot()
+          .setOnClickListener(
+              v -> {
+                setCheckedPosition(getBindingAdapterPosition());
+                listener.onClick(getItem(selectedPosition));
+              });
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position));
+    public void bind(@NonNull SortOption<T> sortOption) {
+      binding.setOption(sortOption);
+      binding.rbSelect.setChecked(selectedPosition == getBindingAdapterPosition());
+      binding.executePendingBindings();
     }
-
-    public void setCheckedPosition(int newPosition) {
-        if (selectedPosition == newPosition) return;
-
-        int previousPosition = selectedPosition;
-        if (selectedPosition != RecyclerView.NO_POSITION) {
-            notifyItemChanged(previousPosition);
-        }
-
-        selectedPosition = newPosition;
-        notifyItemChanged(newPosition);
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private final ListItemSortSelectionBinding binding;
-
-        public ViewHolder(@NonNull ListItemSortSelectionBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-            binding.getRoot()
-                    .setOnClickListener(
-                            v -> {
-                                setCheckedPosition(getBindingAdapterPosition());
-                                listener.onClick(getItem(selectedPosition));
-                            });
-        }
-
-        public void bind(@NonNull SortOption<T> sortOption) {
-            binding.setOption(sortOption);
-            binding.rbSelect.setChecked(selectedPosition == getBindingAdapterPosition());
-            binding.executePendingBindings();
-        }
-    }
+  }
 }

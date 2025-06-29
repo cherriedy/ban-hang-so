@@ -5,8 +5,8 @@ import com.optlab.banhangso.models.remote.RoleStoreFirebaseObject;
 import java.util.List;
 
 public class StoreResponseObjects {
-    public record CreateStoreResponse(@SerializedName("store_id") String storeId) {}
+  public record CreateStoreResponse(@SerializedName("store_id") String storeId) {}
 
-    public record UserStoresResponse(
-            @SerializedName("stores") List<RoleStoreFirebaseObject> stores) {}
+  public record UserStoresResponse(
+      @SerializedName("stores") List<RoleStoreFirebaseObject> stores) {}
 }

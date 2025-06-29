@@ -14,10 +14,10 @@ import org.jetbrains.annotations.Contract;
 @InstallIn(SingletonComponent.class)
 public abstract class ApplicationModule {
 
-    @NonNull @Contract(" -> new")
-    @Provides
-    @Singleton
-    public static ErrorHandler providErrorHandler() {
-        return new ErrorHandlerImpl();
-    }
+  @NonNull @Contract(" -> new")
+  @Provides
+  @Singleton
+  public static ErrorHandler providErrorHandler() {
+    return new ErrorHandlerImpl();
+  }
 }

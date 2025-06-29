@@ -6,17 +6,17 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public interface BrandRepository {
-    LiveData<List<Brand>> getBrands();
+  LiveData<List<Brand>> getBrands();
 
-    Brand getBrandById(String id);
+  Brand getBrandById(String id);
 
-    Brand getBrandByPosition(int position);
+  Brand getBrandByPosition(int position);
 
-    int getPositionById(String id);
+  int getPositionById(String id);
 
-    void updateBrand(Brand brand, Consumer<Boolean> callback);
+  void updateBrand(Brand brand, Consumer<Boolean> callback);
 
-    void deleteBrand(Brand brand, Consumer<Boolean> callback);
+  void deleteBrand(Brand brand, Consumer<Boolean> callback);
 
-    void createBrand(Brand brand, Consumer<Boolean> callback);
+  void createBrand(Brand brand, Consumer<Boolean> callback);
 }

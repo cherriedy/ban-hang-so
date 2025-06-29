@@ -8,12 +8,12 @@
         <import type="com.optlab.banhangso.R" />
 
         <variable
-            name="prefRepo"
-            type="com.optlab.banhangso.repositories.interfaces.PreferenceRepository" />
-
-        <variable
             name="fragment"
             type="com.optlab.banhangso.features.main.home.HomeFragment" />
+
+        <variable
+            name="viewModel"
+            type="com.optlab.banhangso.features.main.home.HomeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,7 +43,7 @@
                 app:civ_border_color="@color/white"
                 app:civ_border_width="1dp"
                 app:defaultImageResource="@{R.drawable.ic_default_user}"
-                app:imageResource="@{prefRepo.user.imageUrl}" />
+                app:imageResource="@{viewModel.user.imageUrl}" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -55,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/open_sans"
-                    android:text="@{@string/welcome + ` ` + prefRepo.user.name}"
+                    android:text="@{viewModel.user.name}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="@color/white"
                     android:textFontWeight="800"
@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/open_sans"
-                        android:text="@{prefRepo.store.name}"
+                        android:text="@{viewModel.store.name}"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                         android:textColor="@color/white"
                         android:textFontWeight="800"
@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:importantForAccessibility="no"
-                    android:onClick="@{fragment::onLogOutImageViewClick}"
+                    android:onClick="@{viewModel::onSignOut}"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_log_out"
                     app:layout_constraintBottom_toBottomOf="parent"

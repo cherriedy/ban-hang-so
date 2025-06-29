@@ -4,9 +4,9 @@ import com.optlab.banhangso.models.application.SortOption;
 import java.util.List;
 
 public interface SortOptionRepository<T extends Enum<T>> {
-    List<SortOption<T>> getSortOptions();
+  List<SortOption<T>> getSortOptions();
 
-    int getPosition(SortOption<T> sortOption);
+  int getPosition(SortOption<T> sortOption);
 
-    SortOption<T> getSortOption(int position);
+  SortOption<T> getSortOption(int position);
 }

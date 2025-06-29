@@ -13,30 +13,29 @@ import com.optlab.banhangso.databinding.FragmentStockListBinding;
 
 public class StockListFragment extends Fragment {
 
-    private FragmentStockListBinding binding;
+  private FragmentStockListBinding binding;
 
-    public StockListFragment() {}
+  public StockListFragment() {}
 
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentStockListBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    binding = FragmentStockListBinding.inflate(inflater, container, false);
+    return binding.getRoot();
+  }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
 
-        NavigationUI.setupWithNavController(
-                binding.toolBar, NavHostFragment.findNavController(this));
+    NavigationUI.setupWithNavController(binding.toolBar, NavHostFragment.findNavController(this));
 
-        //
-        // NavHostFragment.findNavController(this).addOnDestinationChangedListener((controller,
-        // destination, argument) -> {
-        //            if (destination.getId() == R.id.productManagementFragment) {
-        //                binding.toolBar.setTitle("vcl");
-        //            }
-        //        });
-    }
+    //
+    // NavHostFragment.findNavController(this).addOnDestinationChangedListener((controller,
+    // destination, argument) -> {
+    //            if (destination.getId() == R.id.productManagementFragment) {
+    //                binding.toolBar.setTitle("vcl");
+    //            }
+    //        });
+  }
 }

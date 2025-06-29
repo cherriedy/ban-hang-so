@@ -172,7 +172,7 @@
                                     android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_email"
                                     android:inputType="textEmailAddress"
-                                    android:text="@={viewModel.inputs[Constants.Auth.KEY_EMAIL]}"
+                                    android:text="@={viewModel.inputFields[Constants.Auth.KEY_EMAIL]}"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                     android:textFontWeight="800" />
                             </com.google.android.material.textfield.TextInputLayout>
@@ -225,7 +225,7 @@
                                     android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_password"
                                     android:inputType="textPassword"
-                                    android:text="@={viewModel.inputs[Constants.Auth.KEY_PASSWORD]}"
+                                    android:text="@={viewModel.inputFields[Constants.Auth.KEY_PASSWORD]}"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                     android:textFontWeight="800" />
                             </com.google.android.material.textfield.TextInputLayout>
@@ -279,7 +279,7 @@
                                     android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_password"
                                     android:inputType="textPassword"
-                                    android:text="@={viewModel.inputs[Constants.Auth.KEY_CONFIRM_PASSWORD]}"
+                                    android:text="@={viewModel.inputFields[Constants.Auth.KEY_CONFIRM_PASSWORD]}"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                     android:textFontWeight="800" />
                             </com.google.android.material.textfield.TextInputLayout>

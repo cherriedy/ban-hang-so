@@ -32,7 +32,7 @@ subprojects {
 
         java {
             target("**/*.java")
-            googleJavaFormat().aosp()
+            googleJavaFormat().formatJavadoc(true)
             removeUnusedImports()
             formatAnnotations()
             trimTrailingWhitespace()

@@ -83,7 +83,7 @@
                     android:layout_marginEnd="@dimen/spacing_large"
                     android:background="@color/white"
                     app:endIconMode="clear_text"
-                    app:error="@{viewModel.validationState.contactNameError}"
+                    app:error="@{viewModel.errors[Constants.Auth.ERROR_USER_NAME]}"
                     app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -125,7 +125,7 @@
                     android:layout_marginEnd="@dimen/spacing_large"
                     android:background="@color/white"
                     app:endIconMode="clear_text"
-                    app:error="@{viewModel.validationState.contactPhoneError}"
+                    app:error="@{viewModel.errors[Constants.Auth.ERROR_USER_PHONE]}"
                     app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -252,7 +252,7 @@
                         android:layout_marginEnd="@dimen/spacing_large"
                         android:background="@color/white"
                         app:endIconMode="clear_text"
-                        app:error="@{viewModel.validationState.storeNameError}"
+                        app:error="@{viewModel.errors[Constants.Auth.ERROR_STORE_NAME]}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -309,7 +309,7 @@
                         android:layout_marginEnd="@dimen/spacing_large"
                         android:background="@color/white"
                         app:endIconMode="clear_text"
-                        app:error="@{viewModel.validationState.storeDescriptionError}"
+                        app:error="@{viewModel.errors[Constants.Auth.ERROR_STORE_DESCRIPTION]}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -365,6 +365,7 @@
                         android:layout_marginEnd="@dimen/spacing_large"
                         android:background="@color/white"
                         app:endIconMode="clear_text"
+                        app:error="@{viewModel.errors[Constants.Auth.ERROR_STORE_CODE]}"
                         app:hintEnabled="false">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -404,9 +405,9 @@
                 android:layout_marginStart="@dimen/spacing_large"
                 android:layout_marginEnd="@dimen/spacing_large"
                 android:layout_marginBottom="@dimen/spacing_middle"
-                android:enabled="@{viewModel.validationState.hasNoError}"
+                android:enabled="@{viewModel.canRegister}"
                 android:fontFamily="@font/open_sans"
-                android:onClick="@{viewModel::onSignUpButtonClick}"
+                android:onClick="@{viewModel::onSignUp}"
                 android:text="@string/complete"
                 android:textFontWeight="800"
                 app:cornerRadius="@dimen/spacing_medium" />

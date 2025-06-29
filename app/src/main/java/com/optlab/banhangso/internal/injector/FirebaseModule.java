@@ -20,38 +20,38 @@ import org.jetbrains.annotations.Contract;
 @InstallIn(SingletonComponent.class)
 public abstract class FirebaseModule {
 
-    private FirebaseModule() {}
+  private FirebaseModule() {}
 
-    @NonNull @Provides
-    @Singleton
-    public static FirebaseFirestore provideFirebaseFirestore() {
-        return FirebaseFirestore.getInstance();
-    }
+  @NonNull @Provides
+  @Singleton
+  public static FirebaseFirestore provideFirebaseFirestore() {
+    return FirebaseFirestore.getInstance();
+  }
 
-    @NonNull @Provides
-    @Singleton
-    public static FirebaseAuth provideFirebaseAuth() {
-        return FirebaseAuth.getInstance();
-    }
+  @NonNull @Provides
+  @Singleton
+  public static FirebaseAuth provideFirebaseAuth() {
+    return FirebaseAuth.getInstance();
+  }
 
-    @NonNull @Contract(value = "_ -> new", pure = true)
-    @Provides
-    @Singleton
-    public static FirebaseStoreService provideFirebaseStoreService(FirebaseFirestore firestore) {
-        return new FirebaseStoreServiceImpl(firestore);
-    }
+  @NonNull @Contract(value = "_ -> new", pure = true)
+  @Provides
+  @Singleton
+  public static FirebaseStoreService provideFirebaseStoreService(FirebaseFirestore firestore) {
+    return new FirebaseStoreServiceImpl(firestore);
+  }
 
-    @NonNull @Contract(value = "_ -> new", pure = true)
-    @Provides
-    @Singleton
-    public static FirebaseUserService provideFirebaseUserService(FirebaseFirestore firestore) {
-        return new FirebaseUserServiceImpl(firestore);
-    }
+  @NonNull @Contract(value = "_ -> new", pure = true)
+  @Provides
+  @Singleton
+  public static FirebaseUserService provideFirebaseUserService(FirebaseFirestore firestore) {
+    return new FirebaseUserServiceImpl(firestore);
+  }
 
-    @NonNull @Contract(value = "_ -> new", pure = true)
-    @Provides
-    @Singleton
-    public static FirebaseAuthService provideFirebaseAuthService(FirebaseAuth firebaseAuth) {
-        return new FirebaseAuthServiceImpl(firebaseAuth);
-    }
+  @NonNull @Contract(value = "_ -> new", pure = true)
+  @Provides
+  @Singleton
+  public static FirebaseAuthService provideFirebaseAuthService(FirebaseAuth firebaseAuth) {
+    return new FirebaseAuthServiceImpl(firebaseAuth);
+  }
 }

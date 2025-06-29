@@ -11,90 +11,90 @@ import com.optlab.banhangso.models.application.SortOption;
 import java.util.Date;
 
 public class Category extends BaseObservable implements Cloneable {
-    public enum SortField implements SortOption.Displayable {
-        UPDATE_TIME("Cũ nhất", "Mới nhất"),
-        NAME("Tên A -> Z", "Tên Z -> A");
+  public enum SortField implements SortOption.Displayable {
+    UPDATE_TIME("Cũ nhất", "Mới nhất"),
+    NAME("Tên A -> Z", "Tên Z -> A");
 
-        private final String ascending;
-        private final String descending;
+    private final String ascending;
+    private final String descending;
 
-        SortField(String ascending, String descending) {
-            this.ascending = ascending;
-            this.descending = descending;
-        }
-
-        @Override
-        public String getDisplayName(boolean isAscending) {
-            return isAscending ? ascending : descending;
-        }
-    }
-
-    @Exclude private String id;
-    private String name;
-    @ServerTimestamp private Date createdAt;
-    @ServerTimestamp private Date updatedAt;
-
-    public Category() {}
-
-    public Category(String id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public static Category empty() {
-        return new Category("", "");
-    }
-
-    @NonNull @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    SortField(String ascending, String descending) {
+      this.ascending = ascending;
+      this.descending = descending;
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
-        if (obj instanceof Category that) {
-            if (this == that) return true;
-            return this.id.equals(that.id) && this.name.equals(that.name);
-        } else {
-            return false;
-        }
+    public String getDisplayName(boolean isAscending) {
+      return isAscending ? ascending : descending;
     }
+  }
 
-    public String getId() {
-        return id;
-    }
+  @Exclude private String id;
+  private String name;
+  @ServerTimestamp private Date createdAt;
+  @ServerTimestamp private Date updatedAt;
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public Category() {}
 
-    @Bindable
-    public String getName() {
-        return name;
-    }
+  public Category(String id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-        notifyPropertyChanged(BR.name);
-    }
+  public static Category empty() {
+    return new Category("", "");
+  }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+  @NonNull @Override
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
+  }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+  @Override
+  public boolean equals(@Nullable Object obj) {
+    if (obj instanceof Category that) {
+      if (this == that) return true;
+      return this.id.equals(that.id) && this.name.equals(that.name);
+    } else {
+      return false;
     }
+  }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public boolean isEmpty() {
-        return id.isEmpty() && name.isEmpty();
-    }
+  @Bindable
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+    notifyPropertyChanged(BR.name);
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public boolean isEmpty() {
+    return id.isEmpty() && name.isEmpty();
+  }
 }

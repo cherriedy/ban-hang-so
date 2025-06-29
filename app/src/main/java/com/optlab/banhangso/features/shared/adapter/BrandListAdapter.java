@@ -11,57 +11,58 @@ import com.optlab.banhangso.features.shared.listener.OnBrandClickListener;
 import com.optlab.banhangso.models.domain.Brand;
 
 public class BrandListAdapter extends ListAdapter<Brand, BrandListAdapter.ViewHolder> {
-    private static final DiffUtil.ItemCallback<Brand> CALL_BACK =
-            new DiffUtil.ItemCallback<>() {
-                @Override
-                public boolean areItemsTheSame(@NonNull Brand oldItem, @NonNull Brand newItem) {
-                    return oldItem.getId().equals(newItem.getId());
-                }
-
-                @Override
-                public boolean areContentsTheSame(@NonNull Brand oldItem, @NonNull Brand newItem) {
-                    return oldItem.equals(newItem);
-                }
-            };
-
-    private final OnBrandClickListener listener;
-
-    public BrandListAdapter(@NonNull final OnBrandClickListener listener) {
-        super(CALL_BACK);
-        this.listener = listener;
-    }
-
-    @NonNull @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ListItemBrandBinding binding = ListItemBrandBinding.inflate(inflater, null, false);
-        return new ViewHolder(binding);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(getItem(position));
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private final ListItemBrandBinding binding;
-
-        public ViewHolder(@NonNull ListItemBrandBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-            binding.getRoot()
-                    .setOnClickListener(
-                            v -> {
-                                int position = getBindingAdapterPosition();
-                                if (position != RecyclerView.NO_POSITION) {
-                                    listener.onClick(getItem(position).getId());
-                                }
-                            });
+  private static final DiffUtil.ItemCallback<Brand> CALL_BACK =
+      new DiffUtil.ItemCallback<>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Brand oldItem, @NonNull Brand newItem) {
+          return oldItem.getId().equals(newItem.getId());
         }
 
-        public void bind(@NonNull Brand brand) {
-            binding.setBrand(brand);
-            binding.executePendingBindings();
+        @Override
+        public boolean areContentsTheSame(@NonNull Brand oldItem, @NonNull Brand newItem) {
+          return oldItem.equals(newItem);
         }
+      };
+
+  private final OnBrandClickListener listener;
+
+  public BrandListAdapter(@NonNull final OnBrandClickListener listener) {
+    super(CALL_BACK);
+    this.listener = listener;
+  }
+
+  @NonNull @Override
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+    ListItemBrandBinding binding = ListItemBrandBinding.inflate(inflater, null, false);
+    return new ViewHolder(binding);
+  }
+
+  @Override
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    holder.bind(getItem(position));
+  }
+
+  public class ViewHolder extends RecyclerView.ViewHolder {
+    private final ListItemBrandBinding binding;
+
+    public ViewHolder(@NonNull ListItemBrandBinding binding) {
+      super(binding.getRoot());
+      this.binding = binding;
+      binding
+          .getRoot()
+          .setOnClickListener(
+              v -> {
+                int position = getBindingAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                  listener.onClick(getItem(position).getId());
+                }
+              });
     }
+
+    public void bind(@NonNull Brand brand) {
+      binding.setBrand(brand);
+      binding.executePendingBindings();
+    }
+  }
 }

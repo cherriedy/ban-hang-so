@@ -24,96 +24,93 @@ import java.util.EnumSet;
 
 @AndroidEntryPoint
 public class BrandListFragment extends Fragment {
-    private FragmentBrandListBinding binding;
-    private BrandListViewModel viewModel;
-    private BrandListAdapter adapter;
-    private ProductTabHostSharedViewModel tabHostSharedViewModel;
-    private NavController navController;
+  private FragmentBrandListBinding binding;
+  private BrandListViewModel viewModel;
+  private BrandListAdapter adapter;
+  private ProductTabHostSharedViewModel tabHostSharedViewModel;
+  private NavController navController;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        navController = NavHostFragment.findNavController(this);
-        initViewModels();
-        initAdapters();
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    navController = NavHostFragment.findNavController(this);
+    initViewModels();
+    initAdapters();
+  }
+
+  private void initAdapters() {
+    adapter = new BrandListAdapter(id -> navigateToBrandEditFragment(id, false));
+  }
+
+  private void navigateToBrandEditFragment(String id, boolean isCreateMode) {
+    navController.navigate(ProductTabHostFragmentDirections.actionToBrandEdit(id, isCreateMode));
+  }
+
+  private void initViewModels() {
+    viewModel = new ViewModelProvider(this).get(BrandListViewModel.class);
+
+    NavBackStackEntry productTabsEntry =
+        NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_product_tabs);
+    tabHostSharedViewModel =
+        new ViewModelProvider(productTabsEntry).get(ProductTabHostSharedViewModel.class);
+  }
+
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    binding = FragmentBrandListBinding.inflate(inflater, container, false);
+    binding.setLifecycleOwner(this);
+    binding.setFragment(this);
+    return binding.getRoot();
+  }
+
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    initRecyclerView();
+    observeViewModels();
+  }
+
+  private void observeViewModels() {
+    viewModel
+        .getBrands()
+        .observe(
+            getViewLifecycleOwner(),
+            brands -> {
+              // Bug: The brand is not updated unless the list is set to null first.
+              adapter.submitList(null);
+              adapter.submitList(brands);
+            });
+
+    tabHostSharedViewModel
+        .getSearchQuery()
+        .observe(getViewLifecycleOwner(), viewModel::setSearchQuery);
+
+    tabHostSharedViewModel
+        .getBrandSortOption()
+        .observe(getViewLifecycleOwner(), viewModel::setSortOption);
+  }
+
+  private void initRecyclerView() {
+    binding.rvBrands.setHasFixedSize(true);
+    binding.rvBrands.setAdapter(adapter);
+
+    while (binding.rvBrands.getItemDecorationCount() > 0) {
+      binding.rvBrands.removeItemDecorationAt(0);
     }
+    binding.rvBrands.addItemDecoration(
+        new SpacingItemDecoration(
+            new LinearSpacingStrategy(
+                requireContext(),
+                8,
+                EnumSet.of(
+                    LinearSpacingStrategy.Direction.LEFT, LinearSpacingStrategy.Direction.RIGHT))));
+  }
 
-    private void initAdapters() {
-        adapter = new BrandListAdapter(id -> navigateToBrandEditFragment(id, false));
-    }
-
-    private void navigateToBrandEditFragment(String id, boolean isCreateMode) {
-        navController.navigate(
-                ProductTabHostFragmentDirections.actionToBrandEdit(id, isCreateMode));
-    }
-
-    private void initViewModels() {
-        viewModel = new ViewModelProvider(this).get(BrandListViewModel.class);
-
-        NavBackStackEntry productTabsEntry =
-                NavHostFragment.findNavController(this)
-                        .getBackStackEntry(R.id.nav_graph_product_tabs);
-        tabHostSharedViewModel =
-                new ViewModelProvider(productTabsEntry).get(ProductTabHostSharedViewModel.class);
-    }
-
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentBrandListBinding.inflate(inflater, container, false);
-        binding.setLifecycleOwner(this);
-        binding.setFragment(this);
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initRecyclerView();
-        observeViewModels();
-    }
-
-    private void observeViewModels() {
-        viewModel
-                .getBrands()
-                .observe(
-                        getViewLifecycleOwner(),
-                        brands -> {
-                            // Bug: The brand is not updated unless the list is set to null first.
-                            adapter.submitList(null);
-                            adapter.submitList(brands);
-                        });
-
-        tabHostSharedViewModel
-                .getSearchQuery()
-                .observe(getViewLifecycleOwner(), viewModel::setSearchQuery);
-
-        tabHostSharedViewModel
-                .getBrandSortOption()
-                .observe(getViewLifecycleOwner(), viewModel::setSortOption);
-    }
-
-    private void initRecyclerView() {
-        binding.rvBrands.setHasFixedSize(true);
-        binding.rvBrands.setAdapter(adapter);
-
-        while (binding.rvBrands.getItemDecorationCount() > 0) {
-            binding.rvBrands.removeItemDecorationAt(0);
-        }
-        binding.rvBrands.addItemDecoration(
-                new SpacingItemDecoration(
-                        new LinearSpacingStrategy(
-                                requireContext(),
-                                8,
-                                EnumSet.of(
-                                        LinearSpacingStrategy.Direction.LEFT,
-                                        LinearSpacingStrategy.Direction.RIGHT))));
-    }
-
-    /**
-     * @noinspection unused
-     */
-    public void onAddButtonClick(@NonNull View view) {
-        navigateToBrandEditFragment("", true);
-    }
+  /**
+   * @noinspection unused
+   */
+  public void onAddButtonClick(@NonNull View view) {
+    navigateToBrandEditFragment("", true);
+  }
 }

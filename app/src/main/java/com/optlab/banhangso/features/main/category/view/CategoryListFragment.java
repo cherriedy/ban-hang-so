@@ -24,104 +24,100 @@ import java.util.EnumSet;
 
 @AndroidEntryPoint
 public class CategoryListFragment extends Fragment {
-    private FragmentCategoryListBinding binding;
-    private CategoryListViewModel viewModel;
-    private ProductTabHostSharedViewModel tabHostSharedViewModel;
-    private CategoryListAdapter adapter;
+  private FragmentCategoryListBinding binding;
+  private CategoryListViewModel viewModel;
+  private ProductTabHostSharedViewModel tabHostSharedViewModel;
+  private CategoryListAdapter adapter;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initViewModels();
-        initAdapters();
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    initViewModels();
+    initAdapters();
+  }
+
+  private void initAdapters() {
+    adapter =
+        new CategoryListAdapter(
+            id -> {
+              NavDirections action =
+                  ProductTabHostFragmentDirections.actionToCategoryEdit(id, false);
+              NavHostFragment.findNavController(this).navigate(action);
+            });
+  }
+
+  private void initViewModels() {
+    viewModel = new ViewModelProvider(this).get(CategoryListViewModel.class);
+
+    NavBackStackEntry productTabHostEntry =
+        NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_product_tabs);
+    tabHostSharedViewModel =
+        new ViewModelProvider(productTabHostEntry).get(ProductTabHostSharedViewModel.class);
+  }
+
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    binding = FragmentCategoryListBinding.inflate(inflater, container, false);
+    binding.setLifecycleOwner(this);
+    binding.setFragment(this);
+    return binding.getRoot();
+  }
+
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    initRecyclerView();
+    observeViewModel();
+  }
+
+  private void observeViewModel() {
+    viewModel
+        .getCategories()
+        .observe(
+            getViewLifecycleOwner(),
+            categories -> {
+              // BUG: The category will not update if we do not null first
+              adapter.submitList(null);
+              adapter.submitList(categories);
+            });
+
+    tabHostSharedViewModel
+        .getCategorySortOption()
+        .observe(getViewLifecycleOwner(), viewModel::setSortOption);
+
+    tabHostSharedViewModel
+        .getSearchQuery()
+        .observe(getViewLifecycleOwner(), viewModel::setSearchQuery);
+  }
+
+  private void initRecyclerView() {
+    binding.rvCategories.setAdapter(adapter);
+    binding.rvCategories.setHasFixedSize(true);
+
+    while (binding.rvCategories.getItemDecorationCount() > 0) {
+      binding.rvCategories.removeItemDecorationAt(0);
     }
 
-    private void initAdapters() {
-        adapter =
-                new CategoryListAdapter(
-                        id -> {
-                            NavDirections action =
-                                    ProductTabHostFragmentDirections.actionToCategoryEdit(
-                                            id, false);
-                            NavHostFragment.findNavController(this).navigate(action);
-                        });
-    }
+    binding.rvCategories.addItemDecoration(
+        new SpacingItemDecoration(
+            new LinearSpacingStrategy(
+                requireContext(),
+                4,
+                EnumSet.of(
+                    LinearSpacingStrategy.Direction.TOP, LinearSpacingStrategy.Direction.BOTTOM))));
 
-    private void initViewModels() {
-        viewModel = new ViewModelProvider(this).get(CategoryListViewModel.class);
+    binding.rvCategories.addItemDecoration(
+        new SpacingItemDecoration(
+            new LinearSpacingStrategy(
+                requireContext(),
+                8,
+                EnumSet.of(
+                    LinearSpacingStrategy.Direction.LEFT, LinearSpacingStrategy.Direction.RIGHT))));
+  }
 
-        NavBackStackEntry productTabHostEntry =
-                NavHostFragment.findNavController(this)
-                        .getBackStackEntry(R.id.nav_graph_product_tabs);
-        tabHostSharedViewModel =
-                new ViewModelProvider(productTabHostEntry).get(ProductTabHostSharedViewModel.class);
-    }
-
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentCategoryListBinding.inflate(inflater, container, false);
-        binding.setLifecycleOwner(this);
-        binding.setFragment(this);
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initRecyclerView();
-        observeViewModel();
-    }
-
-    private void observeViewModel() {
-        viewModel
-                .getCategories()
-                .observe(
-                        getViewLifecycleOwner(),
-                        categories -> {
-                            // BUG: The category will not update if we do not null first
-                            adapter.submitList(null);
-                            adapter.submitList(categories);
-                        });
-
-        tabHostSharedViewModel
-                .getCategorySortOption()
-                .observe(getViewLifecycleOwner(), viewModel::setSortOption);
-
-        tabHostSharedViewModel
-                .getSearchQuery()
-                .observe(getViewLifecycleOwner(), viewModel::setSearchQuery);
-    }
-
-    private void initRecyclerView() {
-        binding.rvCategories.setAdapter(adapter);
-        binding.rvCategories.setHasFixedSize(true);
-
-        while (binding.rvCategories.getItemDecorationCount() > 0) {
-            binding.rvCategories.removeItemDecorationAt(0);
-        }
-
-        binding.rvCategories.addItemDecoration(
-                new SpacingItemDecoration(
-                        new LinearSpacingStrategy(
-                                requireContext(),
-                                4,
-                                EnumSet.of(
-                                        LinearSpacingStrategy.Direction.TOP,
-                                        LinearSpacingStrategy.Direction.BOTTOM))));
-
-        binding.rvCategories.addItemDecoration(
-                new SpacingItemDecoration(
-                        new LinearSpacingStrategy(
-                                requireContext(),
-                                8,
-                                EnumSet.of(
-                                        LinearSpacingStrategy.Direction.LEFT,
-                                        LinearSpacingStrategy.Direction.RIGHT))));
-    }
-
-    public void onAddButtonClick(@NonNull View view) {
-        NavDirections action = ProductTabHostFragmentDirections.actionToCategoryEdit("", true);
-        NavHostFragment.findNavController(this).navigate(action);
-    }
+  public void onAddButtonClick(@NonNull View view) {
+    NavDirections action = ProductTabHostFragmentDirections.actionToCategoryEdit("", true);
+    NavHostFragment.findNavController(this).navigate(action);
+  }
 }

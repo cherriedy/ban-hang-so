@@ -7,23 +7,23 @@ import java.util.Locale;
 
 public class PriceFormatter {
 
-    private static final DecimalFormat DECIMAL_FORMAT;
-    private static final DecimalFormatSymbols DECIMAL_FORMAT_SYMBOLS;
+  private static final DecimalFormat DECIMAL_FORMAT;
+  private static final DecimalFormatSymbols DECIMAL_FORMAT_SYMBOLS;
 
-    static {
-        DECIMAL_FORMAT_SYMBOLS = new DecimalFormatSymbols(Locale.US);
-        DECIMAL_FORMAT_SYMBOLS.setDecimalSeparator(',');
-        DECIMAL_FORMAT_SYMBOLS.setGroupingSeparator('.');
-        DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
-        DECIMAL_FORMAT.setDecimalFormatSymbols(DECIMAL_FORMAT_SYMBOLS);
-        DECIMAL_FORMAT.setGroupingUsed(true);
-    }
+  static {
+    DECIMAL_FORMAT_SYMBOLS = new DecimalFormatSymbols(Locale.US);
+    DECIMAL_FORMAT_SYMBOLS.setDecimalSeparator(',');
+    DECIMAL_FORMAT_SYMBOLS.setGroupingSeparator('.');
+    DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
+    DECIMAL_FORMAT.setDecimalFormatSymbols(DECIMAL_FORMAT_SYMBOLS);
+    DECIMAL_FORMAT.setGroupingUsed(true);
+  }
 
-    private PriceFormatter() {
-        throw new UnsupportedOperationException("Utility Class");
-    }
+  private PriceFormatter() {
+    throw new UnsupportedOperationException("Utility Class");
+  }
 
-    public static synchronized DecimalFormat getInstance() {
-        return DECIMAL_FORMAT;
-    }
+  public static synchronized DecimalFormat getInstance() {
+    return DECIMAL_FORMAT;
+  }
 }

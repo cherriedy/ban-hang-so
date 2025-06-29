@@ -7,16 +7,16 @@ import io.reactivex.rxjava3.core.Single;
 import java.util.List;
 
 /**
- * @deprecated This class is deprecated and using {@link RenderStoreService} instead.
+ * @deprecated This class is deprecated and using {@link StoreService} instead.
  */
 public interface FirebaseStoreService {
-    String STORES_COLLECTION = "stores";
+  String STORES_COLLECTION = "stores";
 
-    Single<StoreFirebaseObject> getStore(@NonNull String storeId);
+  Single<StoreFirebaseObject> getStore(@NonNull String storeId);
 
-    Single<StoreFirebaseObject> setStore(@NonNull StoreFirebaseObject store);
+  Single<StoreFirebaseObject> setStore(@NonNull StoreFirebaseObject store);
 
-    Single<List<StoreFirebaseObject>> getUserStores(@NonNull String userId);
+  Single<List<StoreFirebaseObject>> getUserStores(@NonNull String userId);
 
-    Completable deleteStore(@NonNull String storeId);
+  Completable deleteStore(@NonNull String storeId);
 }

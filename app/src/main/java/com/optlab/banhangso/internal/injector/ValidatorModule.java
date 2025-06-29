@@ -15,23 +15,23 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 @InstallIn(ViewModelComponent.class)
 public abstract class ValidatorModule {
 
-    @Provides
-    public static ProductValidator provideProductValidator(@ApplicationContext Context context) {
-        return new ProductValidator(context);
-    }
+  @Provides
+  public static ProductValidator provideProductValidator(@ApplicationContext Context context) {
+    return new ProductValidator(context);
+  }
 
-    @Provides
-    public static BrandValidator provideBrandValidator(@ApplicationContext Context context) {
-        return new BrandValidator(context);
-    }
+  @Provides
+  public static BrandValidator provideBrandValidator(@ApplicationContext Context context) {
+    return new BrandValidator(context);
+  }
 
-    @Provides
-    public static CategoryValidator provideCategoryValidator(@ApplicationContext Context context) {
-        return new CategoryValidator(context);
-    }
+  @Provides
+  public static CategoryValidator provideCategoryValidator(@ApplicationContext Context context) {
+    return new CategoryValidator(context);
+  }
 
-    @Provides
-    public static AuthValidator provideAccountValidator(@ApplicationContext Context context) {
-        return new AuthValidator(context);
-    }
+  @Provides
+  public static AuthValidator provideAccountValidator(@ApplicationContext Context context) {
+    return new AuthValidator(context);
+  }
 }

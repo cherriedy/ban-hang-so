@@ -14,32 +14,32 @@ import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
 
 public class UserRepositoryImpl implements UserRepository {
-    private final FirebaseUserService firebaseUserService;
-    private final ErrorHandler errorHandler;
+  private final FirebaseUserService firebaseUserService;
+  private final ErrorHandler errorHandler;
 
-    public UserRepositoryImpl(FirebaseUserService firebaseUserService, ErrorHandler errorHandler) {
-        this.firebaseUserService = firebaseUserService;
-        this.errorHandler = errorHandler;
-    }
+  public UserRepositoryImpl(FirebaseUserService firebaseUserService, ErrorHandler errorHandler) {
+    this.firebaseUserService = firebaseUserService;
+    this.errorHandler = errorHandler;
+  }
 
-    @Override
-    public Single<Result<User>> setUser(@NonNull User user) {
-        UserFirebaseObject userFirebaseObject = UserFirebaseObjectMapper.fromDomain(user);
-        return firebaseUserService
-                .setUser(userFirebaseObject)
-                .flatMap(object -> Single.just((Result<User>) new Result.Success<>(user)))
-                .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
-    }
+  @Override
+  public Single<Result<User>> setUser(@NonNull User user) {
+    UserFirebaseObject userFirebaseObject = UserFirebaseObjectMapper.fromDomain(user);
+    return firebaseUserService
+        .setUser(userFirebaseObject)
+        .flatMap(object -> Single.just((Result<User>) new Result.Success<>(user)))
+        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
+  }
 
-    @Override
-    public Maybe<Result<User>> getUser(@NonNull String userId) {
-        return firebaseUserService
-                .getUser(userId)
-                .flatMap(
-                        userFirebaseObject -> {
-                            User user = UserFirebaseObjectMapper.toDomain(userFirebaseObject);
-                            return Maybe.just((Result<User>) new Result.Success<>(user));
-                        })
-                .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
-    }
+  @Override
+  public Maybe<Result<User>> getUser(@NonNull String userId) {
+    return firebaseUserService
+        .getUser(userId)
+        .flatMap(
+            userFirebaseObject -> {
+              User user = UserFirebaseObjectMapper.toDomain(userFirebaseObject);
+              return Maybe.just((Result<User>) new Result.Success<>(user));
+            })
+        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
+  }
 }

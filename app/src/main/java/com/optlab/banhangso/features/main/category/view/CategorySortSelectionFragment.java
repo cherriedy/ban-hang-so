@@ -20,63 +20,60 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class CategorySortSelectionFragment extends BottomSheetDialogFragment {
-    private FragmentSortSelectionBinding binding;
-    private CategorySortSelectionViewModel viewModel;
-    private ProductTabHostSharedViewModel tabHostSharedViewModel;
-    private SortSelectionAdapter<Category.SortField> adapter;
+  private FragmentSortSelectionBinding binding;
+  private CategorySortSelectionViewModel viewModel;
+  private ProductTabHostSharedViewModel tabHostSharedViewModel;
+  private SortSelectionAdapter<Category.SortField> adapter;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initViewModels();
-        initAdapter();
-    }
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    initViewModels();
+    initAdapter();
+  }
 
-    private void initAdapter() {
-        adapter =
-                new SortSelectionAdapter<>(
-                        sortOption -> {
-                            // Set the selected sort option in the ViewModel
-                            viewModel.setSortOptionIndex(sortOption);
-                            // Set the selected sort option in the shared ViewModel
-                            tabHostSharedViewModel.setCategorySortOption(sortOption);
-                        });
-    }
+  private void initAdapter() {
+    adapter =
+        new SortSelectionAdapter<>(
+            sortOption -> {
+              // Set the selected sort option in the ViewModel
+              viewModel.setSortOptionIndex(sortOption);
+              // Set the selected sort option in the shared ViewModel
+              tabHostSharedViewModel.setCategorySortOption(sortOption);
+            });
+  }
 
-    private void initViewModels() {
-        viewModel = new ViewModelProvider(this).get(CategorySortSelectionViewModel.class);
+  private void initViewModels() {
+    viewModel = new ViewModelProvider(this).get(CategorySortSelectionViewModel.class);
 
-        NavBackStackEntry productTabsEntry =
-                NavHostFragment.findNavController(this)
-                        .getBackStackEntry(R.id.nav_graph_product_tabs);
-        tabHostSharedViewModel =
-                new ViewModelProvider(productTabsEntry).get(ProductTabHostSharedViewModel.class);
-    }
+    NavBackStackEntry productTabsEntry =
+        NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_product_tabs);
+    tabHostSharedViewModel =
+        new ViewModelProvider(productTabsEntry).get(ProductTabHostSharedViewModel.class);
+  }
 
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentSortSelectionBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    binding = FragmentSortSelectionBinding.inflate(inflater, container, false);
+    return binding.getRoot();
+  }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        observeViewModels();
-        setupRecyclerView();
-    }
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    observeViewModels();
+    setupRecyclerView();
+  }
 
-    private void setupRecyclerView() {
-        binding.rvSortSelection.setHasFixedSize(true);
-        binding.rvSortSelection.setAdapter(adapter);
-    }
+  private void setupRecyclerView() {
+    binding.rvSortSelection.setHasFixedSize(true);
+    binding.rvSortSelection.setAdapter(adapter);
+  }
 
-    private void observeViewModels() {
-        viewModel.getSortOptions().observe(getViewLifecycleOwner(), adapter::submitList);
+  private void observeViewModels() {
+    viewModel.getSortOptions().observe(getViewLifecycleOwner(), adapter::submitList);
 
-        viewModel
-                .getSortOptionIndex()
-                .observe(getViewLifecycleOwner(), adapter::setCheckedPosition);
-    }
+    viewModel.getSortOptionIndex().observe(getViewLifecycleOwner(), adapter::setCheckedPosition);
+  }
 }

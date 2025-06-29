@@ -14,13 +14,13 @@ import com.optlab.banhangso.models.remote.mapper.ProductFirebaseObjectMapper
 import com.optlab.banhangso.pagingsource.ProductPagingSource
 import com.optlab.banhangso.pagingsource.ProductSearchPagingSource
 import com.optlab.banhangso.repositories.interfaces.ProductRepository
-import com.optlab.banhangso.services.interfaces.RenderProductService
+import com.optlab.banhangso.services.interfaces.ProductService
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
 import timber.log.Timber
 
 class ProductRepositoryImpl(
-    private val renderProductService: RenderProductService,
+    private val productService: ProductService,
     private val errorHandler: ErrorHandler,
 ) : ProductRepository {
     val pagingConfig =
@@ -33,12 +33,12 @@ class ProductRepositoryImpl(
 
     override fun getProducts(): Flowable<PagingData<Product>> {
         return Pager(pagingConfig) {
-            ProductPagingSource(renderProductService)
+            ProductPagingSource(productService)
         }.flowable.map { pagingData -> pagingData.map(ProductFirebaseObjectMapper::toDomain) }
     }
 
     override fun getProduct(productId: String): Single<Result<Product>> =
-        renderProductService.getProduct(productId).map { renderResponseObject ->
+        productService.getProduct(productId).map { renderResponseObject ->
             if (renderResponseObject.isSuccess) {
                 renderResponseObject.data.item.let {
                     Result.Success<Product>(ProductFirebaseObjectMapper.toDomain(it))
@@ -53,13 +53,13 @@ class ProductRepositoryImpl(
 
     override fun searchProduct(query: String): Flowable<PagingData<Product>> {
         return Pager(pagingConfig) {
-            ProductSearchPagingSource(query, renderProductService)
+            ProductSearchPagingSource(query, productService)
         }.flowable.map { pagingData -> pagingData.map(ProductFirebaseObjectMapper::toDomain) }
     }
 
     override fun createProduct(product: Product): Single<Result<Product>> =
         ProductFirebaseObjectMapper.fromDomain(product).let { productFirebaseObject ->
-            renderProductService.createProduct(productFirebaseObject).map { renderResponseObject ->
+            productService.createProduct(productFirebaseObject).map { renderResponseObject ->
                 Timber.d("Creating product response: $renderResponseObject")
                 if (renderResponseObject.isSuccess) {
                     renderResponseObject.data.item.let {
@@ -78,7 +78,7 @@ class ProductRepositoryImpl(
 
     override fun updateProduct(product: Product): Single<Result<Product>> =
         ProductFirebaseObjectMapper.fromDomain(product).let { productFirebaseObject ->
-            renderProductService.updateProduct(product.id, productFirebaseObject).map { renderResponseObject ->
+            productService.updateProduct(product.id, productFirebaseObject).map { renderResponseObject ->
                 if (renderResponseObject.isSuccess) {
                     renderResponseObject.data.item.let {
                         Result.Success<Product>(ProductFirebaseObjectMapper.toDomain(it))
@@ -95,7 +95,7 @@ class ProductRepositoryImpl(
         }.onErrorReturn { error -> Result.Failure<Product>(errorHandler.getError(error)) }
 
     override fun deleteProduct(productId: String): Single<Result<Boolean>> =
-        renderProductService.deleteProduct(productId).map { renderResponseObject ->
+        productService.deleteProduct(productId).map { renderResponseObject ->
             Result.Success<Boolean>(renderResponseObject.data) as Result<Boolean>
         }.onErrorReturn { error -> Result.Failure<Boolean>(errorHandler.getError(error)) }
 }

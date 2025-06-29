@@ -27,66 +27,63 @@ import dagger.hilt.android.AndroidEntryPoint;
  */
 @AndroidEntryPoint
 public class ProductSortSelectionFragment extends BottomSheetDialogFragment {
-    private FragmentSortSelectionBinding binding;
-    private ProductSortSelectionViewModel viewModel;
-    private SortSelectionAdapter<Product.SortField> adapter;
-    private ProductTabHostSharedViewModel tabHostSharedViewModel;
+  private FragmentSortSelectionBinding binding;
+  private ProductSortSelectionViewModel viewModel;
+  private SortSelectionAdapter<Product.SortField> adapter;
+  private ProductTabHostSharedViewModel tabHostSharedViewModel;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initViewModels();
-        initAdapter();
-    }
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    initViewModels();
+    initAdapter();
+  }
 
-    private void initAdapter() {
-        // Initialize the adapter with a listener to handle sort option selection events.
-        adapter =
-                new SortSelectionAdapter<>(
-                        sortOption -> {
-                            // Set the selected sort option in the ViewModel to update the UI.
-                            viewModel.setSortOptionIndex(sortOption);
+  private void initAdapter() {
+    // Initialize the adapter with a listener to handle sort option selection events.
+    adapter =
+        new SortSelectionAdapter<>(
+            sortOption -> {
+              // Set the selected sort option in the ViewModel to update the UI.
+              viewModel.setSortOptionIndex(sortOption);
 
-                            // Set the selected sort option in the shared ViewModel to communicate
-                            // with the parent fragment.
-                            tabHostSharedViewModel.setProductSortOption(sortOption);
-                        });
+              // Set the selected sort option in the shared ViewModel to communicate
+              // with the parent fragment.
+              tabHostSharedViewModel.setProductSortOption(sortOption);
+            });
 
-        adapter.submitList(viewModel.getSortOptions()); // Set the initial list of sort options
-    }
+    adapter.submitList(viewModel.getSortOptions()); // Set the initial list of sort options
+  }
 
-    private void initViewModels() {
-        viewModel = new ViewModelProvider(this).get(ProductSortSelectionViewModel.class);
+  private void initViewModels() {
+    viewModel = new ViewModelProvider(this).get(ProductSortSelectionViewModel.class);
 
-        NavBackStackEntry productTabsEntry =
-                NavHostFragment.findNavController(this)
-                        .getBackStackEntry(R.id.nav_graph_product_tabs);
-        tabHostSharedViewModel =
-                new ViewModelProvider(productTabsEntry).get(ProductTabHostSharedViewModel.class);
-    }
+    NavBackStackEntry productTabsEntry =
+        NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_product_tabs);
+    tabHostSharedViewModel =
+        new ViewModelProvider(productTabsEntry).get(ProductTabHostSharedViewModel.class);
+  }
 
-    @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentSortSelectionBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
+  @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    binding = FragmentSortSelectionBinding.inflate(inflater, container, false);
+    return binding.getRoot();
+  }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setupRecyclerView();
-        observeViewModel();
-    }
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    setupRecyclerView();
+    observeViewModel();
+  }
 
-    private void setupRecyclerView() {
-        binding.rvSortSelection.setHasFixedSize(true);
-        binding.rvSortSelection.setAdapter(adapter);
-    }
+  private void setupRecyclerView() {
+    binding.rvSortSelection.setHasFixedSize(true);
+    binding.rvSortSelection.setAdapter(adapter);
+  }
 
-    private void observeViewModel() {
-        viewModel
-                .getSortOptionIndex()
-                .observe(getViewLifecycleOwner(), adapter::setCheckedPosition);
-    }
+  private void observeViewModel() {
+    viewModel.getSortOptionIndex().observe(getViewLifecycleOwner(), adapter::setCheckedPosition);
+  }
 }

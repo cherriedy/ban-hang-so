@@ -3,31 +3,31 @@ package com.optlab.banhangso.features.main.brand.state;
 import android.text.TextUtils;
 
 public class BrandEditValidationState {
-    private String nameError;
-    private boolean hasNoError = false;
+  private String nameError;
+  private boolean hasNoError = false;
 
-    public BrandEditValidationState(String nameError) {
-        this.nameError = nameError;
-    }
+  public BrandEditValidationState(String nameError) {
+    this.nameError = nameError;
+  }
 
-    public static BrandEditValidationState empty() {
-        return new BrandEditValidationState(null);
-    }
+  public static BrandEditValidationState empty() {
+    return new BrandEditValidationState(null);
+  }
 
-    public void setNameError(String nameError) {
-        this.nameError = nameError;
-        setHasError();
-    }
+  public void setNameError(String nameError) {
+    this.nameError = nameError;
+    setHasError();
+  }
 
-    private void setHasError() {
-        hasNoError = TextUtils.isEmpty(nameError);
-    }
+  private void setHasError() {
+    hasNoError = TextUtils.isEmpty(nameError);
+  }
 
-    public String getNameError() {
-        return nameError;
-    }
+  public String getNameError() {
+    return nameError;
+  }
 
-    public boolean hasNoError() {
-        return hasNoError;
-    }
+  public boolean hasNoError() {
+    return hasNoError;
+  }
 }

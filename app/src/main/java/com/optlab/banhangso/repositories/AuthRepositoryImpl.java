@@ -1,103 +1,170 @@
 package com.optlab.banhangso.repositories;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.User;
+import com.optlab.banhangso.models.exceptions.ApiResponseException;
+import com.optlab.banhangso.models.remote.UserFirebaseObject;
+import com.optlab.banhangso.models.remote.mapper.UserFirebaseObjectMapper;
+import com.optlab.banhangso.models.remote.render_api.ResponseObject;
+import com.optlab.banhangso.models.remote.render_api.SignUpRequestObject;
 import com.optlab.banhangso.repositories.interfaces.AuthRepository;
-import com.optlab.banhangso.repositories.interfaces.PreferenceRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
 import com.optlab.banhangso.repositories.interfaces.UserRepository;
+import com.optlab.banhangso.services.interfaces.AuthenticationService;
 import com.optlab.banhangso.services.interfaces.FirebaseAuthService;
 
+import org.jetbrains.annotations.Contract;
+
+import java.util.concurrent.atomic.AtomicReference;
+
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
 public class AuthRepositoryImpl implements AuthRepository {
-    private final FirebaseAuthService firebaseAuthService;
-    private final PreferenceRepository preferenceRepository;
-    private final UserRepository userRepository;
-    private final ErrorHandler errorHandler;
 
-    private User inMemoryUser;
+  private final FirebaseAuthService firebaseAuthService;
+  private final AuthenticationService authenticationService;
+  private final PreferencesRepository preferencesRepository;
+  private final UserRepository userRepository;
+  private final ErrorHandler errorHandler;
+  private final AtomicReference<User> activeUser = new AtomicReference<>();
 
-    public AuthRepositoryImpl(
-            FirebaseAuthService firebaseAuthService,
-            PreferenceRepository preferenceRepository,
-            UserRepository userRepository,
-            ErrorHandler errorHandler) {
-        this.firebaseAuthService = firebaseAuthService;
-        this.preferenceRepository = preferenceRepository;
-        this.userRepository = userRepository;
-        this.errorHandler = errorHandler;
-    }
+  public AuthRepositoryImpl(
+      FirebaseAuthService firebaseAuthService,
+      AuthenticationService authenticationService,
+      PreferencesRepository preferencesRepository,
+      UserRepository userRepository,
+      ErrorHandler errorHandler) {
+    this.firebaseAuthService = firebaseAuthService;
+    this.authenticationService = authenticationService;
+    this.preferencesRepository = preferencesRepository;
+    this.userRepository = userRepository;
+    this.errorHandler = errorHandler;
+  }
 
-    @Override
-    public Single<Result<Void>> logInWithEmailAndPassword(
-            @NonNull String email, @NonNull String password) {
-        return firebaseAuthService
-                .logInWithEmailAndPassword(email, password)
-                .flatMap(this::getUserAndSetPreferences)
-                .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
-    }
+  @Override
+  public Single<Result<Void>> logInWithEmailAndPassword(
+      @NonNull String email, @NonNull String password) {
+    return firebaseAuthService
+        .logInWithEmailAndPassword(email, password)
+        .flatMap(this::getUserAndSetPreferences)
+        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
+  }
 
-    @Override
-    public Single<Result<Boolean>> isLoggedIn() {
-        return firebaseAuthService
-                .isLoggedIn()
-                .flatMap(result -> Single.just(new Result.Success<>(result)));
-    }
+  @Override
+  public Single<Result<Void>> signUpWithEmailAndPassword(
+      @NonNull SignUpRequestObject signUpRequestObject) {
+    return authenticationService
+        .signUpWithEmailAndPassword(signUpRequestObject)
+        .flatMap(
+            response -> {
+              if (response.isSuccess()) {
+                return handleSignUpSuccess(response);
+              } else {
+                Throwable throwable = new ApiResponseException(response.message(), response.code());
+                return Single.just(new Result.Failure<Void>(errorHandler.getError(throwable)));
+              }
+            })
+        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
+  }
+
+  /**
+   * Handles the success case of user sign-up by mapping the response to a User object and saving it
+   * in preferences.
+   *
+   * @param response The response object containing user data.
+   * @return A Single that emits a Result indicating success or failure.
+   */
+  @Nullable @Contract(pure = true)
+  private Single<Result<Void>> handleSignUpSuccess(
+      @NonNull ResponseObject<UserFirebaseObject> response) {
+    UserFirebaseObject userFirebaseObject = response.data();
+    User user = UserFirebaseObjectMapper.toDomain(userFirebaseObject);
+    return preferencesRepository
+        .setUser(user)
+        .toSingleDefault((Result<Void>) new Result.Success<Void>(null))
+        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
+  }
+
+  @Override
+  public Observable<Boolean> isAuthenticated() {
+    return firebaseAuthService.isAuthenticated();
+  }
 
     private Single<Result<Void>> getUserAndSetPreferences(@NonNull String userId) {
-        return userRepository
-                .getUser(userId)
-                .toSingle()
-                .flatMap(
-                        userResult -> {
-                            if (userResult instanceof Result.Success<User> success) {
-                                User user = success.getData();
-                                if (user != null) {
-                                    preferenceRepository.setUser(user);
-                                    return Single.just(
-                                            (Result<Void>) new Result.Success<Void>(null));
-                                }
-                            } else if (userResult instanceof Result.Failure<User> failure) {
-                                return Single.just(new Result.Failure<>(failure.getError()));
-                            }
-                            return null;
-                        });
+      return userRepository
+          .getUser(userId)
+          .flatMapSingle(this::handleUserResult)
+          .switchIfEmpty(
+              Single.just(
+                  new Result.Failure<>(
+                      errorHandler.getError(
+                          new IllegalStateException("User not found with ID: " + userId)))));
     }
 
-    @Override
-    public Single<Result<User>> getUser() {
-        return Single.create(
-                emitter -> {
-                    // First check if user is in memory
-                    if (inMemoryUser != null) {
-                        emitter.onSuccess(new Result.Success<>(inMemoryUser));
-                        return;
-                    }
-
-                    // Try to get user from preferences
-                    inMemoryUser = preferenceRepository.getUser();
-                    if (inMemoryUser == null) {
-                        Throwable throwable =
-                                new IllegalStateException("User is not set in preferences");
-                        emitter.onSuccess(new Result.Failure<>(errorHandler.getError(throwable)));
-                        return;
-                    }
-
-                    emitter.onSuccess(new Result.Success<>(inMemoryUser));
-                });
+  private Single<Result<Void>> handleUserResult(Result<User> userResult) {
+    if (userResult instanceof Result.Success<User> success) {
+      User user = success.getData();
+      if (user != null) {
+        // Cache the user in memory and save to preferences
+        activeUser.set(user);
+        return preferencesRepository
+            .setUser(user)
+            .toSingleDefault((Result<Void>) new Result.Success<Void>(null))
+            .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
+      } else {
+        return Single.just(
+            new Result.Failure<>(
+                errorHandler.getError(new IllegalStateException("User data is null"))));
+      }
+    } else if (userResult instanceof Result.Failure<User> failure) {
+      return Single.just(new Result.Failure<>(failure.getError()));
     }
 
-    @Override
-    public Completable setUser(@NonNull User user) {
-        return Completable.fromCallable(
-                () -> {
-                    inMemoryUser = user;
-                    preferenceRepository.setUser(user);
-                    return null;
-                });
+    return Single.just(
+        new Result.Failure<>(
+            errorHandler.getError(new IllegalStateException("Unknown result type"))));
+  }
+
+  @Override
+  public Single<Result<User>> getUser() {
+    // Check if user is already cached in memory
+    User cachedUser = activeUser.get();
+    if (cachedUser != null) {
+      return Single.just(new Result.Success<>(cachedUser));
     }
+
+    // If not in memory, get from preferences and cache it
+    return preferencesRepository
+        .getUser()
+        .map(
+            user -> {
+              activeUser.set(user);
+              return (Result<User>) new Result.Success<>(user);
+            })
+        .switchIfEmpty(
+            Single.just(
+                new Result.Failure<>(
+                    errorHandler.getError(
+                        new IllegalStateException("No user found in preferences")))))
+        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
+  }
+
+  @Override
+  public Completable setUser(@NonNull User user) {
+    return preferencesRepository.setUser(user).doOnComplete(() -> activeUser.set(user));
+  }
+
+  @Override
+  public Completable signOut() {
+    return firebaseAuthService
+        .signOut()
+        .andThen(preferencesRepository.clearPreferences())
+        .doOnComplete(() -> activeUser.set(null)); // Clear cached user on sign out
+  }
 }

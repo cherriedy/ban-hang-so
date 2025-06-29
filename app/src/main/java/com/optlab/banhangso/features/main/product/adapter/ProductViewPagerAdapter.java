@@ -9,32 +9,32 @@ import com.optlab.banhangso.features.main.product.views.ProductListFragment;
 
 public class ProductViewPagerAdapter extends FragmentStateAdapter {
 
-    public ProductViewPagerAdapter(@NonNull Fragment fragment) {
-        super(fragment);
-    }
+  public ProductViewPagerAdapter(@NonNull Fragment fragment) {
+    super(fragment);
+  }
 
-    @NonNull @Override
-    public Fragment createFragment(int position) {
-        return switch (position) {
-            case 0 -> new ProductListFragment();
-            case 1 -> new CategoryListFragment();
-            case 2 -> new BrandListFragment();
-            default -> throw new IllegalStateException("Unknown position: " + position);
-        };
-    }
+  @NonNull @Override
+  public Fragment createFragment(int position) {
+    return switch (position) {
+      case 0 -> new ProductListFragment();
+      case 1 -> new CategoryListFragment();
+      case 2 -> new BrandListFragment();
+      default -> throw new IllegalStateException("Unknown position: " + position);
+    };
+  }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
+  @Override
+  public long getItemId(int position) {
+    return position;
+  }
 
-    @Override
-    public boolean containsItem(long itemId) {
-        return itemId >= 0 && itemId <= 3;
-    }
+  @Override
+  public boolean containsItem(long itemId) {
+    return itemId >= 0 && itemId <= 3;
+  }
 
-    @Override
-    public int getItemCount() {
-        return 3;
-    }
+  @Override
+  public int getItemCount() {
+    return 3;
+  }
 }

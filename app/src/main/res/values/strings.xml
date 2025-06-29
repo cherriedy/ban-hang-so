@@ -246,5 +246,9 @@
     <string name="create_store">Tạo cửa hàng</string>
     <string name="notify_create_store_successful">Tạo cửa hàng thành công</string>
     <string name="notify_create_store_fail">Tạo cửa hàng thất bại</string>
+    <string name="error_while_selecting_store">Đã có lỗi xảy ra không khi chọn cửa hàng</string>
+    <string name="error_invalid_inputs">Thông tin không hợp lệ, vui lòng kiểm tra lại</string>
+    <string name="error_unknown">Lỗi không xác định, vui lòng thử lại</string>
+    <string name="error_sign_out">Không thể đăng xuất, vui lòng thử lại sau</string>
 </resources>
 
