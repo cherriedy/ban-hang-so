@@ -4,7 +4,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class PriceFormatter {
 
   private static final DecimalFormat DECIMAL_FORMAT;
@@ -17,10 +19,6 @@ public class PriceFormatter {
     DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getNumberInstance(Locale.US);
     DECIMAL_FORMAT.setDecimalFormatSymbols(DECIMAL_FORMAT_SYMBOLS);
     DECIMAL_FORMAT.setGroupingUsed(true);
-  }
-
-  private PriceFormatter() {
-    throw new UnsupportedOperationException("Utility Class");
   }
 
   public static synchronized DecimalFormat getInstance() {

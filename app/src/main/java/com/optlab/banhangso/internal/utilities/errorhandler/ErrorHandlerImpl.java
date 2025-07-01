@@ -25,6 +25,7 @@ public class ErrorHandlerImpl implements ErrorHandler {
         case 404 -> new AppError.NotFoundError();
         case 201 -> new AppError.InvalidArgument();
         case 409 -> new AppError.DuplicateError();
+        case 403 -> new AppError.ForbiddenError();
         default -> new AppError.UnknownError();
       };
     }

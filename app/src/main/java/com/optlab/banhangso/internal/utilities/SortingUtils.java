@@ -1,16 +1,19 @@
 package com.optlab.banhangso.internal.utilities;
 
+import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.domain.Brand;
 import com.optlab.banhangso.models.domain.Category;
 import com.optlab.banhangso.models.domain.Product;
 import java.util.Comparator;
+import lombok.experimental.UtilityClass;
 
 /**
  * @noinspection SwitchStatementWithTooFewBranches
  */
+@UtilityClass
 public final class SortingUtils {
   public static Comparator<Category> getComparator(
-      Category.SortField sortField, boolean isAscending) {
+      @NonNull Category.SortField sortField, boolean isAscending) {
     switch (sortField) {
       case NAME -> {
         return isAscending
@@ -26,7 +29,8 @@ public final class SortingUtils {
     }
   }
 
-  public static Comparator<Brand> getComparator(Brand.SortField sortField, boolean isAscending) {
+  public static Comparator<Brand> getComparator(
+      @NonNull Brand.SortField sortField, boolean isAscending) {
     switch (sortField) {
       case NAME -> {
         return isAscending
@@ -38,7 +42,7 @@ public final class SortingUtils {
   }
 
   public static Comparator<Product> getComparator(
-      Product.SortField sortField, boolean isAscending) {
+      @NonNull Product.SortField sortField, boolean isAscending) {
     switch (sortField) {
       case NAME -> {
         return isAscending

@@ -5,18 +5,17 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.optlab.banhangso.BuildConfig;
+import lombok.experimental.UtilityClass;
 import timber.log.Timber;
 
+@UtilityClass
 public class Logging {
   public static void configTimber() {
     // Plant the appropriate Timber tree based on build type
     if (BuildConfig.DEBUG) {
       Timber.plant(new DebugTreeWithTag());
-      // Add a debug log to verify that debug tree is being planted
-      Log.d("Logging", "Debug tree planted. DEBUG=" + BuildConfig.DEBUG);
     } else {
       Timber.plant(new ReleaseTree());
-      Log.d("Logging", "Release tree planted");
     }
   }
 
