@@ -1,8 +1,8 @@
-package com.optlab.banhangso.models.remote.render_api;
+package com.optlab.banhangso.models.remote.responses.base;
 
 import com.google.gson.annotations.SerializedName;
 
-public record ResponseObject<T>(
+public record Response<T>(
     @SerializedName("message") String message,
     @SerializedName("status") String status,
     @SerializedName("code") Integer code,

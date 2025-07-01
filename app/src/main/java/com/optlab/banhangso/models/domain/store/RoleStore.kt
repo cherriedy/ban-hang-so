@@ -1,33 +1,54 @@
-package com.optlab.banhangso.models.domain.store;
+package com.optlab.banhangso.models.domain.store
 
-import androidx.annotation.NonNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import org.jetbrains.annotations.Contract;
+import com.google.gson.annotations.SerializedName
+import java.util.Date
 
-@Data
-@SuperBuilder
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class RoleStore extends Store {
-  private String role;
+data class RoleStore(
+    @SerializedName("role")
+    val role: String? = null,
+) : Store() {
+    constructor(
+        role: String? = null,
+        id: String? = null,
+        name: String? = null,
+        description: String? = null,
+        imageUrl: String? = null,
+        createdAt: Date? = null,
+        updatedAt: Date? = null,
+    ) : this(role) {
+        this.id = id
+        this.name = name
+        this.description = description
+        this.imageUrl = imageUrl
+        this.createdAt = createdAt
+        this.updatedAt = updatedAt
+    }
 
-  @NonNull @Contract(" -> new")
-  public static RoleStore empty() {
-    return RoleStore.builder()
-        .id("")
-        .name("")
-        .description("")
-        .imageUrl("")
-        .createdAt(null)
-        .updatedAt(null)
-        .role("")
-        .build();
-  }
+    // Secondary constructor for backwards compatibility
+    constructor(store: Store, role: String?) : this(role) {
+        this.id = store.id
+        this.name = store.name
+        this.description = store.description
+        this.imageUrl = store.imageUrl
+        this.createdAt = store.createdAt
+        this.updatedAt = store.updatedAt
+    }
 
-  public boolean isEmpty() {
-    return this.equals(RoleStore.empty());
-  }
+    val isEmpty: Boolean
+        get() = super.isEmpty(this) && role?.isBlank() != false
+
+    companion object {
+        @JvmStatic
+        fun empty(): RoleStore {
+            return RoleStore(
+                role = "",
+                id = "",
+                name = "",
+                description = "",
+                imageUrl = "",
+                createdAt = null,
+                updatedAt = null,
+            )
+        }
+    }
 }

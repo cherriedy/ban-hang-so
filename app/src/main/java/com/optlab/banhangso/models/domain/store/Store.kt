@@ -1,41 +1,38 @@
-package com.optlab.banhangso.models.domain.store;
+package com.optlab.banhangso.models.domain.store
 
-import androidx.annotation.NonNull;
-import java.util.Date;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-import org.jetbrains.annotations.Contract;
+import com.google.gson.annotations.SerializedName
+import java.util.Date
 
-@Data
-@SuperBuilder
-@NoArgsConstructor
-public class Store {
-  private String id;
-  private String name;
-  private String description;
-  private String imageUrl;
-  private Date createdAt;
-  private Date updatedAt;
+open class Store(
+    @SerializedName("id")
+    open var id: String? = null,
+    @SerializedName("name")
+    open var name: String? = null,
+    @SerializedName("description")
+    open var description: String? = null,
+    @SerializedName("imageUrl")
+    open var imageUrl: String? = null,
+    @SerializedName("createdAt")
+    open var createdAt: Date? = null,
+    @SerializedName("updatedAt")
+    open var updatedAt: Date? = null,
+) {
+    fun empty(): Store {
+        return Store(
+            id = "",
+            name = "",
+            description = "",
+            imageUrl = "",
+            createdAt = null,
+            updatedAt = null,
+        )
+    }
 
-  @NonNull @Contract(" -> new")
-  public static Store empty() {
-    return Store.builder()
-        .id("")
-        .name("")
-        .description("")
-        .imageUrl("")
-        .createdAt(null)
-        .updatedAt(null)
-        .build();
-  }
-
-  public boolean isEmpty(@NonNull Store store) {
-    return store.getId().isBlank()
-        && store.getName().isBlank()
-        && store.getDescription().isBlank()
-        && store.getImageUrl().isBlank()
-        && store.getCreatedAt() == null
-        && store.getUpdatedAt() == null;
-  }
+    fun isEmpty(store: Store): Boolean {
+        return store.id?.isBlank() != false &&
+            store.name?.isBlank() != false &&
+            store.description?.isBlank() != false &&
+            store.imageUrl?.isBlank() != false &&
+            store.createdAt == null && store.updatedAt == null
+    }
 }

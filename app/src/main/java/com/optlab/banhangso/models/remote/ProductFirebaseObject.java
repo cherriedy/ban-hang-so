@@ -1,5 +1,6 @@
 package com.optlab.banhangso.models.remote;
 
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.firestore.ServerTimestamp;
 import com.google.gson.annotations.SerializedName;
@@ -17,6 +18,9 @@ import lombok.NoArgsConstructor;
 public class ProductFirebaseObject {
   @SerializedName("id")
   private String id;
+
+  @SerializedName("storeId")
+  private String storeId;
 
   @SerializedName("barcode")
   private String barcode;
@@ -61,4 +65,14 @@ public class ProductFirebaseObject {
   @ServerTimestamp
   @SerializedName("updatedAt")
   private Date updatedAt;
+
+  @Exclude
+  public String getId() {
+    return id;
+  }
+
+  @Exclude
+  public String getStoreId() {
+    return storeId;
+  }
 }

@@ -1,4 +1,4 @@
-package com.optlab.banhangso.models.remote.render_api;
+package com.optlab.banhangso.models.remote.requestes;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpRequestObject {
+public class SignUpRequest {
 
   @SerializedName("email")
   private String email;

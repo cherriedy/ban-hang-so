@@ -30,6 +30,7 @@ public class Category extends BaseObservable implements Cloneable {
   }
 
   @Exclude private String id;
+  private String storeId;
   private String name;
   @ServerTimestamp private Date createdAt;
   @ServerTimestamp private Date updatedAt;

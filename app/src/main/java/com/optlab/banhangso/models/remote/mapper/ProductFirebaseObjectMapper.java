@@ -51,7 +51,7 @@ public class ProductFirebaseObjectMapper {
     productFirebaseObject.setStockQuantity(product.getStockQuantity());
     productFirebaseObject.setDescription(product.getDescription());
     productFirebaseObject.setNote(product.getNote());
-    productFirebaseObject.setStatus(product.isStatus());
+    productFirebaseObject.setStatus(product.getStatus());
     productFirebaseObject.setCreatedAt(product.getCreatedAt());
     productFirebaseObject.setUpdatedAt(product.getUpdatedAt());
     return productFirebaseObject;

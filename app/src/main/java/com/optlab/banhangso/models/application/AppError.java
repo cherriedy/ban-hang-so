@@ -10,4 +10,6 @@ public sealed class AppError {
   public static final class UnknownError extends AppError {}
 
   public static final class DuplicateError extends AppError {}
+
+  public static final class ForbiddenError extends AppError {}
 }
