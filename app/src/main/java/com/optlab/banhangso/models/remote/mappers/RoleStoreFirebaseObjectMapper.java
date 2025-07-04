@@ -1,4 +1,4 @@
-package com.optlab.banhangso.models.remote.mapper;
+package com.optlab.banhangso.models.remote.mappers;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.domain.store.RoleStore;
@@ -6,10 +6,10 @@ import com.optlab.banhangso.models.domain.store.Store;
 import com.optlab.banhangso.models.remote.RoleStoreFirebaseObject;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class RoleStoreFirebaseObjectMapper {
-
-  private RoleStoreFirebaseObjectMapper() {}
 
   @NonNull public static RoleStore toDomain(@NonNull RoleStoreFirebaseObject roleStoreFirebaseObject) {
     Store store =

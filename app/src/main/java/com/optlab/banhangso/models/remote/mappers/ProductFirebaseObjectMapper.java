@@ -1,14 +1,14 @@
-package com.optlab.banhangso.models.remote.mapper;
+package com.optlab.banhangso.models.remote.mappers;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.domain.Product;
 import com.optlab.banhangso.models.remote.ProductFirebaseObject;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class ProductFirebaseObjectMapper {
-
-  private ProductFirebaseObjectMapper() {}
 
   @NonNull public static Product toDomain(@NonNull ProductFirebaseObject productFirebaseObject) {
     Product product = new Product();

@@ -1,15 +1,15 @@
-package com.optlab.banhangso.models.remote.mapper;
+package com.optlab.banhangso.models.remote.mappers;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.domain.Staff;
 import com.optlab.banhangso.models.remote.StaffFirebaseObject;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Contract;
 
+@UtilityClass
 public class StaffFirebaseObjectMapper {
-
-  private StaffFirebaseObjectMapper() {}
 
   @NonNull @Contract("_ -> new")
   public static Staff toDomain(@NonNull StaffFirebaseObject staffFirebaseObject) {

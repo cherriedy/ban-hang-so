@@ -1,14 +1,14 @@
-package com.optlab.banhangso.models.remote.mapper;
+package com.optlab.banhangso.models.remote.mappers;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.remote.UserFirebaseObject;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class UserFirebaseObjectMapper {
-
-  private UserFirebaseObjectMapper() {}
 
   @NonNull public static User toDomain(@NonNull UserFirebaseObject userFirebaseObject) {
     User user = new User();

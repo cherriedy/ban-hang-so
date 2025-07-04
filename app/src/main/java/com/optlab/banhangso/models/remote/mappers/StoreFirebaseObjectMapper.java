@@ -1,14 +1,14 @@
-package com.optlab.banhangso.models.remote.mapper;
+package com.optlab.banhangso.models.remote.mappers;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.domain.store.Store;
 import com.optlab.banhangso.models.remote.StoreFirebaseObject;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class StoreFirebaseObjectMapper {
-
-  private StoreFirebaseObjectMapper() {}
 
   @NonNull public static Store toDomain(@NonNull StoreFirebaseObject storeFirebaseObject) {
     Store store = new Store();
