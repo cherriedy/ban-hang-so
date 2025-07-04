@@ -11,21 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class ProductValidator implements BaseValidator {
+public final class ProductValidator extends BaseValidator {
 
-  private final Context context;
   private final Map<String, List<ValidationRule<String>>> stringRules = new HashMap<>();
   private final Map<String, List<ValidationRule<Double>>> doubleRules = new HashMap<>();
   private final List<ValidationRule<Brand>> brandRules = new ArrayList<>();
   private final List<ValidationRule<Category>> categoryRules = new ArrayList<>();
 
-  @Override
-  public Context getContext() {
-    return context;
-  }
-
   public ProductValidator(Context context) {
-    this.context = context;
+    super(context);
     setupDefaultRules();
   }
 

@@ -29,7 +29,7 @@ public final class ValidationRules {
   @NonNull @Contract(pure = true)
   public static ValidationRule<String> regex(int regexStringRes, int errorStringRes) {
     return (value, context) -> {
-      if (value != null && !value.matches(context.getString(regexStringRes))) {
+      if (value != null && !value.isBlank() && !value.matches(context.getString(regexStringRes))) {
         return context.getString(errorStringRes);
       }
       return "";
@@ -39,7 +39,7 @@ public final class ValidationRules {
   @NonNull @Contract(pure = true)
   public static ValidationRule<String> emailPattern(int errorStringRes) {
     return (value, context) -> {
-      if (value != null && !Patterns.EMAIL_ADDRESS.matcher(value).matches()) {
+      if (value != null && !value.isBlank() && !Patterns.EMAIL_ADDRESS.matcher(value).matches()) {
         return context.getString(errorStringRes);
       }
       return "";

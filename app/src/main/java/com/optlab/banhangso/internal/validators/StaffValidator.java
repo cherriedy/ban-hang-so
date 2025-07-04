@@ -8,19 +8,13 @@ import java.util.List;
 import java.util.Map;
 import lombok.NonNull;
 
-public class StaffValidator implements BaseValidator {
+public final class StaffValidator extends BaseValidator {
 
-  private final Context context;
   private final Map<String, List<ValidationRule<String>>> rules = new HashMap<>();
 
   public StaffValidator(Context context) {
-    this.context = context;
+    super(context);
     setupDefaultRules();
-  }
-
-  @Override
-  public Context getContext() {
-    return context;
   }
 
   private void setupDefaultRules() {

@@ -6,18 +6,13 @@ import com.optlab.banhangso.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class BrandValidator implements BaseValidator {
-  private final Context context;
+public final class BrandValidator extends BaseValidator {
+
   private final List<ValidationRule<String>> nameRules = new ArrayList<>();
 
   public BrandValidator(Context context) {
-    this.context = context;
+    super(context);
     setupDefaultNameRules();
-  }
-
-  @Override
-  public Context getContext() {
-    return context;
   }
 
   private void setupDefaultNameRules() {

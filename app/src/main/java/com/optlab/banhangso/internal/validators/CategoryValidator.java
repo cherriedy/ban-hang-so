@@ -6,19 +6,13 @@ import com.optlab.banhangso.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class CategoryValidator implements BaseValidator {
+public final class CategoryValidator extends BaseValidator {
 
-  private final Context context;
   private final List<ValidationRule<String>> nameRules = new ArrayList<>();
 
   public CategoryValidator(Context context) {
-    this.context = context;
+    super(context);
     setupDefaultNameRules();
-  }
-
-  @Override
-  public Context getContext() {
-    return context;
   }
 
   private void setupDefaultNameRules() {

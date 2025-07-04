@@ -8,20 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class AuthValidator implements BaseValidator {
+public final class AuthValidator extends BaseValidator {
 
-  private final Context context;
   private final Map<String, List<ValidationRule<String>>> stringRules = new HashMap<>();
   private final List<ValidationRule<Boolean>> termsRules = new ArrayList<>();
 
   public AuthValidator(Context context) {
-    this.context = context;
+    super(context);
     setupDefaultRules();
-  }
-
-  @Override
-  public Context getContext() {
-    return context;
   }
 
   private void setupDefaultRules() {

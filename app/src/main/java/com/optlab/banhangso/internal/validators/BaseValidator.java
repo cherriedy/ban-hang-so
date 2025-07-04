@@ -4,9 +4,13 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import java.util.List;
 
-public interface BaseValidator {
+public abstract class BaseValidator {
 
-  Context getContext();
+  protected final Context context;
+
+  protected BaseValidator(Context context) {
+    this.context = context;
+  }
 
   /**
    * Default implementation for running validation rules
@@ -15,10 +19,10 @@ public interface BaseValidator {
    * @param rules List of validation rules to apply
    * @return First error message found, or empty string if all rules pass
    */
-  @NonNull default <T> String validate(T value, List<ValidationRule<T>> rules) {
+  @NonNull protected <T> String validate(T value, List<ValidationRule<T>> rules) {
     if (rules == null) return "";
     for (ValidationRule<T> rule : rules) {
-      String result = rule.validate(value, getContext());
+      String result = rule.validate(value, context);
       if (!result.isEmpty()) return result;
     }
     return "";
