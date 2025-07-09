@@ -65,4 +65,6 @@
     <color name="error">#E74C3C</color>
     <color name="warning">#F39C12</color>
     <color name="info">#3498DB</color>
+
+    <color name="semi_transparent_black">#80000000</color>
 </resources>

@@ -1,90 +1,101 @@
-package com.optlab.banhangso.features.main.category.viewmodel;
+package com.optlab.banhangso.features.main.category.viewmodel
 
-import android.text.TextUtils;
-import androidx.annotation.NonNull;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import com.optlab.banhangso.internal.utilities.SortingUtils;
-import com.optlab.banhangso.models.application.SortOption;
-import com.optlab.banhangso.models.domain.Category;
-import com.optlab.banhangso.repositories.interfaces.CategoryRepository;
-import dagger.hilt.android.lifecycle.HiltViewModel;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
+import androidx.databinding.Observable
+import androidx.databinding.ObservableField
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.paging.PagingData
+import androidx.paging.map
+import com.optlab.banhangso.R
+import com.optlab.banhangso.features.main.category.models.CategoryUiModel
+import com.optlab.banhangso.features.main.category.models.mappers.CategoryUiModelMapper
+import com.optlab.banhangso.features.shared.viewmodels.RxViewModel
+import com.optlab.banhangso.models.application.AppError
+import com.optlab.banhangso.models.application.Result
+import com.optlab.banhangso.repositories.interfaces.CategoryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.processors.BehaviorProcessor
+import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
+import timber.log.Timber
 
 @HiltViewModel
-public class CategoryListViewModel extends ViewModel {
-  private final CategoryRepository repository;
-  private final MutableLiveData<List<Category>> categories = new MutableLiveData<>();
-  private final MediatorLiveData<List<Category>> categoryMediator = new MediatorLiveData<>();
-  private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
-  private final MutableLiveData<SortOption<Category.SortField>> sortOption =
-      new MutableLiveData<>();
+class CategoryListViewModel
+@Inject
+constructor(private val categoryRepository: CategoryRepository) : RxViewModel() {
 
-  @Inject
-  public CategoryListViewModel(@NonNull CategoryRepository repository) {
-    this.repository = repository;
-    retrieveCategories();
+  private val _searchQuery: ObservableField<String> = ObservableField("")
+  val searchQuery: ObservableField<String>
+    get() = _searchQuery
 
-    categoryMediator.addSource(categories, unused -> updateCategories());
-    categoryMediator.addSource(searchQuery, unused -> updateCategories());
-    categoryMediator.addSource(sortOption, unused -> updateCategories());
+  private val searchProcessor: BehaviorProcessor<String> = BehaviorProcessor.createDefault("")
+
+  private val _deletionCompleted = MutableLiveData<Unit>()
+  val deletionCompleted: LiveData<Unit> = _deletionCompleted
+
+  private val _categories: Flowable<PagingData<CategoryUiModel>> by lazy {
+    searchProcessor
+      .distinctUntilChanged()
+      .doOnNext { Timber.d("Category search query {$it}") }
+      .switchMap { query ->
+        if (query.isBlank()) {
+            categoryRepository.categories
+          } else {
+            categoryRepository.searchCategories(query)
+          }
+          .map { pagingData -> pagingData.map(CategoryUiModelMapper::fromDomain) }
+      }
+  }
+  val categories: Flowable<PagingData<CategoryUiModel>>
+    get() = _categories
+
+  init {
+    _searchQuery.addOnPropertyChangedCallback(
+      object : Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+          @Suppress("UNCHECKED_CAST") val query: String? = (sender as ObservableField<String>).get()
+          searchProcessor.onNext(query ?: "")
+        }
+      }
+    )
   }
 
-  public MutableLiveData<List<Category>> getCategories() {
-    return categoryMediator;
+  fun deleteCategory(categoryId: String) {
+    val disposable =
+      categoryRepository
+        .deleteCategory(categoryId)
+        .subscribeOn(Schedulers.io())
+        .doOnSuccess { _ -> isLoading.postValue(true) }
+        .observeOn(AndroidSchedulers.mainThread())
+        .doFinally {
+          isLoading.value = false
+          _deletionCompleted.value = Unit
+        }
+        .subscribe(this::onDeleteCategorySuccess, this::onDeleteCategoryError)
+
+    disposables.add(disposable)
   }
 
-  private void updateCategories() {
-    List<Category> updatedList = categories.getValue();
-    if (updatedList == null) {
-      categoryMediator.setValue(Collections.emptyList());
-      return;
-    }
-
-    String query = searchQuery.getValue();
-    if (!TextUtils.isEmpty(query)) {
-      updatedList = filterByQuery(updatedList, query);
-    }
-
-    SortOption<Category.SortField> selectedSortOption = sortOption.getValue();
-    if (selectedSortOption != null) {
-      updatedList.sort(
-          SortingUtils.getComparator(
-              selectedSortOption.getSortField(), selectedSortOption.isAscending()));
-    }
-
-    categoryMediator.setValue(updatedList);
+  private fun onDeleteCategoryError(throwable: Throwable) {
+    messageResId.value = R.string.error_unknown
+    Timber.e(throwable, "There was an error while deleting category: %s", throwable.message)
   }
 
-  private List<Category> filterByQuery(List<Category> updatedList, String query) {
-    return updatedList.stream()
-        .filter(category -> containQuery(category.getName(), query))
-        .collect(Collectors.toList());
-  }
-
-  private boolean containQuery(@NonNull String name, @NonNull String query) {
-    return name.toLowerCase().contains(query.toLowerCase());
-  }
-
-  private void retrieveCategories() {
-    repository.getCategories().observeForever(categories::setValue);
-  }
-
-  @Override
-  protected void onCleared() {
-    repository.getCategories().removeObserver(categories::setValue);
-    super.onCleared();
-  }
-
-  public void setSearchQuery(String query) {
-    searchQuery.setValue(query);
-  }
-
-  public void setSortOption(SortOption<Category.SortField> sortOption) {
-    this.sortOption.setValue(sortOption);
+  private fun onDeleteCategorySuccess(result: Result<Void>) {
+    when (result) {
+      is Result.Failure<Void> -> {
+        when (result.error) {
+          is AppError.ForbiddenError -> R.string.error_forbidden
+          is AppError.NetServiceError -> R.string.error_network
+          is AppError.NotFoundError -> R.string.error_category_not_found
+          else -> R.string.error_unknown
+        }
+      }
+      is Result.Success<Void> -> {
+        R.string.notify_category_delete_success
+      }
+    }.also { messageResId.value = it }
   }
 }

@@ -27,14 +27,13 @@ public class RoleStoreUiModelMapper {
   }
 
   @NonNull public static RoleStore toDomain(@NonNull RoleStoreUiModel roleStoreUiModel) {
-    RoleStore roleStore = new RoleStore();
-    roleStore.setId(roleStoreUiModel.getId());
-    roleStore.setRole(roleStoreUiModel.getRole());
-    roleStore.setName(roleStoreUiModel.getName());
-    roleStore.setDescription(roleStoreUiModel.getDescription());
-    roleStore.setImageUrl(roleStoreUiModel.getImageUrl());
-    roleStore.setCreatedAt(roleStoreUiModel.getCreatedAt());
-    roleStore.setUpdatedAt(roleStoreUiModel.getUpdatedAt());
-    return roleStore;
+    return new RoleStore(
+        roleStoreUiModel.getRole(),
+        roleStoreUiModel.getId(),
+        roleStoreUiModel.getName(),
+        roleStoreUiModel.getDescription(),
+        roleStoreUiModel.getImageUrl(),
+        roleStoreUiModel.getCreatedAt(),
+        roleStoreUiModel.getUpdatedAt());
   }
 }

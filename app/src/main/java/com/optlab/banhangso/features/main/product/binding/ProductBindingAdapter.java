@@ -3,11 +3,19 @@ package com.optlab.banhangso.features.main.product.binding;
 import android.text.TextUtils;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.InverseMethod;
+import androidx.recyclerview.widget.RecyclerView;
 import com.optlab.banhangso.R;
-import com.optlab.banhangso.models.domain.Brand;
-import com.optlab.banhangso.models.domain.Category;
+import com.optlab.banhangso.features.main.brand.models.BrandUiModel;
+import com.optlab.banhangso.features.main.category.models.CategoryUiModel;
+import com.optlab.banhangso.features.shared.adapters.FileUploadAdapter;
+import com.optlab.banhangso.models.application.UploadableImage;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import timber.log.Timber;
 
 public class ProductBindingAdapter {
   /**
@@ -17,7 +25,7 @@ public class ProductBindingAdapter {
    * @param brand Brand object
    */
   @BindingAdapter("brand")
-  public static void setBrand(@NonNull TextView view, Brand brand) {
+  public static void setBrand(@NonNull TextView view, BrandUiModel brand) {
     if (brand != null && !TextUtils.isEmpty(brand.getName())) {
       view.setText(brand.getName());
     } else if (brand == null) {
@@ -32,7 +40,7 @@ public class ProductBindingAdapter {
    * @param category Category object
    */
   @BindingAdapter("category")
-  public static void setCategory(@NonNull TextView view, Category category) {
+  public static void setCategory(@NonNull TextView view, CategoryUiModel category) {
     if (category != null && !TextUtils.isEmpty(category.getName())) {
       view.setText(category.getName());
     } else if (category == null) {

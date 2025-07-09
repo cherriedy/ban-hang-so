@@ -7,17 +7,17 @@ import com.optlab.banhangso.models.domain.Product;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 
-public interface ProductRepository {
+public interface ProductRepository extends BaseRepository {
 
-  Flowable<PagingData<Product>> getProducts();
+  @NonNull Flowable<PagingData<Product>> getProducts();
 
-  Single<Result<Product>> getProduct(@NonNull String productId);
+  @NonNull Single<Result<Product>> getProduct(@NonNull String productId);
 
-  Flowable<PagingData<Product>> searchProduct(@NonNull String query);
+  @NonNull Flowable<PagingData<Product>> searchProduct(@NonNull String query);
 
-  Single<Result<Product>> createProduct(@NonNull Product product);
+  @NonNull Single<Result<Void>> createProduct(@NonNull Product product);
 
-  Single<Result<Product>> updateProduct(@NonNull Product product);
+  @NonNull Single<Result<Void>> updateProduct(@NonNull Product product);
 
-  Single<Result<Boolean>> deleteProduct(@NonNull String productId);
+  @NonNull Single<Result<Void>> deleteProduct(@NonNull String productId);
 }

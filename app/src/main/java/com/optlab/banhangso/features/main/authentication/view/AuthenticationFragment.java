@@ -1,7 +1,8 @@
 package com.optlab.banhangso.features.main.authentication.view;
 
 import static android.accounts.AccountManager.KEY_PASSWORD;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_EMAIL;
+
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_EMAIL;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -22,16 +23,15 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentAuthenticationBinding;
 import com.optlab.banhangso.features.main.authentication.viewmodel.AuthenticationViewModel;
-import com.optlab.banhangso.features.shared.view.AnimationLoadingDialog;
+import com.optlab.banhangso.features.shared.views.LoadingDialog;
 import com.optlab.banhangso.internal.utilities.NavigationUtils;
-import com.optlab.banhangso.models.domain.store.RoleStore;
 import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
 
 @AndroidEntryPoint
 public class AuthenticationFragment extends Fragment {
 
-  private final AnimationLoadingDialog loadingDialog = new AnimationLoadingDialog();
+  private final LoadingDialog loadingDialog = new LoadingDialog();
   private FragmentAuthenticationBinding binding;
   private AuthenticationViewModel viewModel;
   private NavController navController;
@@ -73,26 +73,31 @@ public class AuthenticationFragment extends Fragment {
     viewModel.getErrorFlag().observe(getViewLifecycleOwner(), this::handleErrorFlag);
   }
 
-  private void handleStoreUpdate(@NonNull RoleStore store) {
-    if (store.isEmpty()) {
-      Timber.w("Store is empty, navigating to SelectStoreFragment");
-      navigateToSelectStore();
-    } else {
-      Timber.d("Store is not null, navigating to HomeFragment");
-      navigateToHome();
-    }
-  }
-
   private void handleIsAuthenticatedState(@NonNull Boolean result) {
     if (result) {
+      Timber.d("User is already authenticated, checking store selection");
       // If the user is already authenticated, check if they have a store selected
-      viewModel.getStore().observe(getViewLifecycleOwner(), this::handleStoreUpdate);
+      viewModel
+          .getStore()
+          .observe(
+              getViewLifecycleOwner(),
+              store -> {
+                if (store != null && !store.isEmpty()) {
+                  Timber.d("User has store selected, navigating to home");
+                  navigateToHome();
+                } else {
+                  Timber.d("User has no store selected, navigating to select store");
+                  navigateToSelectStore();
+                }
+              });
+    } else {
+      Timber.d("User is not authenticated, staying in authentication screen");
     }
   }
 
   private void handleErrorFlag(Boolean result) {
     if (Boolean.TRUE.equals(result)) {
-      Toast.makeText(requireContext(), "Có lỗi trong quá trình đăng nhập", Toast.LENGTH_SHORT)
+      Toast.makeText(requireContext(), getString(R.string.error_login_in), Toast.LENGTH_SHORT)
           .show();
     }
   }

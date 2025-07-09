@@ -44,7 +44,7 @@
                     android:background="@android:color/transparent"
                     app:iconifiedByDefault="false"
                     app:query="@{viewModel.searchQuery}"
-                    app:queryHint="@string/hint_query_product" />
+                    app:queryHint="@string/hint_query" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -98,6 +98,19 @@
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+        <TextView
+            android:id="@+id/tv_empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notify_empty_products"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/srl_products"
+            app:layout_constraintEnd_toEndOf="@id/srl_products"
+            app:layout_constraintStart_toStartOf="@id/srl_products"
+            app:layout_constraintTop_toTopOf="@id/srl_products" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_actions"
             android:layout_width="wrap_content"
@@ -106,7 +119,7 @@
             android:layout_marginBottom="24dp"
             android:backgroundTint="@color/boston_blue"
             android:contentDescription="@null"
-            android:onClick="@{fragment::onCreateButtonClick}"
+            android:onClick="@{fragment::navigateToCreate}"
             android:src="@drawable/ic_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

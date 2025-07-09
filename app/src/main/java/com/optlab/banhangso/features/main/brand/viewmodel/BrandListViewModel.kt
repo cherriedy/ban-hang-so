@@ -1,93 +1,112 @@
-package com.optlab.banhangso.features.main.brand.viewmodel;
+package com.optlab.banhangso.features.main.brand.viewmodel
 
-import android.text.TextUtils;
-import androidx.annotation.NonNull;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import com.optlab.banhangso.internal.utilities.SortingUtils;
-import com.optlab.banhangso.models.application.SortOption;
-import com.optlab.banhangso.models.domain.Brand;
-import com.optlab.banhangso.repositories.interfaces.BrandRepository;
-import dagger.hilt.android.lifecycle.HiltViewModel;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import androidx.databinding.Observable
+import androidx.databinding.ObservableField
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.map
+import androidx.paging.rxjava3.cachedIn
+import com.optlab.banhangso.R
+import com.optlab.banhangso.features.main.brand.models.BrandUiModel
+import com.optlab.banhangso.features.main.brand.models.mappers.BrandUiModelMapper
+import com.optlab.banhangso.features.shared.viewmodels.RxViewModel
+import com.optlab.banhangso.models.application.AppError
+import com.optlab.banhangso.models.application.Result
+import com.optlab.banhangso.repositories.interfaces.BrandRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.processors.BehaviorProcessor
+import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import timber.log.Timber
 
-/**
- * @noinspection rawtypes
- */
 @HiltViewModel
-public class BrandListViewModel extends ViewModel {
-  private final BrandRepository repository;
-  private final MutableLiveData<List<Brand>> brands = new MutableLiveData<>();
-  private final MediatorLiveData<List<Brand>> brandMediator = new MediatorLiveData<>();
-  private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
-  private final MutableLiveData<SortOption<Brand.SortField>> sortOption = new MutableLiveData<>();
+class BrandListViewModel @Inject constructor(private val brandRepository: BrandRepository) :
+  RxViewModel() {
 
-  @Inject
-  public BrandListViewModel(@Nonnull BrandRepository repository) {
-    this.repository = repository;
-    retrieveBrands();
+  private val _searchQuery: ObservableField<String> = ObservableField()
+  val searchQuery: ObservableField<String>
+    get() = _searchQuery
 
-    brandMediator.addSource(brands, unused -> updateBrands());
-    brandMediator.addSource(searchQuery, unused -> updateBrands());
-    brandMediator.addSource(sortOption, unused -> updateBrands());
+  private val _searchProcessor: BehaviorProcessor<String> = BehaviorProcessor.createDefault("")
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  private val _brands: Flowable<PagingData<BrandUiModel>> =
+    _searchProcessor
+      .distinctUntilChanged()
+      .doOnNext { Timber.d("Brand search query $it") }
+      .switchMap { query ->
+        if (query.isBlank()) {
+          brandRepository.brands
+        } else {
+          brandRepository.searchBrands(query)
+        }
+      }
+      .map { pagingData -> pagingData.map(BrandUiModelMapper::fromDomain) }
+      .cachedIn(viewModelScope)
+
+  val brands: Flowable<PagingData<BrandUiModel>>
+    get() = _brands
+
+  private val _deletionCompleted: MutableLiveData<Boolean> = MutableLiveData()
+  val deletionCompleted
+    get() = _deletionCompleted
+
+  init {
+    _searchQuery.addOnPropertyChangedCallback(
+      object : Observable.OnPropertyChangedCallback() {
+        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+          @Suppress("UNCHECKED_CAST") val query: String? = (sender as ObservableField<String>).get()
+          _searchProcessor.onNext(query ?: "")
+        }
+      }
+    )
   }
 
-  private void updateBrands() {
-    List<Brand> updatedList = brands.getValue();
-    if (updatedList == null) {
-      brandMediator.setValue(Collections.emptyList());
-      return;
-    }
+  fun deleteBrand(brandId: String) {
+    val disposable =
+      brandRepository
+        .deleteBrand(brandId)
+        .subscribeOn(Schedulers.io())
+        .doOnSubscribe {
+          isLoading.postValue(true)
+          deletionCompleted.postValue(false)
+        }
+        .observeOn(AndroidSchedulers.mainThread())
+        .doFinally {
+          isLoading.value = false
+          deletionCompleted.value = true
+        }
+        .subscribe(this::onDeleteBrandSuccess, this::onDeleteBrandError)
 
-    String query = searchQuery.getValue();
-    if (!TextUtils.isEmpty(query)) {
-      updatedList = filterByQuery(updatedList, query);
-    }
-
-    SortOption<Brand.SortField> selectedSortOption = sortOption.getValue();
-    if (selectedSortOption != null) {
-      updatedList.sort(
-          SortingUtils.getComparator(
-              selectedSortOption.getSortField(), selectedSortOption.isAscending()));
-    }
-
-    brandMediator.setValue(updatedList);
+    disposables.add(disposable)
   }
 
-  private List<Brand> filterByQuery(List<Brand> updatedList, String query) {
-    return updatedList.stream()
-        .filter(brand -> containQuery(brand.getName(), query))
-        .collect(Collectors.toList());
+  private fun onDeleteBrandSuccess(result: Result<Void>) {
+    messageResId.value =
+      when (result) {
+        is Result.Success<Void> -> {
+          R.string.notify_delete_brand_success
+        }
+
+        is Result.Failure<Void> -> {
+          result.error.let {
+            when (it) {
+              is AppError.ForbiddenError -> R.string.error_forbidden
+              is AppError.NetServiceError -> R.string.error_network
+              is AppError.NotFoundError -> R.string.error_brand_not_found
+              else -> R.string.error_unknown
+            }
+          }
+        }
+      }
   }
 
-  private boolean containQuery(@NonNull String name, @NonNull String query) {
-    return name.toLowerCase().contains(query.toLowerCase());
-  }
-
-  private void retrieveBrands() {
-    repository.getBrands().observeForever(brands::setValue);
-  }
-
-  @Override
-  protected void onCleared() {
-    repository.getBrands().removeObserver(brands::setValue);
-    super.onCleared();
-  }
-
-  public MutableLiveData<List<Brand>> getBrands() {
-    return brandMediator;
-  }
-
-  public void setSearchQuery(String query) {
-    searchQuery.setValue(query);
-  }
-
-  public void setSortOption(SortOption<Brand.SortField> sortOption) {
-    this.sortOption.setValue(sortOption);
+  private fun onDeleteBrandError(throwable: Throwable) {
+    messageResId.value = R.string.error_unknown
+    Timber.e(throwable, "There was an error deleting the brand: %s", throwable.message)
   }
 }

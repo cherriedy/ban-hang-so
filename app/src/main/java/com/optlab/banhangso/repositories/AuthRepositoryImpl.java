@@ -2,28 +2,25 @@ package com.optlab.banhangso.repositories;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.exceptions.ApiResponseException;
 import com.optlab.banhangso.models.remote.UserFirebaseObject;
-import com.optlab.banhangso.models.remote.mapper.UserFirebaseObjectMapper;
-import com.optlab.banhangso.models.remote.render_api.ResponseObject;
-import com.optlab.banhangso.models.remote.render_api.SignUpRequestObject;
+import com.optlab.banhangso.models.remote.mappers.UserFirebaseObjectMapper;
+import com.optlab.banhangso.models.remote.requestes.SignUpRequest;
+import com.optlab.banhangso.models.remote.responses.base.Response;
 import com.optlab.banhangso.repositories.interfaces.AuthRepository;
 import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
 import com.optlab.banhangso.repositories.interfaces.UserRepository;
 import com.optlab.banhangso.services.interfaces.AuthenticationService;
 import com.optlab.banhangso.services.interfaces.FirebaseAuthService;
-
-import org.jetbrains.annotations.Contract;
-
-import java.util.concurrent.atomic.AtomicReference;
-
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import java.util.concurrent.atomic.AtomicReference;
+import org.jetbrains.annotations.Contract;
+import timber.log.Timber;
 
 public class AuthRepositoryImpl implements AuthRepository {
 
@@ -57,10 +54,9 @@ public class AuthRepositoryImpl implements AuthRepository {
   }
 
   @Override
-  public Single<Result<Void>> signUpWithEmailAndPassword(
-      @NonNull SignUpRequestObject signUpRequestObject) {
+  public Single<Result<Void>> signUpWithEmailAndPassword(@NonNull SignUpRequest signUpRequest) {
     return authenticationService
-        .signUpWithEmailAndPassword(signUpRequestObject)
+        .signUpWithEmailAndPassword(signUpRequest)
         .flatMap(
             response -> {
               if (response.isSuccess()) {
@@ -81,8 +77,7 @@ public class AuthRepositoryImpl implements AuthRepository {
    * @return A Single that emits a Result indicating success or failure.
    */
   @Nullable @Contract(pure = true)
-  private Single<Result<Void>> handleSignUpSuccess(
-      @NonNull ResponseObject<UserFirebaseObject> response) {
+  private Single<Result<Void>> handleSignUpSuccess(@NonNull Response<UserFirebaseObject> response) {
     UserFirebaseObject userFirebaseObject = response.data();
     User user = UserFirebaseObjectMapper.toDomain(userFirebaseObject);
     return preferencesRepository
@@ -96,25 +91,19 @@ public class AuthRepositoryImpl implements AuthRepository {
     return firebaseAuthService.isAuthenticated();
   }
 
-    private Single<Result<Void>> getUserAndSetPreferences(@NonNull String userId) {
-      return userRepository
-          .getUser(userId)
-          .flatMapSingle(this::handleUserResult)
-          .switchIfEmpty(
-              Single.just(
-                  new Result.Failure<>(
-                      errorHandler.getError(
-                          new IllegalStateException("User not found with ID: " + userId)))));
-    }
+  private Single<Result<Void>> getUserAndSetPreferences(@NonNull String userId) {
+    return userRepository.getUser(userId).flatMap(this::handleUserResult);
+  }
 
   private Single<Result<Void>> handleUserResult(Result<User> userResult) {
     if (userResult instanceof Result.Success<User> success) {
       User user = success.getData();
       if (user != null) {
-        // Cache the user in memory and save to preferences
+        Timber.d("Cache user in memory: %s", user);
         activeUser.set(user);
         return preferencesRepository
             .setUser(user)
+            .doOnSubscribe(__ -> Timber.d("Setting user preferences for: %s", user))
             .toSingleDefault((Result<Void>) new Result.Success<Void>(null))
             .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
       } else {

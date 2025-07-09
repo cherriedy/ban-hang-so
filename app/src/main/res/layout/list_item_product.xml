@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -20,7 +21,8 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:elevation="2dp"
-        app:cardCornerRadius="8dp">
+        app:cardCornerRadius="8dp"
+        tools:layout_margin="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,10 +35,11 @@
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/cat"
+                app:imageResource="@{product.thumbnailUrl}"
                 app:shapeAppearanceOverlay="@style/RoundedBorderShapeableImage"
                 app:strokeColor="@color/alto"
-                app:strokeWidth="1dp" />
+                app:strokeWidth="1dp"
+                tools:src="@drawable/haohao" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -52,7 +55,9 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@{product.name}"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    tools:text="Hao Hao chua cay"
+                    />
 
                 <TextView
                     android:id="@+id/tv_brand"
@@ -63,7 +68,8 @@
                     android:maxLines="1"
                     android:text='@{product.category.name + " | " + product.brand.name}'
                     android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                    android:visibility="@{product.brand.name == null ? View.GONE : View.VISIBLE}" />
+                    android:visibility="@{product.brand.name == null ? View.GONE : View.VISIBLE}"
+                    tools:text="Mi tom | Acecook" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -82,7 +88,7 @@
 
                     <View
                         android:layout_width="8dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
                         android:visibility="@{product.discountPrice > 0 ? View.VISIBLE : View.GONE}" />
 
                     <TextView

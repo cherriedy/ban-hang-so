@@ -1,146 +1,143 @@
-package com.optlab.banhangso.repositories;
+package com.optlab.banhangso.repositories
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.optlab.banhangso.models.domain.Brand;
-import com.optlab.banhangso.repositories.interfaces.BrandRepository;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import javax.inject.Singleton;
-import timber.log.Timber;
+import androidx.paging.Pager
+import androidx.paging.PagingData
+import androidx.paging.map
+import androidx.paging.rxjava3.flowable
+import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler
+import com.optlab.banhangso.models.application.Result
+import com.optlab.banhangso.models.domain.Brand
+import com.optlab.banhangso.models.exceptions.ApiResponseException
+import com.optlab.banhangso.models.remote.mappers.BrandFirebaseObjectMapper
+import com.optlab.banhangso.paging.brand.BrandPagingSource
+import com.optlab.banhangso.paging.brand.BrandSearchPagingSource
+import com.optlab.banhangso.repositories.interfaces.BrandRepository
+import com.optlab.banhangso.repositories.interfaces.PaginationRepository
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepository
+import com.optlab.banhangso.services.interfaces.BrandService
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
+import javax.inject.Inject
 
-@Singleton
-public class BrandRepositoryImpl implements BrandRepository {
-  public static final String COLLECTION_PATH = "brands";
-  private final FirebaseFirestore firestore;
-  private final MutableLiveData<List<Brand>> brands = new MutableLiveData<>();
-
-  public BrandRepositoryImpl(FirebaseFirestore firestore) {
-    this.firestore = firestore;
-    retrieveData();
-  }
+class BrandRepositoryImpl
+@Inject
+constructor(
+  private val preferencesRepository: PreferencesRepository,
+  private val brandService: BrandService,
+  private val errorHandler: ErrorHandler,
+) : BrandRepository, PaginationRepository {
 
   /**
-   * Converts a DocumentSnapshot to a Brand object.
+   * Provides access to the preferences repository instance.
    *
-   * @param doc The DocumentSnapshot to convert.
-   * @return The converted Brand object, or null if the conversion fails.
+   * @return The PreferencesRepository instance used by this repository
    */
-  private Brand docToBrand(DocumentSnapshot doc) {
-    Brand brand = doc.toObject(Brand.class);
-    if (brand == null) {
-      Timber.e("Document %s is null", doc.getId());
-      return null;
-    } else {
-      Timber.d("Document %s is not null", doc.getId());
-      brand.setId(doc.getId());
-      return brand;
+  override fun getPreferencesRepository(): PreferencesRepository = preferencesRepository
+
+  /**
+   * Retrieves a paginated list of all brands for the current store.
+   *
+   * @return A Flowable stream of PagingData containing Brand domain objects
+   */
+  override fun getBrands(): Flowable<PagingData<Brand>> =
+    Pager(pagingConfig) { BrandPagingSource(preferencesRepository, brandService) }
+      .flowable
+      .map { pagingData -> pagingData.map(BrandFirebaseObjectMapper::toDomain) }
+
+  /**
+   * Retrieves a specific brand by its ID.
+   *
+   * @param brandId The unique identifier of the brand to retrieve
+   * @return A Single containing a Result with either the Brand object or an error
+   */
+  override fun getBrand(brandId: String): Single<Result<Brand>> =
+    storeId
+      .flatMap { storeId -> brandService.getBrand(brandId, storeId) }
+      .map { response ->
+        if (response.isSuccess) {
+          BrandFirebaseObjectMapper.toDomain(response.data.item).let { Result.Success(it) }
+        } else {
+          ApiResponseException(response.message, response.code).let {
+            Result.Failure(errorHandler.getError(it))
+          }
+        }
+      }
+      .onErrorReturn { Result.Failure(errorHandler.getError(it)) }
+
+  /**
+   * Searches for brands based on a query string with pagination support.
+   *
+   * @param query The search term to filter brands
+   * @return A Flowable stream of PagingData containing matching Brand domain objects
+   */
+  override fun searchBrands(query: String): Flowable<PagingData<Brand>> =
+    Pager(pagingConfig) { BrandSearchPagingSource(preferencesRepository, brandService, query) }
+      .flowable
+      .map { pagingData -> pagingData.map(BrandFirebaseObjectMapper::toDomain) }
+
+  /**
+   * Updates an existing brand with new information.
+   *
+   * @param brand The Brand object containing updated data
+   * @return A Single containing a Result indicating success or failure of the update operation
+   */
+  override fun updateBrand(brand: Brand): Single<Result<Void>> =
+    storeId
+      .flatMap { storeId ->
+        BrandFirebaseObjectMapper.fromDomain(brand).let { brandFirebaseObject ->
+          brandService.updateBrand(brand.id, storeId, brandFirebaseObject)
+        }
+      }
+      .map { response ->
+        if (response.isSuccess) {
+          Result.Success<Void>(null) as Result<Void>
+        } else {
+          ApiResponseException(response.message, response.code).let {
+            Result.Failure<Void>(errorHandler.getError(it))
+          }
+        }
+      }
+      .onErrorReturn { Result.Failure(errorHandler.getError(it)) }
+
+  /**
+   * Creates a new brand in the store.
+   *
+   * @param brand The Brand object to be created
+   * @return A Single containing a Result indicating success or failure of the creation operation
+   */
+  override fun createBrand(brand: Brand): Single<Result<Void>> =
+    storeId.flatMap { storeId ->
+      BrandFirebaseObjectMapper.fromDomain(brand)
+        .let { brandFirebaseObject -> brandService.createBrand(storeId, brandFirebaseObject) }
+        .map { response ->
+          if (response.isSuccess) {
+            Result.Success<Void>(null) as Result<Void>
+          } else {
+            ApiResponseException(response.message, response.code).let {
+              Result.Failure<Void>(errorHandler.getError(it))
+            }
+          }
+        }
+        .onErrorReturn { Result.Failure(errorHandler.getError(it)) }
     }
-  }
 
-  /** Retrieves data from Firestore and updates the brands LiveData. */
-  private void retrieveData() {
-    firestore
-        .collection(COLLECTION_PATH)
-        .addSnapshotListener(
-            (snapshots, error) -> {
-              if (error != null) {
-                Timber.e("Failed getting documents: %s", error.getMessage());
-                return;
-              }
-
-              if (snapshots != null && !snapshots.isEmpty()) {
-                List<Brand> brandList =
-                    snapshots.getDocuments().stream()
-                        .map(this::docToBrand)
-                        .filter(Objects::nonNull) // Filter out null brands
-                        // if any
-                        .collect(Collectors.toList());
-                brands.setValue(brandList);
-              }
-            });
-  }
-
-  @Override
-  public LiveData<List<Brand>> getBrands() {
-    return brands;
-  }
-
-  @Override
-  public Brand getBrandById(String id) {
-    return Optional.ofNullable(brands.getValue())
-        .flatMap(
-            brandList -> brandList.stream().filter(brand -> brand.getId().equals(id)).findFirst())
-        .map(this::safeClone)
-        .orElse(null);
-  }
-
-  public Brand getBrandByPosition(int position) {
-    return Optional.ofNullable(brands.getValue())
-        .flatMap(brands -> Optional.of(brands.get(position)))
-        .map(this::safeClone)
-        .orElse(null);
-  }
-
-  @Override
-  public int getPositionById(String id) {
-    List<Brand> brands = this.brands.getValue();
-    if (brands == null) return -1;
-    return IntStream.range(0, brands.size())
-        .filter(i -> brands.get(i).getId().equals(id))
-        .findFirst()
-        .orElse(-1);
-  }
-
-  @Override
-  public void updateBrand(Brand brand, Consumer<Boolean> callback) {
-    firestore
-        .collection(COLLECTION_PATH)
-        .document(brand.getId())
-        .set(brand)
-        .addOnSuccessListener(
-            unused -> {
-              Timber.d("Document %s updated", brand.getId());
-              callback.accept(true);
-            })
-        .addOnFailureListener(
-            e -> {
-              Timber.e("Failed updating document: %s", e.getMessage());
-              callback.accept(false);
-            });
-  }
-
-  @Override
-  public void deleteBrand(Brand brand, Consumer<Boolean> callback) {}
-
-  @Override
-  public void createBrand(Brand brand, Consumer<Boolean> callback) {
-    firestore
-        .collection(COLLECTION_PATH)
-        .add(brand)
-        .addOnSuccessListener(
-            docRef -> {
-              Timber.d("Document %s created", docRef.getId());
-              callback.accept(true);
-            })
-        .addOnFailureListener(
-            e -> {
-              Timber.e("Failed creating document: %s", e.getMessage());
-              callback.accept(false);
-            });
-  }
-
-  private Brand safeClone(Brand brand) {
-    try {
-      return (Brand) brand.clone();
-    } catch (CloneNotSupportedException e) {
-      throw new RuntimeException("Not an instance of Brand");
-    }
-  }
+  /**
+   * Deletes a brand by its ID from the store.
+   *
+   * @param brandId The unique identifier of the brand to delete
+   * @return A Single containing a Result indicating success or failure of the deletion operation
+   */
+  override fun deleteBrand(brandId: String): Single<Result<Void>> =
+    storeId
+      .flatMap { storeId -> brandService.deleteBrand(brandId, storeId) }
+      .map { response ->
+        if (response.isSuccess) {
+          Result.Success<Void>(null) as Result<Void>
+        } else {
+          ApiResponseException(response.message, response.code).let {
+            Result.Failure(errorHandler.getError(it))
+          }
+        }
+      }
+      .onErrorReturn { Result.Failure(errorHandler.getError(it)) }
 }

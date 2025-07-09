@@ -8,13 +8,14 @@ import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.BindingAdapter;
 import com.google.android.material.textfield.TextInputLayout;
 import com.optlab.banhangso.R;
+import lombok.experimental.UtilityClass;
 import timber.log.Timber;
 
+@UtilityClass
 public class TextViewBindingAdapter {
   /**
    * Sets the text color of a TextView based on the focus state of an EditText.
@@ -114,13 +115,5 @@ public class TextViewBindingAdapter {
     } else {
       view.setPaintFlags(view.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
     }
-  }
-
-  @BindingAdapter("stringResource")
-  public static void setStringRes(TextView view, @StringRes int stringResource) {
-    if (stringResource == 0) {
-      view.setText("");
-    }
-    view.setText(view.getContext().getString(stringResource));
   }
 }

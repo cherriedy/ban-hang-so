@@ -5,17 +5,15 @@
 
     <data>
 
+        <import type="com.optlab.banhangso.features.main.category.Constants" />
+
         <variable
             name="viewModel"
             type="com.optlab.banhangso.features.main.category.viewmodel.CategoryEditViewModel" />
 
         <variable
             name="fragment"
-            type="com.optlab.banhangso.features.main.category.view.CategoryEditFragment" />
-
-        <variable
-            name="isCreateMode"
-            type="boolean" />
+            type="com.optlab.banhangso.features.main.category.views.CategoryEditFragment" />
     </data>
 
     <ScrollView
@@ -38,8 +36,10 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/open_sans"
                     android:text="@string/attr_category_detail"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textFontWeight="800" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_complete"
@@ -47,9 +47,12 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerInParent="true"
-                    android:enabled="@{viewModel.validationState.hasError()}"
-                    android:onClick="@{isCreateMode ? viewModel::onCreateButtonClick : viewModel::onUpdateButtonClick}"
-                    android:text="@{isCreateMode ? @string/complete : @string/update}"
+                    android:enabled="@{viewModel.canSubmit}"
+                    android:fontFamily="@font/open_sans"
+                    android:onClick="@{viewModel.isEditing ? viewModel::onUpdate : viewModel::onCreate}"
+                    android:text="@{viewModel.isEditing ? @string/update : @string/complete}"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:textFontWeight="800"
                     app:cornerRadius="8dp"
                     tools:ignore="RelativeOverlap" />
             </RelativeLayout>
@@ -63,9 +66,11 @@
                     android:id="@+id/tv_title_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
                     android:text="@string/attr_category_name"
                     android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                     android:textColor="@color/raven"
+                    android:textFontWeight="800"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:syncFocusColor="@{tieName}" />
@@ -86,19 +91,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:endIconMode="clear_text"
-                app:error="@{viewModel.validationState.nameError}"
+                app:error="@{viewModel.errors[Constants.ERROR_NAME]}"
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tie_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
                     android:hint="@string/hint_category_name"
                     android:inputType="text"
-                    android:text="@={viewModel.category.name}"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                    android:text="@={viewModel.uiModel.name}"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:textFontWeight="800" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
+
     </ScrollView>
+
 </layout>

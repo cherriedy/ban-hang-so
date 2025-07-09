@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_category_edit"
+    app:startDestination="@id/categoryEditFragment">
+
+    <dialog
+        android:id="@+id/categoryEditFragment"
+        android:name="com.optlab.banhangso.features.main.category.views.CategoryEditFragment"
+        android:label="BrandEditFragment"
+        app:enterAnim="@anim/anim_slide_in_right"
+        app:exitAnim="@anim/anim_slide_out_left"
+        app:popEnterAnim="@anim/anim_slide_in_left"
+        app:popExitAnim="@anim/anim_slide_out_right"
+        tools:layout="@layout/fragment_category_edit">
+
+        <argument
+            android:name="categoryId"
+            app:argType="string" />
+
+        <argument
+            android:name="isEditing"
+            app:argType="boolean" />
+    </dialog>
+</navigation>
+

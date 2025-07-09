@@ -434,10 +434,11 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/card_customer"
+                        android:id="@+id/mcv_customer"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_weight="0.33"
+                        android:onClick="@{fragment}"
                         app:cardCornerRadius="5dp"
                         app:cardElevation="3dp"
                         app:strokeWidth="0dp"
@@ -556,10 +557,11 @@
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/card_employee"
+                        android:id="@+id/mcv_staff"
                         android:layout_width="75dp"
                         android:layout_height="96dp"
                         android:layout_weight="0.33"
+                        android:onClick="@{fragment}"
                         app:cardCornerRadius="5dp"
                         app:cardElevation="3dp"
                         app:strokeWidth="0dp"
@@ -583,7 +585,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/spacing_xmedium"
                                 android:fontFamily="@font.open_sans"
-                                android:text="@string/employee"
+                                android:text="@string/staff"
                                 android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                                 android:textColor="@color/black"
                                 android:textFontWeight="800" />

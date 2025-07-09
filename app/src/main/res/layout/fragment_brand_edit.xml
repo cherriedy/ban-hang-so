@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.optlab.banhangso.features.main.brand.Constants" />
+
         <variable
             name="viewModel"
             type="com.optlab.banhangso.features.main.brand.viewmodel.BrandEditViewModel" />
@@ -12,10 +14,6 @@
         <variable
             name="fragment"
             type="com.optlab.banhangso.features.main.brand.view.BrandEditFragment" />
-
-        <variable
-            name="isCreateMode"
-            type="boolean" />
     </data>
 
     <ScrollView
@@ -47,9 +45,9 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerInParent="true"
-                    android:enabled="@{viewModel.validateState.hasNoError()}"
-                    android:onClick="@{isCreateMode ? viewModel::onCreateButtonClick : viewModel::onUpdateButtonClick}"
-                    android:text="@{isCreateMode ? @string/complete : @string/update}"
+                    android:enabled="@{viewModel.canSubmit}"
+                    android:onClick="@{viewModel.isEditing ? viewModel::onUpdate : viewModel::onCreate}"
+                    android:text="@{viewModel.isEditing ? @string/update : @string/complete}"
                     app:cornerRadius="8dp"
                     tools:ignore="RelativeOverlap" />
             </RelativeLayout>
@@ -86,17 +84,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:endIconMode="clear_text"
-                app:error="@{viewModel.validateState.nameError}"
+                app:error="@{viewModel.errors[Constants.ERROR_NAME]}"
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tie_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
                     android:hint="@string/hint_brand_name"
                     android:inputType="text"
-                    android:text="@={viewModel.brand.name}"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                    android:text="@={viewModel.uiModel.name}"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:textFontWeight="800" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>

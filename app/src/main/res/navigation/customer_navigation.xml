@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/customer_navigation"
+    app:startDestination="@id/customerListFragment">
+
+    <fragment
+        android:id="@+id/customerListFragment"
+        android:name="com.optlab.banhangso.features.main.customer.views.CustomerListFragment"
+        android:label="CustomerListFragment"
+        tools:layout="@layout/fragment_customer_list">
+
+        <action
+            android:id="@+id/action_to_edit"
+            app:destination="@id/customerEditFragment">
+
+            <argument
+                android:name="customerId"
+                app:argType="string" />
+
+            <argument
+                android:name="isEditing"
+                android:defaultValue="true"
+                app:argType="boolean" />
+        </action>
+
+        <action
+            android:id="@+id/action_to_create"
+            app:destination="@id/customerEditFragment">
+
+            <argument
+                android:name="customerId"
+                android:defaultValue=""
+                app:argType="string" />
+
+            <argument
+                android:name="isEditing"
+                android:defaultValue="false"
+                app:argType="boolean" />
+        </action>
+
+        <action
+            android:id="@+id/action_to_edit_with_parcelable"
+            app:destination="@id/customerEditFragment">
+
+            <argument
+                android:name="customer"
+                app:argType="com.optlab.banhangso.features.main.customer.models.CustomerUiModel" />
+
+            <argument
+                android:name="isEditing"
+                android:defaultValue="false"
+                app:argType="boolean" />
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/customerEditFragment"
+        android:name="com.optlab.banhangso.features.main.customer.views.CustomerEditFragment"
+        android:label="CustomerEditFragment"
+        tools:layout="@layout/fragment_customer_edit">
+
+        <argument
+            android:name="customerId"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="isEditing"
+            android:defaultValue="true"
+            app:argType="boolean" />
+
+        <argument
+            android:name="customer"
+            android:defaultValue="@null"
+            app:argType="com.optlab.banhangso.features.main.customer.models.CustomerUiModel"
+            app:nullable="true" />
+
+    </fragment>
+
+</navigation>

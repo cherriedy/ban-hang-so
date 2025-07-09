@@ -1,101 +1,99 @@
 package com.optlab.banhangso.repositories
 
 import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.paging.rxjava3.flowable
-import com.optlab.banhangso.internal.utilities.Constants.ITEMS_PER_PAGE
 import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler
 import com.optlab.banhangso.models.application.Result
 import com.optlab.banhangso.models.domain.Product
 import com.optlab.banhangso.models.exceptions.ApiResponseException
-import com.optlab.banhangso.models.remote.mapper.ProductFirebaseObjectMapper
-import com.optlab.banhangso.pagingsource.ProductPagingSource
-import com.optlab.banhangso.pagingsource.ProductSearchPagingSource
+import com.optlab.banhangso.models.remote.mappers.ProductFirebaseObjectMapper
+import com.optlab.banhangso.paging.product.ProductPagingSource
+import com.optlab.banhangso.paging.product.ProductSearchPagingSource
+import com.optlab.banhangso.repositories.interfaces.PaginationRepository
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepository
 import com.optlab.banhangso.repositories.interfaces.ProductRepository
 import com.optlab.banhangso.services.interfaces.ProductService
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
-import timber.log.Timber
 
 class ProductRepositoryImpl(
-    private val productService: ProductService,
-    private val errorHandler: ErrorHandler,
-) : ProductRepository {
-    val pagingConfig =
-        PagingConfig(
-            pageSize = ITEMS_PER_PAGE,
-            prefetchDistance = ITEMS_PER_PAGE,
-            enablePlaceholders = false,
-            initialLoadSize = ITEMS_PER_PAGE * 3,
-        )
+  private val productService: ProductService,
+  private val preferencesRepository: PreferencesRepository,
+  private val errorHandler: ErrorHandler,
+) : ProductRepository, PaginationRepository {
+  override fun getPreferencesRepository(): PreferencesRepository = preferencesRepository
 
-    override fun getProducts(): Flowable<PagingData<Product>> {
-        return Pager(pagingConfig) {
-            ProductPagingSource(productService)
-        }.flowable.map { pagingData -> pagingData.map(ProductFirebaseObjectMapper::toDomain) }
-    }
+  override fun getProducts(): Flowable<PagingData<Product>> =
+    Pager(pagingConfig) { ProductPagingSource(preferencesRepository, productService) }
+      .flowable
+      .map { pagingData -> pagingData.map(ProductFirebaseObjectMapper::toDomain) }
 
-    override fun getProduct(productId: String): Single<Result<Product>> =
-        productService.getProduct(productId).map { renderResponseObject ->
-            if (renderResponseObject.isSuccess) {
-                renderResponseObject.data.item.let {
-                    Result.Success<Product>(ProductFirebaseObjectMapper.toDomain(it))
-                }
-            } else {
-                ApiResponseException(
-                    renderResponseObject.message,
-                    renderResponseObject.code,
-                ).let { Result.Failure<Product>(errorHandler.getError(it)) }
-            }
-        }.onErrorReturn { error -> Result.Failure<Product>(errorHandler.getError(error)) }
-
-    override fun searchProduct(query: String): Flowable<PagingData<Product>> {
-        return Pager(pagingConfig) {
-            ProductSearchPagingSource(query, productService)
-        }.flowable.map { pagingData -> pagingData.map(ProductFirebaseObjectMapper::toDomain) }
-    }
-
-    override fun createProduct(product: Product): Single<Result<Product>> =
-        ProductFirebaseObjectMapper.fromDomain(product).let { productFirebaseObject ->
-            productService.createProduct(productFirebaseObject).map { renderResponseObject ->
-                Timber.d("Creating product response: $renderResponseObject")
-                if (renderResponseObject.isSuccess) {
-                    renderResponseObject.data.item.let {
-                        Result.Success<Product>(ProductFirebaseObjectMapper.toDomain(it))
-                    }
-                } else {
-                    ApiResponseException(
-                        renderResponseObject.message,
-                        renderResponseObject.code,
-                    ).let {
-                        Result.Failure<Product>(errorHandler.getError(it))
-                    }
-                }
-            }.onErrorReturn { error -> Result.Failure<Product>(errorHandler.getError(error)) }
+  override fun getProduct(productId: String): Single<Result<Product>> =
+    storeId
+      .flatMap { productService.getProduct(productId, it) }
+      .map { response ->
+        if (response.isSuccess) {
+          response.data.item.let {
+            Result.Success<Product>(ProductFirebaseObjectMapper.toDomain(it))
+          }
+        } else {
+          ApiResponseException(response.message, response.code).let {
+            Result.Failure(errorHandler.getError(it))
+          }
         }
+      }
+      .onErrorReturn { error -> Result.Failure(errorHandler.getError(error)) }
 
-    override fun updateProduct(product: Product): Single<Result<Product>> =
-        ProductFirebaseObjectMapper.fromDomain(product).let { productFirebaseObject ->
-            productService.updateProduct(product.id, productFirebaseObject).map { renderResponseObject ->
-                if (renderResponseObject.isSuccess) {
-                    renderResponseObject.data.item.let {
-                        Result.Success<Product>(ProductFirebaseObjectMapper.toDomain(it))
-                    }
-                } else {
-                    ApiResponseException(
-                        renderResponseObject.message,
-                        renderResponseObject.code,
-                    ).let {
-                        Result.Failure<Product>(errorHandler.getError(it))
-                    }
-                }
+  override fun searchProduct(query: String): Flowable<PagingData<Product>> =
+    Pager(pagingConfig) { ProductSearchPagingSource(preferencesRepository, productService, query) }
+      .flowable
+      .map { pagingData -> pagingData.map(ProductFirebaseObjectMapper::toDomain) }
+
+  override fun createProduct(product: Product): Single<Result<Void>> =
+    ProductFirebaseObjectMapper.fromDomain(product).let { productFirebaseObject ->
+      storeId
+        .flatMap { productService.createProduct(it, productFirebaseObject) }
+        .map { renderResponseObject ->
+          if (renderResponseObject.isSuccess) {
+            Result.Success<Void>(null)
+          } else {
+            ApiResponseException(renderResponseObject.message, renderResponseObject.code).let {
+              Result.Failure(errorHandler.getError(it))
             }
-        }.onErrorReturn { error -> Result.Failure<Product>(errorHandler.getError(error)) }
+          }
+        }
+        .onErrorReturn { error -> Result.Failure(errorHandler.getError(error)) }
+    }
 
-    override fun deleteProduct(productId: String): Single<Result<Boolean>> =
-        productService.deleteProduct(productId).map { renderResponseObject ->
-            Result.Success<Boolean>(renderResponseObject.data) as Result<Boolean>
-        }.onErrorReturn { error -> Result.Failure<Boolean>(errorHandler.getError(error)) }
+  override fun updateProduct(product: Product): Single<Result<Void>> =
+    ProductFirebaseObjectMapper.fromDomain(product).let { productFirebaseObject ->
+      storeId
+        .flatMap { productService.updateProduct(product.id, it, productFirebaseObject) }
+        .map { response ->
+          if (response.isSuccess) {
+            Result.Success<Void>(null)
+          } else {
+            ApiResponseException(response.message, response.code).let {
+              Result.Failure(errorHandler.getError(it))
+            }
+          }
+        }
+        .onErrorReturn { error -> Result.Failure(errorHandler.getError(error)) }
+    }
+
+  override fun deleteProduct(productId: String): Single<Result<Void>> =
+    storeId
+      .flatMap { productService.deleteProduct(productId, it) }
+      .map { response ->
+        if (response.isSuccess) {
+          Result.Success<Void>(null)
+        } else {
+          ApiResponseException(response.message, response.code).let {
+            Result.Failure(errorHandler.getError(it))
+          }
+        }
+      }
+      .onErrorReturn { error -> Result.Failure(errorHandler.getError(error)) }
 }

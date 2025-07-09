@@ -42,10 +42,10 @@ public class SelectStoreViewModel extends ViewModel {
     this.storeRepository = storeRepository;
     this.preferencesRepository = preferencesRepository;
 
-    observeUser();
+    observeUserUpdates();
   }
 
-  private void observeUser() {
+  private void observeUserUpdates() {
     Disposable disposable =
         authRepository
             .getUser()

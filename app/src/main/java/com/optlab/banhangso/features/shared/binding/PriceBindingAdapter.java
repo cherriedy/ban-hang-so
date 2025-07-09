@@ -12,7 +12,9 @@ import com.optlab.banhangso.R;
 import com.optlab.banhangso.internal.utilities.PriceFormatter;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class PriceBindingAdapter {
 
   private static final DecimalFormat DECIMAL_FORMAT = PriceFormatter.getInstance();

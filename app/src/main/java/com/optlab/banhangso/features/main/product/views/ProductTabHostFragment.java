@@ -17,7 +17,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentProductTabHostBinding;
-import com.optlab.banhangso.features.main.product.adapter.ProductViewPagerAdapter;
+import com.optlab.banhangso.features.main.product.adapters.ProductViewPagerAdapter;
 import com.optlab.banhangso.features.main.product.viewmodels.ProductTabHostSharedViewModel;
 import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -108,7 +108,7 @@ public class ProductTabHostFragment extends Fragment {
 
   private void setupQueryHintText() {
     int[] hintQueryRes = {
-      R.string.hint_query_product, R.string.hint_query_category, R.string.hint_query_brand
+      R.string.hint_query, R.string.hint_query_category, R.string.hint_query_brand
     };
 
     binding.viewPager.registerOnPageChangeCallback(

@@ -1,34 +1,39 @@
 package com.optlab.banhangso.features.main.product.models;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
-import com.google.firebase.firestore.Exclude;
+
 import com.optlab.banhangso.BR;
-import com.optlab.banhangso.models.domain.Brand;
-import com.optlab.banhangso.models.domain.Category;
+import com.optlab.banhangso.features.main.brand.models.BrandUiModel;
+import com.optlab.banhangso.features.main.category.models.CategoryUiModel;
+
 import java.util.Date;
-import java.util.Objects;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
  * @noinspection LombokSetterMayBeUsed, LombokGetterMayBeUsed
  */
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ProductUiModel extends BaseObservable {
   private String id;
   private String barcode;
-  private Category category;
-  private Brand brand;
+  private CategoryUiModel category;
+  private BrandUiModel brand;
   private String name;
   private double purchasePrice;
   private double sellingPrice;
-  private String avatarUrl;
+  private String thumbnailUrl;
+  private List<String> imageUrls;
   private int stockQuantity;
   private String description;
   private boolean status;
@@ -37,120 +42,22 @@ public class ProductUiModel extends BaseObservable {
   private Date createdAt;
   private Date updatedAt;
 
-  @Override
-  public boolean equals(@Nullable Object obj) {
-    if (obj instanceof ProductUiModel that) {
-      if (this == obj) return true;
-      return id.equals(that.id)
-          && barcode.equals(that.barcode)
-          && category.equals(that.category)
-          && brand.equals(that.brand)
-          && name.equals(that.name)
-          && purchasePrice == that.purchasePrice
-          && sellingPrice == that.sellingPrice
-          && avatarUrl.equals(that.avatarUrl)
-          && stockQuantity == that.stockQuantity
-          && description.equals(that.description)
-          && status == that.status
-          && discountPrice == that.discountPrice
-          && note.equals(that.note);
-    }
-    return false;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(
-        id,
-        barcode,
-        category,
-        brand,
-        name,
-        purchasePrice,
-        sellingPrice,
-        avatarUrl,
-        stockQuantity,
-        description,
-        status,
-        discountPrice,
-        note);
-  }
-
-  @NonNull @Override
-  public String toString() {
-    return "Product{"
-        + "id='"
-        + id
-        + '\''
-        + ", barcode='"
-        + barcode
-        + '\''
-        + ", category="
-        + category
-        + ", brand="
-        + brand
-        + ", name='"
-        + name
-        + '\''
-        + ", purchasePrice="
-        + purchasePrice
-        + ", sellingPrice="
-        + sellingPrice
-        + ", avatarUrl='"
-        + avatarUrl
-        + '\''
-        + ", stockQuantity="
-        + stockQuantity
-        + ", description='"
-        + description
-        + '\''
-        + ", status="
-        + status
-        + ", discountPrice="
-        + discountPrice
-        + ", note='"
-        + note
-        + '\''
-        + ", createdAt="
-        + createdAt
-        + ", updatedAt="
-        + updatedAt
-        + '}';
-  }
-
-  @Exclude
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getBarcode() {
-    return barcode;
-  }
-
-  public void setBarcode(String barcode) {
-    this.barcode = barcode;
-  }
-
   @Bindable
-  public Category getCategory() {
+  public CategoryUiModel getCategory() {
     return category;
   }
 
-  public void setCategory(Category category) {
+  public void setCategory(CategoryUiModel category) {
     this.category = category;
     notifyPropertyChanged(BR.category);
   }
 
   @Bindable
-  public Brand getBrand() {
+  public BrandUiModel getBrand() {
     return brand;
   }
 
-  public void setBrand(Brand brand) {
+  public void setBrand(BrandUiModel brand) {
     this.brand = brand;
     notifyPropertyChanged(BR.brand);
   }
@@ -196,16 +103,6 @@ public class ProductUiModel extends BaseObservable {
   }
 
   @Bindable
-  public String getAvatarUrl() {
-    return avatarUrl;
-  }
-
-  public void setAvatarUrl(String avatarUrl) {
-    this.avatarUrl = avatarUrl;
-    notifyPropertyChanged(BR.avatarUrl);
-  }
-
-  @Bindable
   public String getDescription() {
     return description;
   }
@@ -243,21 +140,5 @@ public class ProductUiModel extends BaseObservable {
   public void setNote(String note) {
     this.note = note;
     notifyPropertyChanged(BR.note);
-  }
-
-  public Date getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public Date getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(Date updatedAt) {
-    this.updatedAt = updatedAt;
   }
 }

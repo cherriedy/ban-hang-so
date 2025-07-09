@@ -4,55 +4,48 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavBackStackEntry;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.paging.CombinedLoadStates;
+import androidx.paging.LoadState;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentBrandListBinding;
+import com.optlab.banhangso.features.main.brand.adapters.BrandListAdapter;
+import com.optlab.banhangso.features.main.brand.callbacks.SwipeToDeleteCallback;
 import com.optlab.banhangso.features.main.brand.viewmodel.BrandListViewModel;
-import com.optlab.banhangso.features.main.product.viewmodels.ProductTabHostSharedViewModel;
 import com.optlab.banhangso.features.main.product.views.ProductTabHostFragmentDirections;
-import com.optlab.banhangso.features.shared.adapter.BrandListAdapter;
+import com.optlab.banhangso.features.shared.views.DeleteConfirmationDialog;
 import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
 import dagger.hilt.android.AndroidEntryPoint;
 import java.util.EnumSet;
+import kotlin.Unit;
+import timber.log.Timber;
 
 @AndroidEntryPoint
 public class BrandListFragment extends Fragment {
+
+  private static final String PENDING_DELETE_BRAND_ID = "PENDING_DELETE_BRAND_ID";
+
   private FragmentBrandListBinding binding;
   private BrandListViewModel viewModel;
-  private BrandListAdapter adapter;
-  private ProductTabHostSharedViewModel tabHostSharedViewModel;
+  private BrandListAdapter listAdapter;
   private NavController navController;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    navController = NavHostFragment.findNavController(this);
-    initViewModels();
-    initAdapters();
-  }
-
-  private void initAdapters() {
-    adapter = new BrandListAdapter(id -> navigateToBrandEditFragment(id, false));
-  }
-
-  private void navigateToBrandEditFragment(String id, boolean isCreateMode) {
-    navController.navigate(ProductTabHostFragmentDirections.actionToBrandEdit(id, isCreateMode));
-  }
-
-  private void initViewModels() {
     viewModel = new ViewModelProvider(this).get(BrandListViewModel.class);
-
-    NavBackStackEntry productTabsEntry =
-        NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_product_tabs);
-    tabHostSharedViewModel =
-        new ViewModelProvider(productTabsEntry).get(ProductTabHostSharedViewModel.class);
+    listAdapter = new BrandListAdapter(this::navigateToEdit);
   }
 
   @Override
@@ -60,6 +53,7 @@ public class BrandListFragment extends Fragment {
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentBrandListBinding.inflate(inflater, container, false);
     binding.setLifecycleOwner(this);
+    binding.setViewModel(viewModel);
     binding.setFragment(this);
     return binding.getRoot();
   }
@@ -67,50 +61,149 @@ public class BrandListFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    navController = NavHostFragment.findNavController(this);
+
     initRecyclerView();
-    observeViewModels();
+    observeViewModel();
+    registerDeleteConfirmationListener();
+    registerBrandListRefreshListener();
   }
 
-  private void observeViewModels() {
+  @Override
+  public void onResume() {
+    super.onResume();
+    listAdapter.refresh();
+  }
+
+  /**
+   * @noinspection unused
+   */
+  public void navigateToCreate(@NonNull View view) {
+    NavDirections action = ProductTabHostFragmentDirections.actionToBrandEdit("", false);
+    navController.navigate(action);
+  }
+
+  private void registerDeleteConfirmationListener() {
+    getParentFragmentManager()
+        .setFragmentResultListener(
+            DeleteConfirmationDialog.REQUEST,
+            getViewLifecycleOwner(),
+            (requestKey, result) -> handleDeleteConfirmation(result));
+  }
+
+  private void registerBrandListRefreshListener() {
+    requireActivity()
+        .getSupportFragmentManager()
+        .setFragmentResultListener(
+            BrandEditFragment.BRAND_EDIT_RESULT,
+            getViewLifecycleOwner(),
+            (requestKey, result) -> handleBrandRefresh(result));
+  }
+
+  private void handleBrandRefresh(@NonNull Bundle result) {
+    if (result.getBoolean(BrandEditFragment.REFRESH_FLAG, false)) {
+      listAdapter.refresh();
+    }
+  }
+
+  private void handleDeleteConfirmation(@NonNull Bundle result) {
+    if (!result.getBoolean(DeleteConfirmationDialog.DELETED)) {
+      listAdapter.refresh();
+    } else {
+      Bundle args = getArguments();
+      if (args != null) {
+        String brandId = args.getString(PENDING_DELETE_BRAND_ID);
+
+        if (brandId != null) {
+          viewModel.deleteBrand(brandId);
+        } else {
+          // No pending brand ID, log an error or handle it gracefully
+          Timber.e("Unable to delete, there is no pending brand ID");
+          showToast(R.string.error_unknown);
+        }
+      }
+    }
+  }
+
+  private void showToast(@NonNull Integer messageResId) {
+    Toast.makeText(requireContext(), getString(messageResId), Toast.LENGTH_SHORT).show();
+  }
+
+  private void observeViewModel() {
     viewModel
         .getBrands()
-        .observe(
-            getViewLifecycleOwner(),
-            brands -> {
-              // Bug: The brand is not updated unless the list is set to null first.
-              adapter.submitList(null);
-              adapter.submitList(brands);
-            });
+        .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this)))
+        .subscribe(categories -> listAdapter.submitData(getLifecycle(), categories));
 
-    tabHostSharedViewModel
-        .getSearchQuery()
-        .observe(getViewLifecycleOwner(), viewModel::setSearchQuery);
-
-    tabHostSharedViewModel
-        .getBrandSortOption()
-        .observe(getViewLifecycleOwner(), viewModel::setSortOption);
+    viewModel.getMessageResId().observe(getViewLifecycleOwner(), this::showToast);
+    viewModel
+        .getDeletionCompleted()
+        .observe(getViewLifecycleOwner(), unit -> listAdapter.refresh());
   }
 
   private void initRecyclerView() {
-    binding.rvBrands.setHasFixedSize(true);
-    binding.rvBrands.setAdapter(adapter);
+    setupBrandLoadingState();
+    setupBrandItemSpacing();
+    setupBrandSwipeToDelete();
 
+    binding.rvBrands.setHasFixedSize(true);
+    binding.rvBrands.setAdapter(listAdapter);
+  }
+
+  private void setupBrandLoadingState() {
+    binding.srlBrands.setOnRefreshListener(listAdapter::refresh);
+
+    listAdapter.addLoadStateListener(
+        loadStates -> {
+          handlePagingLoadState(loadStates);
+          return Unit.INSTANCE;
+        });
+  }
+
+  private void handlePagingLoadState(@NonNull CombinedLoadStates loadStates) {
+    // Show loading state when refreshing or initial load is in progress
+    boolean isLoading = loadStates.getRefresh() instanceof LoadState.Loading;
+    binding.srlBrands.setRefreshing(isLoading);
+
+    // Show empty state when not loading and adapter has no items
+    boolean isEmpty = !isLoading && listAdapter.getItemCount() == 0;
+    binding.tvEmptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+  }
+
+  private void setupBrandSwipeToDelete() {
+    SwipeToDeleteCallback swipeToDeleteCallback =
+        new SwipeToDeleteCallback(
+            requireContext(), listAdapter, this::showDeleteConfirmationDialog);
+    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeToDeleteCallback);
+    itemTouchHelper.attachToRecyclerView(binding.rvBrands);
+  }
+
+  private void showDeleteConfirmationDialog(@NonNull String brandId) {
+    String title = getString(R.string.alter_brand_delete_title);
+    String message = getString(R.string.alert_category_delete_message);
+    DeleteConfirmationDialog deleteConfirmationDialog =
+        DeleteConfirmationDialog.newInstance(title, message);
+
+    Bundle args = new Bundle();
+    args.putString(PENDING_DELETE_BRAND_ID, brandId);
+    setArguments(args);
+
+    deleteConfirmationDialog.show(
+        getParentFragmentManager(), "deleteConfirmationDialog_" + this.getClass().getSimpleName());
+  }
+
+  private void setupBrandItemSpacing() {
     while (binding.rvBrands.getItemDecorationCount() > 0) {
       binding.rvBrands.removeItemDecorationAt(0);
     }
     binding.rvBrands.addItemDecoration(
         new SpacingItemDecoration(
             new LinearSpacingStrategy(
-                requireContext(),
-                8,
-                EnumSet.of(
-                    LinearSpacingStrategy.Direction.LEFT, LinearSpacingStrategy.Direction.RIGHT))));
+                requireContext(), 8, EnumSet.allOf(LinearSpacingStrategy.Direction.class))));
   }
 
-  /**
-   * @noinspection unused
-   */
-  public void onAddButtonClick(@NonNull View view) {
-    navigateToBrandEditFragment("", true);
+  private void navigateToEdit(@NonNull String brandId) {
+    NavDirections action = ProductTabHostFragmentDirections.actionToBrandEdit(brandId, true);
+    navController.navigate(action);
   }
 }

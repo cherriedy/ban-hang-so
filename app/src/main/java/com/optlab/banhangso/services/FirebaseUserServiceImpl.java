@@ -8,8 +8,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.optlab.banhangso.models.remote.UserFirebaseObject;
 import com.optlab.banhangso.services.interfaces.FirebaseUserService;
-import io.reactivex.rxjava3.core.Maybe;
-import io.reactivex.rxjava3.core.MaybeEmitter;
 import io.reactivex.rxjava3.core.Single;
 import timber.log.Timber;
 
@@ -55,13 +53,14 @@ public class FirebaseUserServiceImpl implements FirebaseUserService {
         });
   }
 
-  public Maybe<UserFirebaseObject> getUser(@NonNull String userId) {
-    return Maybe.create(
+  public Single<UserFirebaseObject> getUser(@NonNull String userId) {
+    return Single.create(
         emitter -> {
           if (userId.isBlank()) {
             emitter.onError(
                 new FirebaseFirestoreException(
                     "User ID cannot be empty", FirebaseFirestoreException.Code.INVALID_ARGUMENT));
+            return;
           }
 
           firestore
@@ -71,7 +70,7 @@ public class FirebaseUserServiceImpl implements FirebaseUserService {
               .addOnCompleteListener(
                   task -> {
                     if (task.isSuccessful()) {
-                      onGetUserSuccess(emitter, task);
+                      onGetUserSuccess(emitter, task, userId);
                     } else {
                       emitter.onError(task.getException());
                     }
@@ -80,19 +79,33 @@ public class FirebaseUserServiceImpl implements FirebaseUserService {
   }
 
   private void onGetUserSuccess(
-      @NonNull MaybeEmitter<UserFirebaseObject> emitter, @NonNull Task<DocumentSnapshot> task) {
+      @NonNull io.reactivex.rxjava3.core.SingleEmitter<UserFirebaseObject> emitter,
+      @NonNull Task<DocumentSnapshot> task,
+      @NonNull String userId) {
     DocumentSnapshot result = task.getResult();
 
-    if (result == null || !result.exists()) {
-      Timber.w("User not found with ID: %s", task.getResult().getId());
-      emitter.onComplete();
+    if (result == null) {
+      Timber.e("Document snapshot is null for user ID: %s", userId);
+      emitter.onError(
+          new FirebaseFirestoreException(
+              "Document snapshot is null", FirebaseFirestoreException.Code.INTERNAL));
+      return;
+    }
+
+    if (!result.exists()) {
+      Timber.e("User not found with ID: %s", userId);
+      emitter.onError(
+          new FirebaseFirestoreException(
+              "User not found with ID: " + userId, FirebaseFirestoreException.Code.NOT_FOUND));
       return;
     }
 
     UserFirebaseObject userFirebaseObject = toUser(result);
     if (userFirebaseObject != null) {
+      Timber.d("Successfully retrieved user with ID: %s", userId);
       emitter.onSuccess(userFirebaseObject);
     } else {
+      Timber.e("Failed to parse user data for ID: %s", userId);
       emitter.onError(
           new FirebaseFirestoreException(
               "Failed to parse user data", FirebaseFirestoreException.Code.INTERNAL));

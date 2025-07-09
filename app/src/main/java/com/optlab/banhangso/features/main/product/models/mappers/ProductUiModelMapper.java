@@ -1,6 +1,8 @@
 package com.optlab.banhangso.features.main.product.models.mappers;
 
 import androidx.annotation.NonNull;
+import com.optlab.banhangso.features.main.brand.models.mappers.BrandUiModelMapper;
+import com.optlab.banhangso.features.main.category.models.mappers.CategoryUiModelMapper;
 import com.optlab.banhangso.features.main.product.models.ProductUiModel;
 import com.optlab.banhangso.models.domain.Product;
 import java.util.List;
@@ -14,15 +16,20 @@ public class ProductUiModelMapper {
     return ProductUiModel.builder()
         .id(product.getId())
         .barcode(product.getBarcode())
-        .category(product.getCategory())
-        .brand(product.getBrand())
+        .category(
+            product.getCategory() != null
+                ? CategoryUiModelMapper.fromDomain(product.getCategory())
+                : null)
+        .brand(
+            product.getBrand() != null ? BrandUiModelMapper.fromDomain(product.getBrand()) : null)
         .name(product.getName())
         .purchasePrice(product.getPurchasePrice())
         .sellingPrice(product.getSellingPrice())
-        .avatarUrl(product.getAvatarUrl())
+        .thumbnailUrl(product.getThumbnailUrl())
+        .imageUrls(product.getImageUrls())
         .stockQuantity(product.getStockQuantity())
         .description(product.getDescription())
-        .status(product.isStatus())
+        .status(product.getStatus())
         .discountPrice(product.getDiscountPrice())
         .note(product.getNote())
         .createdAt(product.getCreatedAt())
@@ -37,22 +44,27 @@ public class ProductUiModelMapper {
   }
 
   @NonNull public static Product toDomain(@NonNull ProductUiModel productUiModel) {
-    return Product.builder()
-        .id(productUiModel.getId())
-        .barcode(productUiModel.getBarcode())
-        .category(productUiModel.getCategory())
-        .brand(productUiModel.getBrand())
-        .name(productUiModel.getName())
-        .purchasePrice(productUiModel.getPurchasePrice())
-        .sellingPrice(productUiModel.getSellingPrice())
-        .avatarUrl(productUiModel.getAvatarUrl())
-        .stockQuantity(productUiModel.getStockQuantity())
-        .description(productUiModel.getDescription())
-        .status(productUiModel.getStatus())
-        .discountPrice(productUiModel.getDiscountPrice())
-        .note(productUiModel.getNote())
-        .createdAt(productUiModel.getCreatedAt())
-        .updatedAt(productUiModel.getUpdatedAt())
-        .build();
+    return new Product(
+        productUiModel.getId(),
+        null, // storeId - not available in UI model
+        productUiModel.getBarcode(),
+        productUiModel.getCategory() != null
+            ? CategoryUiModelMapper.toDomain(productUiModel.getCategory())
+            : null,
+        productUiModel.getBrand() != null
+            ? BrandUiModelMapper.toDomain(productUiModel.getBrand())
+            : null,
+        productUiModel.getName(),
+        productUiModel.getPurchasePrice(),
+        productUiModel.getSellingPrice(),
+        productUiModel.getThumbnailUrl(),
+        productUiModel.getImageUrls(),
+        productUiModel.getStockQuantity(),
+        productUiModel.getDescription(),
+        productUiModel.getStatus(),
+        productUiModel.getDiscountPrice(),
+        productUiModel.getNote(),
+        productUiModel.getCreatedAt(),
+        productUiModel.getUpdatedAt());
   }
 }

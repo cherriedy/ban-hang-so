@@ -7,7 +7,7 @@
 
         <import type="android.view.View" />
 
-        <import type="com.optlab.banhangso.internal.utilities.Constants" />
+        <import type="com.optlab.banhangso.features.main.authentication.Constants" />
 
         <variable
             name="fragment"
@@ -160,7 +160,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 app:endIconMode="clear_text"
-                                app:error="@{viewModel.errors[Constants.Auth.ERROR_EMAIL]}"
+                                app:error="@{viewModel.errors[Constants.ERROR_EMAIL]}"
                                 app:hintEnabled="false"
                                 app:startIconDrawable="@drawable/ic_start_email"
                                 app:startIconTint="?attr/colorPrimary">
@@ -172,7 +172,7 @@
                                     android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_email"
                                     android:inputType="textEmailAddress"
-                                    android:text="@={viewModel.inputFields[Constants.Auth.KEY_EMAIL]}"
+                                    android:text="@={viewModel.inputFields[Constants.KEY_EMAIL]}"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                     android:textFontWeight="800" />
                             </com.google.android.material.textfield.TextInputLayout>
@@ -213,7 +213,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 app:endIconMode="password_toggle"
-                                app:error="@{viewModel.errors[Constants.Auth.ERROR_PASSWORD]}"
+                                app:error="@{viewModel.errors[Constants.ERROR_PASSWORD]}"
                                 app:hintEnabled="false"
                                 app:startIconDrawable="@drawable/ic_start_password"
                                 app:startIconTint="?attr/colorPrimary">
@@ -225,7 +225,7 @@
                                     android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_password"
                                     android:inputType="textPassword"
-                                    android:text="@={viewModel.inputFields[Constants.Auth.KEY_PASSWORD]}"
+                                    android:text="@={viewModel.inputFields[Constants.KEY_PASSWORD]}"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                     android:textFontWeight="800" />
                             </com.google.android.material.textfield.TextInputLayout>
@@ -267,7 +267,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 app:endIconMode="password_toggle"
-                                app:error="@{viewModel.errors[Constants.Auth.ERROR_CONFIRM_PASSWORD]}"
+                                app:error="@{viewModel.errors[Constants.ERROR_CONFIRM_PASSWORD]}"
                                 app:hintEnabled="false"
                                 app:startIconDrawable="@drawable/ic_start_password"
                                 app:startIconTint="?attr/colorPrimary">
@@ -279,7 +279,7 @@
                                     android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_password"
                                     android:inputType="textPassword"
-                                    android:text="@={viewModel.inputFields[Constants.Auth.KEY_CONFIRM_PASSWORD]}"
+                                    android:text="@={viewModel.inputFields[Constants.KEY_CONFIRM_PASSWORD]}"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                     android:textFontWeight="800" />
                             </com.google.android.material.textfield.TextInputLayout>

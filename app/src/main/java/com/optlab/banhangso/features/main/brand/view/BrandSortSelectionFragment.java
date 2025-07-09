@@ -14,8 +14,9 @@ import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentSortSelectionBinding;
 import com.optlab.banhangso.features.main.brand.viewmodel.BrandSortSelectionViewModel;
 import com.optlab.banhangso.features.main.product.viewmodels.ProductTabHostSharedViewModel;
-import com.optlab.banhangso.features.shared.adapter.SortSelectionAdapter;
+import com.optlab.banhangso.features.shared.adapters.SortSelectionAdapter;
 import com.optlab.banhangso.models.domain.Brand;
+
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint

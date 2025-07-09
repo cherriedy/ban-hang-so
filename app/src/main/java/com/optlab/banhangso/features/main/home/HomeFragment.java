@@ -18,7 +18,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentHomeBinding;
-import com.optlab.banhangso.features.shared.view.AnimationLoadingDialog;
+import com.optlab.banhangso.features.shared.views.LoadingDialog;
 import com.optlab.banhangso.internal.utilities.NavigationUtils;
 import dagger.hilt.android.AndroidEntryPoint;
 import java.time.LocalDate;
@@ -29,7 +29,7 @@ import java.util.TimeZone;
 @AndroidEntryPoint
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
-  private final AnimationLoadingDialog loadingDialog = new AnimationLoadingDialog();
+  private final LoadingDialog loadingDialog = new LoadingDialog();
   private FragmentHomeBinding binding;
   private HomeViewModel viewModel;
   private NavController navController;
@@ -67,8 +67,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     int viewId = v.getId();
     if (viewId == R.id.ib_stores) {
       NavOptions options = NavigationUtils.getNavOptions(R.id.homeFragment, true);
-      NavDirections action = HomeFragmentDirections.actionToSelectFragment();
+      NavDirections action = HomeFragmentDirections.actionToStoreSelect();
       controller.navigate(action, options);
+    } else if (viewId == R.id.mcv_staff) {
+      NavDirections action = HomeFragmentDirections.actionToStaff();
+      controller.navigate(action);
+    } else if (viewId == R.id.mcv_customer) {
+      NavDirections action = HomeFragmentDirections.actionToCustomer();
+      controller.navigate(action);
     }
   }
 

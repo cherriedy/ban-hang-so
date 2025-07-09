@@ -20,7 +20,8 @@ public class ProductFirebaseObjectMapper {
     product.setPurchasePrice(productFirebaseObject.getPurchasePrice());
     product.setSellingPrice(productFirebaseObject.getSellingPrice());
     product.setDiscountPrice(productFirebaseObject.getDiscountPrice());
-    product.setAvatarUrl(productFirebaseObject.getAvatarUrl());
+    product.setThumbnailUrl(productFirebaseObject.getThumbnailUrl());
+    product.setImageUrls(productFirebaseObject.getImageUrls());
     product.setStockQuantity(productFirebaseObject.getStockQuantity());
     product.setDescription(productFirebaseObject.getDescription());
     product.setNote(productFirebaseObject.getNote());
@@ -47,7 +48,8 @@ public class ProductFirebaseObjectMapper {
     productFirebaseObject.setPurchasePrice(product.getPurchasePrice());
     productFirebaseObject.setSellingPrice(product.getSellingPrice());
     productFirebaseObject.setDiscountPrice(product.getDiscountPrice());
-    productFirebaseObject.setAvatarUrl(product.getAvatarUrl());
+    productFirebaseObject.setThumbnailUrl(product.getThumbnailUrl());
+    productFirebaseObject.setImageUrls(product.getImageUrls());
     productFirebaseObject.setStockQuantity(product.getStockQuantity());
     productFirebaseObject.setDescription(product.getDescription());
     productFirebaseObject.setNote(product.getNote());

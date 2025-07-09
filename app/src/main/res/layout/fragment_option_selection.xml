@@ -20,14 +20,15 @@
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/bg_search_view"
+            android:visibility="gone"
             app:iconifiedByDefault="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:queryHint="@string/hint_query_product" />
+            app:queryHint="@string/hint_query" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list_option"
+            android:id="@+id/rv_options"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"

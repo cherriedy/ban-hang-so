@@ -1,22 +1,27 @@
 package com.optlab.banhangso.repositories.interfaces;
 
-import androidx.lifecycle.LiveData;
+import androidx.annotation.NonNull;
+import androidx.paging.PagingData;
+
+import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.Brand;
-import java.util.List;
-import java.util.function.Consumer;
 
-public interface BrandRepository {
-  LiveData<List<Brand>> getBrands();
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
-  Brand getBrandById(String id);
+public interface BrandRepository extends BaseRepository {
 
-  Brand getBrandByPosition(int position);
+  @NonNull
+  Flowable<PagingData<Brand>> getBrands();
 
-  int getPositionById(String id);
+  @NonNull
+  Single<Result<Brand>> getBrand(@NonNull String brandId);
 
-  void updateBrand(Brand brand, Consumer<Boolean> callback);
+  @NonNull Flowable<PagingData<Brand>> searchBrands(@NonNull String query);
 
-  void deleteBrand(Brand brand, Consumer<Boolean> callback);
+  @NonNull Single<Result<Void>> updateBrand(@NonNull Brand brand);
 
-  void createBrand(Brand brand, Consumer<Boolean> callback);
+  @NonNull Single<Result<Void>> createBrand(@NonNull Brand brand);
+
+  @NonNull Single<Result<Void>> deleteBrand(@NonNull String brandId);
 }

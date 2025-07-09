@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.ObservableField;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class SearchViewBindingAdapter {
   @BindingAdapter("query")
   public static void setQuery(

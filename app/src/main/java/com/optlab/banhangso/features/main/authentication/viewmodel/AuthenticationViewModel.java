@@ -1,15 +1,14 @@
 package com.optlab.banhangso.features.main.authentication.viewmodel;
 
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.ERROR_CONFIRM_PASSWORD;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.ERROR_EMAIL;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.ERROR_PASSWORD;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_CONFIRM_PASSWORD;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_EMAIL;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_IS_SIGN_IN;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_PASSWORD;
+import static com.optlab.banhangso.features.main.authentication.Constants.ERROR_CONFIRM_PASSWORD;
+import static com.optlab.banhangso.features.main.authentication.Constants.ERROR_EMAIL;
+import static com.optlab.banhangso.features.main.authentication.Constants.ERROR_PASSWORD;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_CONFIRM_PASSWORD;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_EMAIL;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_IS_SIGN_IN;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_PASSWORD;
 
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableArrayMap;
 import androidx.databinding.ObservableMap;
@@ -19,23 +18,20 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
-
-import com.optlab.banhangso.internal.validators.AuthValidator;
+import com.optlab.banhangso.features.main.authentication.AuthValidator;
+import com.optlab.banhangso.models.application.AppError;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.store.RoleStore;
 import com.optlab.banhangso.repositories.interfaces.AuthRepository;
 import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
-
-import java.util.function.Consumer;
-
-import javax.inject.Inject;
-
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import java.util.function.Consumer;
+import javax.inject.Inject;
 import timber.log.Timber;
 
 /**
@@ -73,22 +69,27 @@ public class AuthenticationViewModel extends ViewModel {
     this.validator = validator;
     this.authRepository = authRepository;
 
-    isAuthenticated =
-        LiveDataReactiveStreams.fromPublisher(
-            authRepository
-                .isAuthenticated()
-                .subscribeOn(Schedulers.io())
-                .toFlowable(BackpressureStrategy.LATEST));
-
-    store =
-        LiveDataReactiveStreams.fromPublisher(
-            preferencesRepository
-                .observeStore()
-                .subscribeOn(Schedulers.io())
-                .toFlowable(BackpressureStrategy.LATEST));
+    isAuthenticated = observeIsAuthenticated();
+    store = observeStoreUpdates();
 
     initAuthInputsListener();
     initSignInState();
+  }
+
+  @NonNull private LiveData<RoleStore> observeStoreUpdates() {
+    return LiveDataReactiveStreams.fromPublisher(
+        preferencesRepository
+            .observeStore()
+            .subscribeOn(Schedulers.io())
+            .toFlowable(BackpressureStrategy.LATEST));
+  }
+
+  @NonNull private LiveData<Boolean> observeIsAuthenticated() {
+    return LiveDataReactiveStreams.fromPublisher(
+        authRepository
+            .isAuthenticated()
+            .subscribeOn(Schedulers.io())
+            .toFlowable(BackpressureStrategy.LATEST));
   }
 
   public LiveData<RoleStore> getStore() {
@@ -262,8 +263,11 @@ public class AuthenticationViewModel extends ViewModel {
           authRepository
               .logInWithEmailAndPassword(email, password)
               .subscribeOn(Schedulers.io())
-              .doOnSubscribe(__ -> isLoading.postValue(true))
-              .doOnSubscribe(__ -> Timber.d("Starting authentication for email: %s", email))
+              .doOnSubscribe(
+                  __ -> {
+                    isLoading.postValue(true);
+                    Timber.d("Starting authentication for email: %s", email);
+                  })
               .observeOn(AndroidSchedulers.mainThread())
               .doFinally(() -> isLoading.setValue(false))
               .subscribe(this::onLogInSuccess, this::onLogInError);
@@ -276,11 +280,19 @@ public class AuthenticationViewModel extends ViewModel {
 
   private void onLogInError(Throwable throwable) {
     authResult.setValue(false);
+    errorFlag.setValue(true);
     Timber.e(throwable, "Authentication failed: %s", throwable.getMessage());
   }
 
   private void onLogInSuccess(Result<Void> result) {
-    authResult.setValue(result instanceof Result.Success<Void>);
-    Timber.d("Authentication result: %s", authResult.getValue());
+    if (result instanceof Result.Success<Void>) {
+      authResult.setValue(true);
+      Timber.d("Authentication successful");
+    } else if (result instanceof Result.Failure<Void> failure) {
+      authResult.setValue(false);
+      if (failure.getError() instanceof AppError.UnknownError) {
+        errorFlag.setValue(true);
+      }
+    }
   }
 }

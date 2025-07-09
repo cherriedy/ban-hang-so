@@ -1,18 +1,18 @@
 package com.optlab.banhangso.features.main.authentication.viewmodel;
 
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.ERROR_STORE_CODE;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.ERROR_STORE_DESCRIPTION;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.ERROR_STORE_NAME;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.ERROR_TERMS_AND_CONDITIONS;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.ERROR_USER_NAME;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.ERROR_USER_PHONE;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_STORE_CODE;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_STORE_DESCRIPTION;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_STORE_NAME;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_USER_NAME;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.KEY_USER_PHONE;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.OWNER;
-import static com.optlab.banhangso.internal.utilities.Constants.Auth.STAFF;
+import static com.optlab.banhangso.features.main.authentication.Constants.ERROR_STORE_CODE;
+import static com.optlab.banhangso.features.main.authentication.Constants.ERROR_STORE_DESCRIPTION;
+import static com.optlab.banhangso.features.main.authentication.Constants.ERROR_STORE_NAME;
+import static com.optlab.banhangso.features.main.authentication.Constants.ERROR_TERMS_AND_CONDITIONS;
+import static com.optlab.banhangso.features.main.authentication.Constants.ERROR_USER_NAME;
+import static com.optlab.banhangso.features.main.authentication.Constants.ERROR_USER_PHONE;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_STORE_CODE;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_STORE_DESCRIPTION;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_STORE_NAME;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_USER_NAME;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_USER_PHONE;
+import static com.optlab.banhangso.internal.Config.OWNER;
+import static com.optlab.banhangso.internal.Config.STAFF;
 
 import android.view.View;
 import androidx.annotation.NonNull;
@@ -23,11 +23,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import com.optlab.banhangso.R;
-import com.optlab.banhangso.internal.utilities.Constants;
-import com.optlab.banhangso.internal.validators.AuthValidator;
+import com.optlab.banhangso.features.main.authentication.Constants;
+import com.optlab.banhangso.features.main.authentication.AuthValidator;
 import com.optlab.banhangso.models.application.AppError;
 import com.optlab.banhangso.models.application.Result;
-import com.optlab.banhangso.models.remote.render_api.SignUpRequestObject;
+import com.optlab.banhangso.models.remote.requestes.SignUpRequest;
 import com.optlab.banhangso.repositories.interfaces.AuthRepository;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -86,8 +86,8 @@ public class RegistrationViewModel extends ViewModel {
     this.validator = validator;
     this.authRepository = authRepository;
 
-    Boolean isAdmin = savedStateHandle.get(Constants.Auth.KEY_IS_ADMIN);
-    savedStateHandle.set(Constants.Auth.KEY_IS_ADMIN, isAdmin == null || isAdmin);
+    Boolean isAdmin = savedStateHandle.get(Constants.KEY_IS_OWNER);
+    savedStateHandle.set(Constants.KEY_IS_OWNER, isAdmin == null || isAdmin);
 
     initInputFields();
   }
@@ -126,7 +126,7 @@ public class RegistrationViewModel extends ViewModel {
   }
 
   public LiveData<Boolean> getIsAdmin() {
-    return savedStateHandle.getLiveData(Constants.Auth.KEY_IS_ADMIN);
+    return savedStateHandle.getLiveData(Constants.KEY_IS_OWNER);
   }
 
   public LiveData<Integer> getErrorMessageResId() {
@@ -134,7 +134,7 @@ public class RegistrationViewModel extends ViewModel {
   }
 
   public void setIsAdmin(boolean isAdmin) {
-    savedStateHandle.set(Constants.Auth.KEY_IS_ADMIN, isAdmin);
+    savedStateHandle.set(Constants.KEY_IS_OWNER, isAdmin);
   }
 
   public void setEmail(String email) {
@@ -256,11 +256,11 @@ public class RegistrationViewModel extends ViewModel {
   }
 
   public void onSignUp(@NonNull View view) {
-    SignUpRequestObject signUpRequestObject = getSignUpRequestObject();
+    SignUpRequest signUpRequest = getSignUpRequestObject();
 
     Disposable disposable =
         authRepository
-            .signUpWithEmailAndPassword(signUpRequestObject)
+            .signUpWithEmailAndPassword(signUpRequest)
             .subscribeOn(Schedulers.io())
             .doOnSubscribe(
                 __ -> {
@@ -278,7 +278,7 @@ public class RegistrationViewModel extends ViewModel {
     disposables.add(disposable);
   }
 
-  private SignUpRequestObject getSignUpRequestObject() {
+  private SignUpRequest getSignUpRequestObject() {
     String displayName = inputFields.get(KEY_USER_NAME);
     String phone = inputFields.get(KEY_USER_PHONE);
     String storeId = inputFields.get(KEY_STORE_CODE);
@@ -286,16 +286,13 @@ public class RegistrationViewModel extends ViewModel {
     String storeDescription = inputFields.get(KEY_STORE_DESCRIPTION);
     String role = (storeId != null && !storeId.isBlank()) ? STAFF : OWNER;
 
-    SignUpRequestObject.StoreInfo storeInfo = null;
+    SignUpRequest.StoreInfo storeInfo = null;
     if (OWNER.equals(role)) {
       storeInfo =
-          SignUpRequestObject.StoreInfo.builder()
-              .name(storeName)
-              .description(storeDescription)
-              .build();
+          SignUpRequest.StoreInfo.builder().name(storeName).description(storeDescription).build();
     }
 
-    return SignUpRequestObject.builder()
+    return SignUpRequest.builder()
         .email(email)
         .password(password)
         .role(role)

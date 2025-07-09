@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/staff_navigation"
+    app:startDestination="@id/staffListFragment">
+
+    <fragment
+        android:id="@+id/staffListFragment"
+        android:name="com.optlab.banhangso.features.main.staff.views.StaffListFragment"
+        android:label="StaffListFragment"
+        tools:layout="@layout/fragment_staff_list">
+
+        <action
+            android:id="@+id/action_to_staff_edit"
+            app:destination="@id/staffEditFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/staffEditFragment"
+        android:name="com.optlab.banhangso.features.main.staff.views.StaffEditFragment"
+        android:label="StaffEditFragment"
+        tools:layout="@layout/fragment_staff_edit">
+
+        <argument
+            android:name="staffId"
+            app:argType="string" />
+
+        <argument
+            android:name="isCreateMode"
+            app:argType="boolean" />
+    </fragment>
+
+</navigation>

@@ -1,17 +1,15 @@
 package com.optlab.banhangso.repositories;
 
 import androidx.annotation.NonNull;
-
 import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.remote.UserFirebaseObject;
-import com.optlab.banhangso.models.remote.mapper.UserFirebaseObjectMapper;
+import com.optlab.banhangso.models.remote.mappers.UserFirebaseObjectMapper;
 import com.optlab.banhangso.repositories.interfaces.UserRepository;
 import com.optlab.banhangso.services.interfaces.FirebaseUserService;
-
-import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
+import timber.log.Timber;
 
 public class UserRepositoryImpl implements UserRepository {
   private final FirebaseUserService firebaseUserService;
@@ -32,14 +30,19 @@ public class UserRepositoryImpl implements UserRepository {
   }
 
   @Override
-  public Maybe<Result<User>> getUser(@NonNull String userId) {
+  public Single<Result<User>> getUser(@NonNull String userId) {
     return firebaseUserService
         .getUser(userId)
-        .flatMap(
+        .map(
             userFirebaseObject -> {
               User user = UserFirebaseObjectMapper.toDomain(userFirebaseObject);
-              return Maybe.just((Result<User>) new Result.Success<>(user));
+              Timber.d("UserRepository: Successfully retrieved user with ID: %s", user.getId());
+              return (Result<User>) new Result.Success<>(user);
             })
-        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
+        .onErrorReturn(
+            throwable -> {
+              Timber.e(throwable, "UserRepository: Error fetching user with ID: %s", userId);
+              return new Result.Failure<>(errorHandler.getError(throwable));
+            });
   }
 }

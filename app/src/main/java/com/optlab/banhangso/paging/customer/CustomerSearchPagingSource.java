@@ -1,6 +1,6 @@
 package com.optlab.banhangso.paging.customer;
 
-import static com.optlab.banhangso.internal.utilities.Constants.ITEMS_PER_PAGE;
+import static com.optlab.banhangso.internal.Config.ITEMS_PER_PAGE;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.remote.CustomerFirebaseObject;

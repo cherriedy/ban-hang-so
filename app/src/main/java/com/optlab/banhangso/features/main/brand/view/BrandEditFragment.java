@@ -7,43 +7,41 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.Observable;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.optlab.banhangso.BR;
-import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentBrandEditBinding;
 import com.optlab.banhangso.features.main.brand.viewmodel.BrandEditViewModel;
-import com.optlab.banhangso.features.shared.view.AnimationLoadingDialog;
-import com.optlab.banhangso.models.domain.Brand;
+import com.optlab.banhangso.features.shared.views.LoadingDialog;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class BrandEditFragment extends BottomSheetDialogFragment {
-  private final AnimationLoadingDialog loadingDialog = new AnimationLoadingDialog();
+
+  public static final String BRAND_EDIT_RESULT = "BRAND_EDIT_RESULT";
+  public static final String REFRESH_FLAG = "REFRESH_FLAG";
+
+  private final LoadingDialog loadingDialog = new LoadingDialog();
 
   private FragmentBrandEditBinding binding;
   private BrandEditViewModel viewModel;
   private BrandEditFragmentArgs args;
-  private Observable.OnPropertyChangedCallback changedCallback;
+  private NavController navController;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    initViewModels();
-  }
-
-  private void initViewModels() {
+    args = BrandEditFragmentArgs.fromBundle(requireArguments());
     viewModel = new ViewModelProvider(this).get(BrandEditViewModel.class);
+    configureInteractionMode();
   }
 
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentBrandEditBinding.inflate(inflater, container, false);
-    binding.setLifecycleOwner(this);
+    binding.setLifecycleOwner(getViewLifecycleOwner());
     binding.setViewModel(viewModel);
     binding.setFragment(this);
     return binding.getRoot();
@@ -52,100 +50,44 @@ public class BrandEditFragment extends BottomSheetDialogFragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    setupNavigation();
-    observeViewModels();
-  }
-
-  private void observeViewModels() {
-    viewModel.getBrand().observe(getViewLifecycleOwner(), this::onPropertyChanged);
-
-    observeLoadingState(viewModel.isCreating());
-    observeLoadingState(viewModel.isUpdating());
-
-    observeOperationState(
-        viewModel.getCreateResult(),
-        getString(R.string.notify_create_brand_successful),
-        getString(R.string.notify_create_brand_fail));
-    observeOperationState(
-        viewModel.getUpdateResult(),
-        getString(R.string.notify_update_brand_successful),
-        getString(R.string.notify_update_brand_fail));
-  }
-
-  private void observeOperationState(
-      @NonNull LiveData<Boolean> result, @NonNull String successMsg, @NonNull String errorMsg) {
-    result.observe(
-        getViewLifecycleOwner(),
-        isSuccessful -> {
-          if (Boolean.TRUE.equals(isSuccessful)) {
-            showToast(successMsg);
-            NavHostFragment.findNavController(this).navigateUp();
-          } else {
-            showToast(errorMsg);
-          }
-        });
-  }
-
-  private void showToast(String successMsg) {
-    Toast.makeText(getContext(), successMsg, Toast.LENGTH_SHORT).show();
-  }
-
-  private void observeLoadingState(LiveData<Boolean> state) {
-    state.observe(getViewLifecycleOwner(), this::toggleLoadingDialog);
-  }
-
-  private void toggleLoadingDialog(Boolean isLoading) {
-    if (isLoading) {
-      loadingDialog.show(getParentFragmentManager(), this.getClass().getSimpleName());
-    } else {
-      // Ensure the dialog can be dismissed even if the fragment is not in the foreground
-      // due to the behaviour of BottomSheetDialogFragment.
-      if (loadingDialog.isAdded()) {
-        loadingDialog.dismissAllowingStateLoss();
-      }
-    }
-  }
-
-  @Override
-  public void onDestroyView() {
-    binding = null;
-    changedCallback = null;
-    super.onDestroyView();
-  }
-
-  private void setupNavigation() {
-    args = BrandEditFragmentArgs.fromBundle(requireArguments());
-    configureInteractionMode();
+    navController = NavHostFragment.findNavController(this);
+    observeViewModel();
   }
 
   private void configureInteractionMode() {
-    binding.setIsCreateMode(args.getIsCreateMode());
-    binding.executePendingBindings();
-
+    viewModel.setIsEditing(args.getIsEditing());
     viewModel.loadBrandById(args.getBrandId());
   }
 
-  private void onPropertyChanged(Brand brand) {
-    if (changedCallback == null) {
-      changedCallback =
-          new Observable.OnPropertyChangedCallback() {
-            @Override
-            public void onPropertyChanged(Observable sender, int propertyId) {
-              handlePropertyChanges((Brand) sender, propertyId);
-            }
-          };
-
-      // Add the callback to the brand object to observe property changes
-      brand.addOnPropertyChangedCallback(changedCallback);
-    }
-
-    // Initially validate the brand properties.
-    viewModel.validateName(brand.getName());
+  private void observeViewModel() {
+    viewModel.isLoading().observe(getViewLifecycleOwner(), this::handleLoadingState);
+    viewModel.getMessageResId().observe(getViewLifecycleOwner(), this::showToast);
+    viewModel
+        .getOperationCompleted()
+        .observe(getViewLifecycleOwner(), this::handleOperationCompleted);
   }
 
-  private void handlePropertyChanges(Brand brand, int propertyId) {
-    if (propertyId == BR.name) {
-      viewModel.validateName(brand.getName());
+  private void showToast(@NonNull Integer messageResId) {
+    navController.navigateUp();
+    Toast.makeText(getContext(), getString(messageResId), Toast.LENGTH_SHORT).show();
+  }
+
+  private void handleLoadingState(@NonNull Boolean isLoading) {
+    if (isLoading) {
+      loadingDialog.show(
+          getParentFragmentManager(), "loadingDialog_" + this.getClass().getSimpleName());
+    } else {
+      loadingDialog.dismissAllowingStateLoss();
+    }
+  }
+
+  private void handleOperationCompleted(@NonNull Boolean completed) {
+    if (completed) {
+      Bundle result = new Bundle();
+      result.putBoolean(REFRESH_FLAG, true);
+      requireActivity()
+          .getSupportFragmentManager()
+          .setFragmentResult(BRAND_EDIT_RESULT, result);
     }
   }
 }

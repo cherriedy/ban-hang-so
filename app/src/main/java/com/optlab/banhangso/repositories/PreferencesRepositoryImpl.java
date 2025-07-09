@@ -1,24 +1,20 @@
 package com.optlab.banhangso.repositories;
 
 import android.content.SharedPreferences;
-
 import androidx.annotation.NonNull;
-
 import com.optlab.banhangso.models.application.SortOption;
 import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.domain.store.RoleStore;
 import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
 import com.optlab.banhangso.repositories.interfaces.preferences.AppPreferences;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
 import io.reactivex.rxjava3.subjects.Subject;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import timber.log.Timber;
 
 /**
@@ -144,14 +140,15 @@ public class PreferencesRepositoryImpl implements PreferencesRepository {
 
   @Override
   public Maybe<User> getUser() {
-    return Maybe.create(emitter -> {
-      User user = appPreferences.getUser();
-      if (user == null) {
-        emitter.onComplete();
-      } else {
-        emitter.onSuccess(user);
-      }
-    });
+    return Maybe.create(
+        emitter -> {
+          User user = appPreferences.getUser();
+          if (user == null) {
+            emitter.onComplete();
+          } else {
+            emitter.onSuccess(user);
+          }
+        });
   }
 
   @Override

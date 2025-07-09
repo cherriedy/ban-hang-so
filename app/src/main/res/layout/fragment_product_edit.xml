@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -12,7 +13,7 @@
 
         <import type="android.view.View" />
 
-        <import type="com.optlab.banhangso.internal.utilities.Constants" />
+        <import type="com.optlab.banhangso.features.main.product.Constants" />
 
         <variable
             name="viewModel"
@@ -30,6 +31,7 @@
         android:orientation="vertical">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/mtb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_top_dashboard"
@@ -56,18 +58,30 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:clipToOutline="false"
+                    android:clipToPadding="false"
                     android:orientation="vertical"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="12dp">
+
+                    <androidx.constraintlayout.helper.widget.Flow
+                        android:id="@+id/flow_buttons"
+                        android:layout_width="wrap_content"
+                        android:layout_height="120dp"
+                        android:orientation="vertical"
+                        app:constraint_referenced_ids="btn_upload_images, btn_take_picture"
+                        app:flow_verticalGap="@dimen/spacing_xmedium"
+                        app:flow_wrapMode="none"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_upload_images"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
                         android:backgroundTint="@android:color/transparent"
-                        android:onClick="@{fragment::pickImage}"
-                        android:padding="16dp"
+                        android:onClick="@{fragment::launchMultipleImagePicker}"
+                        android:padding="@dimen/spacing_large"
                         android:text="@string/attr_upload_image"
                         android:textColor="@color/mariner"
                         android:textStyle="bold"
@@ -75,8 +89,6 @@
                         app:icon="@drawable/ic_add_image"
                         app:iconGravity="start"
                         app:iconTint="@color/mariner"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         app:strokeColor="@color/mariner"
                         app:strokeWidth="1dp" />
 
@@ -85,7 +97,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@android:color/transparent"
-                        android:padding="16dp"
+                        android:onClick="@{fragment::launchTakePicture}"
+                        android:padding="@dimen/spacing_large"
                         android:text="@string/attr_take_a_pic"
                         android:textColor="@color/mariner"
                         android:textStyle="bold"
@@ -93,11 +106,25 @@
                         app:icon="@drawable/ic_take_new_photo"
                         app:iconGravity="start"
                         app:iconTint="@color/mariner"
-                        app:layout_constraintEnd_toEndOf="@id/btn_upload_images"
-                        app:layout_constraintStart_toStartOf="@id/btn_upload_images"
-                        app:layout_constraintTop_toBottomOf="@id/btn_upload_images"
                         app:strokeColor="@color/mariner"
                         app:strokeWidth="1dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_images"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="@dimen/spacing_large"
+                        android:clipToPadding="false"
+                        android:nestedScrollingEnabled="false"
+                        android:orientation="horizontal"
+                        android:scrollbars="none"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toBottomOf="@id/flow_buttons"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/flow_buttons"
+                        app:layout_constraintTop_toTopOf="@id/flow_buttons"
+                        tools:itemCount="10"
+                        tools:listitem="@layout/list_item_image_upload" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -118,8 +145,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="16dp"
+                            android:fontFamily="@font/open_sans"
                             android:text="@string/attr_product_detail"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textFontWeight="800" />
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
@@ -130,9 +159,11 @@
                                 android:id="@+id/tv_title_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/open_sans"
                                 android:text="@string/attr_product_name"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                                 android:textColor="@color/raven"
+                                android:textFontWeight="800"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:syncFocusColor="@{etName}" />
@@ -153,17 +184,19 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:endIconMode="clear_text"
-                            app:error="@{viewModel.errors[Constants.Product.KEY_NAME]}"
+                            app:error="@{viewModel.errors[Constants.KEY_NAME]}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/et_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/open_sans"
                                 android:hint="@string/hint_product_name"
                                 android:inputType="text"
                                 android:text="@={viewModel.productUiModel.name}"
-                                android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+                                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                android:textFontWeight="800" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
@@ -189,9 +222,11 @@
                                     android:id="@+id/tv_title_selling_price"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:fontFamily="@font/open_sans"
                                     android:text="@string/attr_product_out_price"
                                     android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                                     android:textColor="@color/raven"
+                                    android:textFontWeight="800"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:syncFocusColor="@{etSellingPrice}" />
@@ -212,16 +247,18 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 app:endIconMode="clear_text"
-                                app:error="@{viewModel.errors[Constants.Product.KEY_SELLING_PRICE]}"
+                                app:error="@{viewModel.errors[Constants.KEY_SELLING_PRICE]}"
                                 app:hintEnabled="false">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_selling_price"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_product_price"
                                     android:inputType="numberDecimal"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                    android:textFontWeight="800"
                                     app:price="@={viewModel.productUiModel.sellingPrice}" />
                             </com.google.android.material.textfield.TextInputLayout>
 
@@ -242,25 +279,29 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"
+                                android:fontFamily="@font/open_sans"
                                 android:text="@string/attr_product_in_price"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@color/raven" />
+                                android:textColor="@color/raven"
+                                android:textFontWeight="800" />
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_purchase_price"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 app:endIconMode="clear_text"
-                                app:error="@{viewModel.errors[Constants.Product.KEY_PURCHASE_PRICE]}"
+                                app:error="@{viewModel.errors[Constants.KEY_PURCHASE_PRICE]}"
                                 app:hintEnabled="false">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_purchase_price"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:fontFamily="@font/open_sans"
                                     android:hint="@string/hint_product_price"
                                     android:inputType="numberDecimal"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                    android:textFontWeight="800"
                                     app:price="@={viewModel.productUiModel.purchasePrice}" />
                             </com.google.android.material.textfield.TextInputLayout>
 
@@ -279,25 +320,29 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
+                            android:fontFamily="@font/open_sans"
                             android:text="@string/attr_product_discount"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@color/raven" />
+                            android:textColor="@color/raven"
+                            android:textFontWeight="800" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/til_discount_price"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:endIconMode="clear_text"
-                            app:error="@{viewModel.errors[Constants.Product.KEY_DISCOUNT_PRICE]}"
+                            app:error="@{viewModel.errors[Constants.KEY_DISCOUNT_PRICE]}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/et_discount_price"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/open_sans"
                                 android:hint="@string/hint_product_price"
                                 android:inputType="number"
                                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                android:textFontWeight="800"
                                 app:price="@={viewModel.productUiModel.discountPrice}" />
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
@@ -316,8 +361,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
+                        android:fontFamily="@font/open_sans"
                         android:text="@string/attr_product_inventory"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textFontWeight="800" />
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -329,9 +376,11 @@
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginBottom="12dp"
+                            android:fontFamily="@font/open_sans"
                             android:text="@string/attr_product_status"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@color/raven" />
+                            android:textColor="@color/raven"
+                            android:textFontWeight="800" />
 
                         <RadioGroup
                             android:id="@+id/rg_stock_status"
@@ -382,9 +431,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
+                            android:fontFamily="@font/open_sans"
                             android:text="@string/attr_product_sku"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@color/raven" />
+                            android:textColor="@color/raven"
+                            android:textFontWeight="800" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/til_sku"
@@ -413,7 +464,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="14dp"
+                        android:fontFamily="@font/open_sans"
                         android:text="@string/attr_product_more_info"
+                        android:textFontWeight="800"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -432,9 +485,11 @@
                                 android:id="@+id/tv_title_brand"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/open_sans"
                                 android:text="@string/attr_product_brand"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                                 android:textColor="@color/raven"
+                                android:textFontWeight="800"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -454,7 +509,7 @@
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:error="@{viewModel.errors[Constants.Product.KEY_BRAND]}"
+                            app:error="@{viewModel.errors[Constants.KEY_BRAND]}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -485,9 +540,11 @@
                                 android:id="@+id/tv_title_category"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/open_sans"
                                 android:text="@string/attr_product_type"
                                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                                 android:textColor="@color/raven"
+                                android:textFontWeight="800"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -508,7 +565,7 @@
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:error="@{viewModel.errors[Constants.Product.KEY_CATEGORY]}"
+                            app:error="@{viewModel.errors[Constants.KEY_CATEGORY]}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -535,13 +592,19 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
+                            android:fontFamily="@font/open_sans"
                             android:text="@string/attr_product_barcode"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@color/raven" />
+                            android:textColor="@color/raven"
+                            android:textFontWeight="800" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            app:endIconContentDescription="@string/scan_qr_code"
+                            app:endIconDrawable="@drawable/ic_qr_code_scanner"
+                            app:endIconMode="custom"
+                            app:endIconOnClickListener="@{fragment::launchBarcodeScanner}">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/ed_barcode"
@@ -562,9 +625,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
+                            android:fontFamily="@font/open_sans"
                             android:text="@string/attr_product_description"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                            android:textColor="@color/raven" />
+                            android:textColor="@color/raven"
+                            android:textFontWeight="800" />
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/til_description"
@@ -575,7 +640,7 @@
                             app:counterEnabled="true"
                             app:counterMaxLength="120"
                             app:endIconMode="clear_text"
-                            app:error="@{viewModel.errors[Constants.Product.KEY_DESCRIPTION]}"
+                            app:error="@{viewModel.errors[Constants.KEY_DESCRIPTION]}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -607,9 +672,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
+                            android:fontFamily="@font/open_sans"
                             android:text="@string/attr_product_note"
                             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                             android:textColor="@color/raven"
+                            android:textFontWeight="800"
                             app:endIconMode="clear_text" />
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -620,7 +687,7 @@
                             app:counterEnabled="true"
                             app:counterMaxLength="50"
                             app:endIconMode="clear_text"
-                            app:error="@{viewModel.errors[Constants.Product.KEY_NOTE]}"
+                            app:error="@{viewModel.errors[Constants.KEY_NOTE]}"
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -650,23 +717,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:onClick="@{fragment::onDeleteButtonClick}"
+                        android:onClick="@{fragment::onDeleteClick}"
                         android:padding="16dp"
                         android:text="@string/delete"
                         android:textColor="@android:color/holo_red_light"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:visibility="@{viewModel.isCreateMode ? View.GONE : View.VISIBLE}"
+                        android:visibility="@{viewModel.editing ? View.VISIBLE : View.GONE}"
                         app:backgroundTint="@android:color/transparent"
                         app:cornerRadius="5dp"
                         app:strokeColor="@android:color/holo_red_light"
                         app:strokeWidth="1dp" />
 
-                    <View
+                    <Space
                         android:id="@+id/tl_login_method"
-                        android:layout_width="16dp"
-                        android:layout_height="match_parent"
-                        android:visibility="@{viewModel.isCreateMode ? View.GONE : View.VISIBLE}" />
+                        android:layout_width="@dimen/spacing_large"
+                        android:layout_height="0dp"
+                        android:visibility="@{viewModel.editing ? View.VISIBLE : View.GONE}" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_update"
@@ -675,9 +742,9 @@
                         android:layout_weight="1"
                         android:backgroundTint="@color/boston_blue"
                         android:enabled="@{viewModel.canSubmit}"
-                        android:onClick="@{viewModel.isCreateMode ? viewModel::onCreate : viewModel::onUpdate}"
+                        android:onClick="@{viewModel.editing ? viewModel::onUpdate : viewModel::onCreate}"
                         android:padding="16dp"
-                        android:text="@{viewModel.isCreateMode ? @string/complete : @string/update}"
+                        android:text="@{viewModel.editing ? @string/update : @string/complete}"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:cornerRadius="5dp" />

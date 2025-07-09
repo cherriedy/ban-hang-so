@@ -36,7 +36,7 @@
             app:popExitAnim="@anim/anim_slide_out_right" />
 
         <action
-            android:id="@+id/action_to_select_fragment"
+            android:id="@+id/action_to_store_select"
             app:destination="@+id/selectStoreFragment"
             app:enterAnim="@anim/anim_slide_in_right"
             app:exitAnim="@anim/anim_slide_out_left"
@@ -48,6 +48,22 @@
                 android:defaultValue="true"
                 app:argType="boolean" />
         </action>
+
+        <action
+            android:id="@+id/action_to_staff"
+            app:destination="@+id/staff_navigation"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
+        <action
+            android:id="@+id/action_to_customer"
+            app:destination="@+id/customer_navigation"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
 
     </fragment>
 
@@ -88,8 +104,10 @@
     </fragment>
 
     <include app:graph="@navigation/auth_navigation" />
-    <include app:graph="@navigation/nav_graph_product_tabs" />
-    <include app:graph="@navigation/nav_graph_product_edit" />
-    <include app:graph="@navigation/nav_graph_brand_edit" />
-    <include app:graph="@navigation/nav_graph_category_edit" />
+    <include app:graph="@navigation/product_shared_navigation" />
+    <include app:graph="@navigation/product_navigation" />
+    <include app:graph="@navigation/brand_navigation" />
+    <include app:graph="@navigation/category_navigation" />
+    <include app:graph="@navigation/staff_navigation" />
+    <include app:graph="@navigation/customer_navigation" />
 </navigation>

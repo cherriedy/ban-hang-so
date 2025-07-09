@@ -7,10 +7,10 @@ import androidx.databinding.ObservableField;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelKt;
 import androidx.paging.PagingData;
 import androidx.paging.rxjava3.PagingRx;
+import com.optlab.banhangso.features.shared.viewmodels.RxViewModel;
 import com.optlab.banhangso.models.application.SortOption;
 import com.optlab.banhangso.models.domain.Product;
 import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
@@ -19,18 +19,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.processors.BehaviorProcessor;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import javax.inject.Inject;
 import kotlinx.coroutines.CoroutineScope;
 import timber.log.Timber;
 
+/**
+ * @noinspection LombokGetterMayBeUsed
+ */
 @HiltViewModel
-public class ProductListViewModel extends ViewModel {
+public class ProductListViewModel extends RxViewModel {
+
   private final ProductRepository productRepository;
   private final PreferencesRepository preferencesRepository;
-  private final CompositeDisposable disposables = new CompositeDisposable();
   private final ObservableField<String> searchQuery = new ObservableField<>();
   private final MutableLiveData<SortOption<Product.SortField>> sortOption = new MutableLiveData<>();
   private final BehaviorProcessor<String> searchProcessor = BehaviorProcessor.createDefault("");
@@ -53,16 +55,10 @@ public class ProductListViewModel extends ViewModel {
                 .toFlowable(BackpressureStrategy.LATEST));
 
     setUpProducts();
-    setUpSearchQueryChanges();
+    observeSearchQuery();
   }
 
-  @Override
-  protected void onCleared() {
-    disposables.clear();
-    super.onCleared();
-  }
-
-  private void setUpSearchQueryChanges() {
+  private void observeSearchQuery() {
     searchQuery.addOnPropertyChangedCallback(
         new Observable.OnPropertyChangedCallback() {
           @SuppressWarnings("unchecked")
@@ -113,8 +109,11 @@ public class ProductListViewModel extends ViewModel {
     this.sortOption.setValue(sortOption);
   }
 
+  /**
+   * @noinspection unused
+   */
   public void toggleLayout(@NonNull View view) {
-    boolean current = layoutMode.getValue();
+    boolean current = Boolean.TRUE.equals(layoutMode.getValue());
 
     disposables.add(
         preferencesRepository

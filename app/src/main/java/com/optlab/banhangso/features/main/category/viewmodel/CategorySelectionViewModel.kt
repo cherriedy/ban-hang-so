@@ -1,69 +1,31 @@
-package com.optlab.banhangso.features.main.category.viewmodel;
+package com.optlab.banhangso.features.main.category.viewmodel
 
-import android.text.TextUtils;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import com.optlab.banhangso.models.domain.Category;
-import com.optlab.banhangso.repositories.interfaces.CategoryRepository;
-import dagger.hilt.android.lifecycle.HiltViewModel;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.map
+import androidx.paging.rxjava3.cachedIn
+import com.optlab.banhangso.features.main.category.models.CategoryUiModel
+import com.optlab.banhangso.features.main.category.models.mappers.CategoryUiModelMapper
+import com.optlab.banhangso.repositories.interfaces.CategoryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.core.Flowable
+import javax.inject.Inject
 
 @HiltViewModel
-public class CategorySelectionViewModel extends ViewModel {
-  private final CategoryRepository repository;
-  private final MutableLiveData<List<Category>> categoriesSource = new MutableLiveData<>();
-  private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
-  private final MediatorLiveData<List<Category>> categories = new MediatorLiveData<>();
+class CategorySelectionViewModel
+@Inject
+constructor(private val categoryRepository: CategoryRepository) : ViewModel() {
 
-  @Inject
-  public CategorySelectionViewModel(@NonNull CategoryRepository repository) {
-    this.repository = repository;
-    // Observe the brands change from repository and update the list.
-    repository.getCategories().observeForever(categoriesSource::setValue);
+  private val _categories: Flowable<PagingData<CategoryUiModel>>
+  val categories: Flowable<PagingData<CategoryUiModel>>
+    get() = _categories
 
-    // Set up the mediator to observe changes in the categories list and search query.
-    categories.addSource(categoriesSource, unused -> updateCategories());
-    categories.addSource(searchQuery, unused -> updateCategories());
-  }
-
-  /**
-   * Update the categories list based on the search query. If the query is empty, show all
-   * categories.
-   */
-  private void updateCategories() {
-    List<Category> updatedCategories = categoriesSource.getValue();
-    if (updatedCategories == null || updatedCategories.isEmpty()) return;
-
-    String query = searchQuery.getValue();
-    if (!TextUtils.isEmpty(query)) {
-      updatedCategories =
-          updatedCategories.stream()
-              .filter(brand -> brand.getName().toLowerCase().contains(query.toLowerCase()))
-              .collect(Collectors.toList());
-    }
-
-    categories.setValue(updatedCategories);
-  }
-
-  @Override
-  protected void onCleared() {
-    repository.getCategories().removeObserver(categoriesSource::setValue);
-    categories.removeSource(categoriesSource);
-    categories.removeSource(searchQuery);
-    super.onCleared();
-  }
-
-  public LiveData<List<Category>> getCategoriesSource() {
-    return categoriesSource;
-  }
-
-  public void setSearchQuery(@Nullable String query) {
-    searchQuery.setValue(query);
+  init {
+    @Suppress("OPT_IN_USAGE")
+    _categories =
+      categoryRepository.categories
+        .map { pagingData -> pagingData.map(CategoryUiModelMapper::fromDomain) }
+        .cachedIn(viewModelScope)
   }
 }

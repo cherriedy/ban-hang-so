@@ -20,7 +20,7 @@ import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentSelectStoreBinding;
 import com.optlab.banhangso.features.main.store.models.RoleStoreUiModel;
 import com.optlab.banhangso.features.main.store.viewmodel.SelectStoreViewModel;
-import com.optlab.banhangso.features.shared.adapter.StoreListAdapter;
+import com.optlab.banhangso.features.main.store.adapters.StoreListAdapter;
 import com.optlab.banhangso.internal.utilities.NavigationUtils;
 import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;

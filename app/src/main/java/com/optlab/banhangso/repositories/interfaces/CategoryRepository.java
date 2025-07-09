@@ -1,22 +1,22 @@
 package com.optlab.banhangso.repositories.interfaces;
 
-import androidx.lifecycle.LiveData;
+import androidx.annotation.NonNull;
+import androidx.paging.PagingData;
+import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.Category;
-import java.util.List;
-import java.util.function.Consumer;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Single;
 
-public interface CategoryRepository {
-  LiveData<List<Category>> getCategories();
+public interface CategoryRepository extends BaseRepository {
+  @NonNull Flowable<PagingData<Category>> getCategories();
 
-  Category getCategoryById(String id);
+  @NonNull Single<Result<Category>> getCategory(@NonNull String categoryId);
 
-  Category getCategoryByPosition(int position);
+  @NonNull Flowable<PagingData<Category>> searchCategories(@NonNull String query);
 
-  int getPositionById(String id);
+  @NonNull Single<Result<Void>> updateCategory(@NonNull Category category);
 
-  void updateCategory(Category currentCategory, Consumer<Boolean> isSuccessful);
+  @NonNull Single<Result<Void>> createCategory(@NonNull Category category);
 
-  void createCategory(Category currentCategory, Consumer<Boolean> isSuccessful);
-
-  void deleteCategory(Category currentCategory, Consumer<Boolean> isSuccessful);
+  @NonNull Single<Result<Void>> deleteCategory(@NonNull String categoryId);
 }

@@ -14,10 +14,10 @@ import java.util.Objects;
  * the store ID from preferences. This class extends RxPagingSource to provide a reactive way of
  * loading data in pages.
  *
- * @param <Value> The type of data being paged, typically a model class representing the items to be
+ * @param <V> The type of data being paged, typically a model class representing the items to be
  *     displayed in a list or grid.
  */
-public abstract class BasePagingSource<Value> extends RxPagingSource<Integer, Value> {
+public abstract class BasePagingSource<V> extends RxPagingSource<Integer, V> {
 
   private final PreferencesRepository preferencesRepository;
 
@@ -47,14 +47,14 @@ public abstract class BasePagingSource<Value> extends RxPagingSource<Integer, Va
    * @return The key to be used for refreshing data, or null if refresh isn't possible
    */
   @Nullable @Override
-  public Integer getRefreshKey(@NonNull PagingState<Integer, Value> pagingState) {
+  public Integer getRefreshKey(@NonNull PagingState<Integer, V> pagingState) {
     // Try to find the page key of the closest page to the anchor position
     Integer anchorPosition = pagingState.getAnchorPosition();
     if (anchorPosition == null) {
       return null;
     }
 
-    LoadResult.Page<Integer, Value> anchorPage = pagingState.closestPageToPosition(anchorPosition);
+    LoadResult.Page<Integer, V> anchorPage = pagingState.closestPageToPosition(anchorPosition);
     if (anchorPage == null) {
       return null;
     }

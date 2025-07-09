@@ -31,7 +31,7 @@
                 android:layout_marginVertical="8dp"
                 android:background="@drawable/bg_search_view"
                 app:iconifiedByDefault="false"
-                app:queryHint="@string/hint_query_product" />
+                app:queryHint="@string/hint_query" />
 
         </com.google.android.material.appbar.MaterialToolbar>
 

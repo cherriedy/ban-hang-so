@@ -20,14 +20,16 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentRegistrationBinding;
 import com.optlab.banhangso.features.main.authentication.viewmodel.RegistrationViewModel;
-import com.optlab.banhangso.features.shared.view.AnimationLoadingDialog;
+import com.optlab.banhangso.features.shared.views.LoadingDialog;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class RegistrationFragment extends Fragment {
+
+  private final LoadingDialog loadingDialog = new LoadingDialog();
+
   private FragmentRegistrationBinding binding;
   private RegistrationViewModel viewModel;
-  private AnimationLoadingDialog loadingDialog;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +38,6 @@ public class RegistrationFragment extends Fragment {
     RegistrationFragmentArgs args = RegistrationFragmentArgs.fromBundle(requireArguments());
     viewModel.setEmail(args.getEmail());
     viewModel.setPassword(args.getPassword());
-    loadingDialog = new AnimationLoadingDialog();
   }
 
   private void initViewModel() {

@@ -1,12 +1,13 @@
 package com.optlab.banhangso;
 
 import android.app.Application;
+
+import com.optlab.banhangso.internal.utilities.Logging;
+
 import dagger.hilt.android.HiltAndroidApp;
-import timber.log.Timber;
 
 /**
- * Application class for BanHangSo app. Handles global app initialization including Firebase
- * configurations.
+ * Application class for BanHangSo app.
  */
 @HiltAndroidApp
 public class BanHangSo extends Application {
@@ -17,18 +18,7 @@ public class BanHangSo extends Application {
 
     // Initialize Timber for logging
     if (BuildConfig.DEBUG) {
-      Timber.plant(new Timber.DebugTree());
+      Logging.configTimber();
     }
-
-    //        // Configure Firebase Firestore with offline persistence
-    //        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    //        FirebaseFirestoreSettings settings =
-    //                new FirebaseFirestoreSettings.Builder()
-    //                        .setPersistenceEnabled(true)
-    //                        .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
-    //                        .build();
-    //
-    //        firestore.setFirestoreSettings(settings);
-    //        Timber.d("Firebase Firestore initialized with offline persistence enabled");
   }
 }

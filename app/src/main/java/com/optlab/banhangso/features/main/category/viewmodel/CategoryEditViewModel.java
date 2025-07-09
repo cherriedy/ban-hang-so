@@ -1,124 +1,214 @@
 package com.optlab.banhangso.features.main.category.viewmodel;
 
-import android.text.TextUtils;
+import static com.optlab.banhangso.features.main.category.Constants.ERROR_NAME;
+
 import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.databinding.Observable;
+import androidx.databinding.library.baseAdapters.BR;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import com.optlab.banhangso.features.main.category.state.CategoryEditValidationState;
-import com.optlab.banhangso.internal.validators.CategoryValidator;
+import com.optlab.banhangso.R;
+import com.optlab.banhangso.features.main.category.models.CategoryUiModel;
+import com.optlab.banhangso.features.main.category.models.mappers.CategoryUiModelMapper;
+import com.optlab.banhangso.features.shared.viewmodels.UiViewModel;
+import com.optlab.banhangso.features.main.category.CategoryValidator;
+import com.optlab.banhangso.models.application.AppError;
+import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.Category;
 import com.optlab.banhangso.repositories.interfaces.CategoryRepository;
 import dagger.hilt.android.lifecycle.HiltViewModel;
-import java.util.function.Consumer;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import java.util.Objects;
 import javax.inject.Inject;
 import timber.log.Timber;
 
 @HiltViewModel
-public class CategoryEditViewModel extends ViewModel {
-  private final CategoryRepository repository;
-  private final CategoryValidator validator;
-  private final MutableLiveData<Category> category = new MutableLiveData<>();
-  private final MutableLiveData<CategoryEditValidationState> validationState =
-      new MutableLiveData<>(CategoryEditValidationState.empty());
-  private final MutableLiveData<Boolean> isUpdating = new MutableLiveData<>();
-  private final MutableLiveData<Boolean> updateResult = new MutableLiveData<>();
-  private final MutableLiveData<Boolean> isCreating = new MutableLiveData<>();
-  private final MutableLiveData<Boolean> createResult = new MutableLiveData<>();
+public class CategoryEditViewModel extends UiViewModel<CategoryUiModel> {
+
+  private final CategoryRepository categoryRepository;
+  private final CategoryValidator categoryValidator;
+  private final MutableLiveData<Boolean> isEditing = new MutableLiveData<>();
+  private final MutableLiveData<Boolean> canSubmit = new MutableLiveData<>();
+
+  private Observable.OnPropertyChangedCallback categoryOnPropertyChangedCallback;
 
   @Inject
   public CategoryEditViewModel(
-      @NonNull CategoryRepository repository, @NonNull CategoryValidator validator) {
-    this.repository = repository;
-    this.validator = validator;
+      @NonNull CategoryRepository categoryRepository, CategoryValidator categoryValidator) {
+    this.categoryRepository = categoryRepository;
+    this.categoryValidator = categoryValidator;
+
+    initCategoryChangeListener();
   }
 
-  public MutableLiveData<Category> getCategory() {
-    return category;
+  private void initCategoryChangeListener() {
+    uiModel.observeForever(
+        category -> {
+          if (categoryOnPropertyChangedCallback == null) {
+            categoryOnPropertyChangedCallback =
+                new Observable.OnPropertyChangedCallback() {
+                  @Override
+                  public void onPropertyChanged(Observable sender, int propertyId) {
+                    if (propertyId == BR.name) {
+                      validateName();
+                    }
+                  }
+
+                  private void validateName() {
+                    validateField(
+                        ERROR_NAME, CategoryUiModel::getName, categoryValidator::validateName);
+                  }
+                };
+          }
+
+          category.addOnPropertyChangedCallback(categoryOnPropertyChangedCallback);
+        });
   }
 
-  public MutableLiveData<CategoryEditValidationState> getValidationState() {
-    return validationState;
+  @Override
+  protected void onValidationComplete() {
+    // This method is called when validation is complete to check if there are any errors and update
+    // the canSubmit LiveData accordingly, indicating whether the form can be submitted.
+    Timber.d("onValidationComplete called, checking for errors: %b", errors.isEmpty());
+    canSubmit.setValue(errors.isEmpty());
   }
 
-  public MutableLiveData<Boolean> isUpdating() {
-    return isUpdating;
+  public void setIsEditing(boolean value) {
+    isEditing.setValue(value);
+    canSubmit.setValue(value);
   }
 
-  public MutableLiveData<Boolean> getUpdateResult() {
-    return updateResult;
+  @NonNull public LiveData<Boolean> canSubmit() {
+    return canSubmit;
   }
 
-  public MutableLiveData<Boolean> isCreating() {
-    return isCreating;
+  @NonNull public LiveData<Boolean> isEditing() {
+    return isEditing;
   }
 
-  public MutableLiveData<Boolean> getCreateResult() {
-    return createResult;
-  }
-
-  /** Load a category by its ID. If the ID is empty, an empty category is set. */
-  public void loadCategoryById(String id) {
-    if (category.getValue() == null) {
-      if (TextUtils.isEmpty(id)) {
-        category.setValue(Category.empty());
+  public void getCategoryById(@NonNull String categoryId) {
+    CategoryUiModel model = uiModel.getValue();
+    if (model == null) {
+      if (categoryId.isBlank()) {
+        uiModel.setValue(new CategoryUiModel());
       } else {
-        category.setValue(repository.getCategoryById(id));
+        Disposable disposable =
+            categoryRepository
+                .getCategory(categoryId)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(__ -> isLoading.postValue(true))
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally(() -> isLoading.setValue(false))
+                .subscribe(this::onGetCategorySuccess, this::onGetCategoryError);
+
+        disposables.add(disposable);
       }
     }
   }
 
-  /** Update the validation state of the category. */
-  private void updateValidationState(Consumer<CategoryEditValidationState> action) {
-    action.accept(validationState.getValue());
-    validationState.setValue(validationState.getValue());
-  }
+  /**
+   * @noinspection unused
+   */
+  public void onUpdate(@NonNull View view) {
+    Category category = CategoryUiModelMapper.toDomain(Objects.requireNonNull(uiModel.getValue()));
 
-  /** Validate the name of the category. */
-  public void validateName(String name) {
-    updateValidationState(
-        state -> {
-          state.setNameError(validator.validateName(name));
-        });
+    Disposable disposable =
+        categoryRepository
+            .updateCategory(category)
+            .subscribeOn(Schedulers.io())
+            .doOnSubscribe(__ -> isLoading.postValue(true))
+            .observeOn(AndroidSchedulers.mainThread())
+            .doFinally(() -> isLoading.setValue(false))
+            .subscribe(this::onUpdateCategorySuccess, this::onUpdateCategoryError);
+
+    disposables.add(disposable);
   }
 
   /**
-   * Handle the click event of the update button.
-   *
    * @noinspection unused
    */
-  public void onUpdateButtonClick(@NonNull View view) {
-    Category currentCategory = category.getValue();
-    if (currentCategory != null) {
-      isUpdating.setValue(true);
-      repository.updateCategory(
-          currentCategory,
-          isSuccessful -> {
-            isUpdating.setValue(false);
-            updateResult.setValue(isSuccessful);
-          });
-    } else {
-      Timber.e("Category is null when trying to update");
+  public void onCreate(@NonNull View view) {
+    Category category = CategoryUiModelMapper.toDomain(Objects.requireNonNull(uiModel.getValue()));
+
+    Disposable disposable =
+        categoryRepository
+            .createCategory(category)
+            .subscribeOn(Schedulers.io())
+            .doOnSubscribe(__ -> isLoading.postValue(true))
+            .observeOn(AndroidSchedulers.mainThread())
+            .doFinally(() -> isLoading.setValue(false))
+            .subscribe(this::onCreateCategorySuccess, this::onCreateCategoryError);
+
+    disposables.add(disposable);
+  }
+
+  private void onCreateCategorySuccess(Result<Void> result) {
+    if (result instanceof Result.Success<Void>) {
+      messageResId.setValue(R.string.notify_category_create_success);
+    } else if (result instanceof Result.Failure<Void> failure) {
+      AppError appError = failure.getError();
+      if (appError instanceof AppError.NetServiceError) {
+        messageResId.setValue(R.string.error_network);
+      } else if (appError instanceof AppError.ForbiddenError) {
+        messageResId.setValue(R.string.error_forbidden);
+      } else {
+        messageResId.setValue(R.string.error_unknown);
+      }
     }
   }
 
-  /**
-   * Handle the click event of the create button.
-   *
-   * @noinspection unused
-   */
-  public void onCreateButtonClick(@NonNull View view) {
-    Category currentCategory = category.getValue();
-    if (currentCategory != null) {
-      isCreating.setValue(true);
-      repository.createCategory(
-          currentCategory,
-          isSuccessful -> {
-            isCreating.setValue(false);
-            createResult.setValue(isSuccessful);
-          });
-    } else {
-      Timber.e("Category is null when trying to create");
+  private void onCreateCategoryError(Throwable throwable) {
+    messageResId.setValue(R.string.error_unknown);
+    Timber.e(
+        throwable, "There was an error while creating the category :%s", throwable.getMessage());
+  }
+
+  private void onUpdateCategorySuccess(Result<Void> result) {
+    if (result instanceof Result.Success<Void>) {
+      messageResId.setValue(R.string.notify_category_update_success);
+    } else if (result instanceof Result.Failure<Void> failure) {
+      AppError appError = failure.getError();
+      if (appError instanceof AppError.NetServiceError) {
+        messageResId.setValue(R.string.error_network);
+      } else if (appError instanceof AppError.NotFoundError) {
+        messageResId.setValue(R.string.error_category_not_found);
+      } else if (appError instanceof AppError.ForbiddenError) {
+        messageResId.setValue(R.string.error_forbidden);
+      } else {
+        messageResId.setValue(R.string.error_unknown);
+      }
     }
+  }
+
+  private void onUpdateCategoryError(Throwable throwable) {
+    messageResId.setValue(R.string.error_unknown);
+    Timber.e(
+        throwable, "There was an error while updating the category :%s", throwable.getMessage());
+  }
+
+  private void onGetCategorySuccess(Result<Category> result) {
+    if (result instanceof Result.Success<Category> success) {
+      CategoryUiModel categoryUiModel =
+          CategoryUiModelMapper.fromDomain(Objects.requireNonNull(success.getData()));
+      uiModel.setValue(categoryUiModel);
+    } else if (result instanceof Result.Failure<Category> failure) {
+      AppError appError = failure.getError();
+      if (appError instanceof AppError.NotFoundError) {
+        messageResId.setValue(R.string.error_category_not_found);
+      } else if (appError instanceof AppError.NetServiceError) {
+        messageResId.setValue(R.string.error_network);
+      } else {
+        messageResId.setValue(R.string.error_unknown);
+      }
+    }
+  }
+
+  private void onGetCategoryError(Throwable throwable) {
+    messageResId.setValue(R.string.error_unknown);
+    Timber.e(
+        throwable, "There was an error while getting the category :%s", throwable.getMessage());
   }
 }

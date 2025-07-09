@@ -15,12 +15,12 @@ import com.google.android.material.snackbar.Snackbar;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentStoreEditBinding;
 import com.optlab.banhangso.features.main.store.viewmodel.StoreEditViewModel;
-import com.optlab.banhangso.features.shared.view.AnimationLoadingDialog;
+import com.optlab.banhangso.features.shared.views.LoadingDialog;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class StoreEditFragment extends Fragment {
-  private final AnimationLoadingDialog loadingDialog = new AnimationLoadingDialog();
+  private final LoadingDialog loadingDialog = new LoadingDialog();
   private FragmentStoreEditBinding binding;
   private StoreEditFragmentArgs args;
   private StoreEditViewModel viewModel;
