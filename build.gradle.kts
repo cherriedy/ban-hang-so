@@ -41,7 +41,7 @@ subprojects {
 
         kotlin {
             target("**/*.kt")
-            ktlint()
+            ktlint("0.50.0").editorConfigOverride(mapOf("ktlint_code_style" to "google"))
             trimTrailingWhitespace()
             endWithNewline()
         }

@@ -74,9 +74,7 @@ public abstract class NetworkModule {
   public static Retrofit provideRetrofit(OkHttpClient okHttpClient, Gson gson) {
     return new Retrofit.Builder()
         .client(okHttpClient)
-        //                .baseUrl("https://ban-hang-so-api.onrender.com")
-        // TODO: Remove localhost
-        .baseUrl("http://10.0.2.2:8000")
+        .baseUrl("https://ban-hang-so-api.onrender.com")
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .build();

@@ -9,16 +9,17 @@ import static com.optlab.banhangso.features.main.product.Constants.KEY_NOTE;
 import static com.optlab.banhangso.features.main.product.Constants.KEY_PURCHASE_PRICE;
 import static com.optlab.banhangso.features.main.product.Constants.KEY_SELLING_PRICE;
 import static dagger.hilt.android.internal.ThreadUtil.isMainThread;
-import static timber.log.Timber.i;
 
 import android.net.Uri;
 import android.util.Pair;
 import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.Observable;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.features.main.brand.models.BrandUiModel;
 import com.optlab.banhangso.features.main.category.models.CategoryUiModel;
@@ -33,16 +34,19 @@ import com.optlab.banhangso.models.application.UploadableImage;
 import com.optlab.banhangso.models.domain.Product;
 import com.optlab.banhangso.repositories.interfaces.ProductRepository;
 import com.optlab.banhangso.services.ImageUploader;
-import dagger.hilt.android.lifecycle.HiltViewModel;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
 @HiltViewModel
