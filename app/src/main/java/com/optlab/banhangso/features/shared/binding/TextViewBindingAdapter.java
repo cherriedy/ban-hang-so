@@ -8,6 +8,8 @@ import android.view.ViewParent;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.BindingAdapter;
 import com.google.android.material.textfield.TextInputLayout;
@@ -56,10 +58,14 @@ public class TextViewBindingAdapter {
     editText.addTextChangedListener(
         new TextWatcher() {
           @Override
-          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+              // No action needed before text change.
+          }
 
           @Override
-          public void afterTextChanged(Editable s) {}
+          public void afterTextChanged(Editable s) {
+              // No action needed after text change.
+          }
 
           @Override
           public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -91,13 +97,13 @@ public class TextViewBindingAdapter {
    * @param editText The EditText whose parent TextInputLayout is to be found.
    * @return The TextInputLayout that contains the EditText, or null if not found.
    */
-  private static TextInputLayout findTextInputLayout(EditText editText) {
-    ViewParent parent = editText.getParent();
-    while (parent instanceof View) {
-      if (parent instanceof TextInputLayout) {
-        return (TextInputLayout) parent;
+  @Nullable private static TextInputLayout findTextInputLayout(@NonNull EditText editText) {
+    for (ViewParent parent = editText.getParent();
+        parent instanceof View;
+        parent = parent.getParent()) {
+      if (parent instanceof TextInputLayout textInputLayout) {
+        return textInputLayout;
       }
-      parent = parent.getParent();
     }
     return null;
   }
@@ -115,5 +121,13 @@ public class TextViewBindingAdapter {
     } else {
       view.setPaintFlags(view.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
     }
+  }
+
+  @BindingAdapter("stringResource")
+  public static void setStringResource(@NonNull TextView view, @StringRes Integer stringRes) {
+    if (stringRes == null || stringRes == 0) {
+      return;
+    }
+    view.setText(view.getContext().getString(stringRes));
   }
 }

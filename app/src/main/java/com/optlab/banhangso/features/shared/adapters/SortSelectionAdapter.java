@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.optlab.banhangso.databinding.ListItemSortSelectionBinding;
-import com.optlab.banhangso.features.shared.listener.OnSortSelectListener;
+import com.optlab.banhangso.features.shared.listeners.OnSortSelectListener;
 import com.optlab.banhangso.models.application.SortOption;
 
 public class SortSelectionAdapter<T extends Enum<T>>

@@ -21,6 +21,11 @@ public class ImageViewBindingAdapter {
     GlideUtils.loadOrDefault(imageView, imageUrl, defaultImageRes);
   }
 
+  @BindingAdapter(value = "imageResource")
+  public static void setImageResource(@NonNull ImageView imageView, @DrawableRes int imageResId) {
+    GlideUtils.load(imageView, imageResId);
+  }
+
   @BindingAdapter(
       value = {"imageResource", "displayText"},
       requireAll = false)

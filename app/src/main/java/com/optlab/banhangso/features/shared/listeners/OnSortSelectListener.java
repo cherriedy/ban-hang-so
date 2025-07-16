@@ -1,4 +1,4 @@
-package com.optlab.banhangso.features.shared.listener;
+package com.optlab.banhangso.features.shared.listeners;
 
 import com.optlab.banhangso.models.application.SortOption;
 
