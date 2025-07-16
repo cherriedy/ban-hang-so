@@ -1,0 +1,84 @@
+package com.optlab.banhangso.features.main.transaction.adapters;
+
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import com.optlab.banhangso.databinding.GridItemFilterBinding;
+import com.optlab.banhangso.models.application.Interval;
+import java.util.List;
+import java.util.function.Consumer;
+
+public class IntervalFilterListAdapter
+    extends RecyclerView.Adapter<IntervalFilterListAdapter.ViewHolder> {
+
+  @NonNull private final List<Interval> intervals = Interval.getIntervals();
+  @NonNull private final Consumer<String> consumer;
+
+  private int selectedPosition = RecyclerView.NO_POSITION;
+
+  public IntervalFilterListAdapter(@NonNull Consumer<String> consumer) {
+    this.consumer = consumer;
+  }
+
+  @NonNull @Override
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    GridItemFilterBinding binding =
+        GridItemFilterBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+    return new ViewHolder(binding);
+  }
+
+  @Override
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    holder.bind(intervals.get(position));
+  }
+
+  public void setSelectedPosition(int newPosition) {
+    if (newPosition == selectedPosition) {
+      selectedPosition = RecyclerView.NO_POSITION;
+      notifyItemChanged(newPosition);
+      return;
+    }
+
+    int currentPosition = selectedPosition;
+    selectedPosition = newPosition;
+    if (currentPosition != RecyclerView.NO_POSITION) {
+      notifyItemChanged(currentPosition);
+    }
+    notifyItemChanged(selectedPosition);
+  }
+
+  @Override
+  public int getItemCount() {
+    return intervals.size();
+  }
+
+  public class ViewHolder extends RecyclerView.ViewHolder {
+
+    private final GridItemFilterBinding binding;
+
+    public ViewHolder(@NonNull GridItemFilterBinding binding) {
+      super(binding.getRoot());
+      this.binding = binding;
+    }
+
+    public void bind(@NonNull Interval interval) {
+      binding.setFilter(interval);
+
+      int currentPosition = getLayoutPosition();
+      boolean checked = selectedPosition == currentPosition;
+      binding.chipInterval.setChecked(checked);
+      binding.chipInterval.setCheckedIconVisible(checked);
+
+      binding.executePendingBindings();
+
+      binding
+          .getRoot()
+          .setOnClickListener(
+              v -> {
+                setSelectedPosition(currentPosition);
+                consumer.accept(interval.getValue());
+              });
+    }
+  }
+}
