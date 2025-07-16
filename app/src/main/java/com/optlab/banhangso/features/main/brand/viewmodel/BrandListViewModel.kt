@@ -19,9 +19,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.processors.BehaviorProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
-import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
 class BrandListViewModel @Inject constructor(private val brandRepository: BrandRepository) :
@@ -110,3 +110,4 @@ class BrandListViewModel @Inject constructor(private val brandRepository: BrandR
     Timber.e(throwable, "There was an error deleting the brand: %s", throwable.message)
   }
 }
+

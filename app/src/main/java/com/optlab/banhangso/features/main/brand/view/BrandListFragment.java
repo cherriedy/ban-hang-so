@@ -1,5 +1,7 @@
 package com.optlab.banhangso.features.main.brand.view;
 
+import static com.optlab.banhangso.features.shared.utilities.LoadStateErrorUtil.handleLoadStateError;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -156,6 +158,7 @@ public class BrandListFragment extends Fragment {
     listAdapter.addLoadStateListener(
         loadStates -> {
           handlePagingLoadState(loadStates);
+          handleLoadStateError(requireContext(), loadStates);
           return Unit.INSTANCE;
         });
   }

@@ -85,9 +85,7 @@ public class BrandEditFragment extends BottomSheetDialogFragment {
     if (completed) {
       Bundle result = new Bundle();
       result.putBoolean(REFRESH_FLAG, true);
-      requireActivity()
-          .getSupportFragmentManager()
-          .setFragmentResult(BRAND_EDIT_RESULT, result);
+      requireActivity().getSupportFragmentManager().setFragmentResult(BRAND_EDIT_RESULT, result);
     }
   }
 }

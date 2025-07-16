@@ -5,5 +5,5 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Constants {
 
-    public static final String ERROR_NAME = "ERROR_NAME";
+  public static final String ERROR_NAME = "ERROR_NAME";
 }

@@ -6,7 +6,6 @@ import com.optlab.banhangso.R;
 import com.optlab.banhangso.features.shared.validators.BaseValidator;
 import com.optlab.banhangso.features.shared.validators.ValidationRule;
 import com.optlab.banhangso.features.shared.validators.ValidationRules;
-
 import java.util.ArrayList;
 import java.util.List;
 

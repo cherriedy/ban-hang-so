@@ -3,7 +3,6 @@ package com.optlab.banhangso.features.main.brand.models;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
-
 import java.io.Serializable;
 import java.util.Date;
 import lombok.AllArgsConstructor;

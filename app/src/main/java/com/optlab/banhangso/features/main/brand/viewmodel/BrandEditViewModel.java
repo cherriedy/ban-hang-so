@@ -3,13 +3,11 @@ package com.optlab.banhangso.features.main.brand.viewmodel;
 import static com.optlab.banhangso.features.main.brand.Constants.ERROR_NAME;
 
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.Observable;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.features.main.brand.BrandValidator;
 import com.optlab.banhangso.features.main.brand.models.BrandUiModel;
@@ -19,15 +17,12 @@ import com.optlab.banhangso.models.application.AppError;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.Brand;
 import com.optlab.banhangso.repositories.interfaces.BrandRepository;
-
-import java.util.Objects;
-
-import javax.inject.Inject;
-
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import java.util.Objects;
+import javax.inject.Inject;
 import timber.log.Timber;
 
 @HiltViewModel
@@ -110,11 +105,15 @@ public class BrandEditViewModel extends UiViewModel<BrandUiModel> {
     return operationCompleted;
   }
 
-  /** @noinspection unused*/
+  /**
+   * @noinspection unused
+   */
   public void onUpdate(@NonNull View view) {
     Brand brand = BrandUiModelMapper.toDomain(Objects.requireNonNull(uiModel.getValue()));
 
-    Disposable disposable = brandRepository.updateBrand(brand)
+    Disposable disposable =
+        brandRepository
+            .updateBrand(brand)
             .subscribeOn(Schedulers.io())
             .doOnSubscribe(__ -> isLoading.postValue(true))
             .observeOn(AndroidSchedulers.mainThread())
@@ -124,18 +123,23 @@ public class BrandEditViewModel extends UiViewModel<BrandUiModel> {
     disposables.add(disposable);
   }
 
-  /** @noinspection unused*/
+  /**
+   * @noinspection unused
+   */
   public void onCreate(@NonNull View view) {
     Brand brand = BrandUiModelMapper.toDomain(Objects.requireNonNull(uiModel.getValue()));
 
-    Disposable disposable = brandRepository.createBrand(brand)
+    Disposable disposable =
+        brandRepository
+            .createBrand(brand)
             .subscribeOn(Schedulers.io())
             .doOnSubscribe(__ -> isLoading.postValue(true))
             .observeOn(AndroidSchedulers.mainThread())
-            .doFinally(() -> {
-              isLoading.setValue(false);
-              operationCompleted.setValue(true);
-            })
+            .doFinally(
+                () -> {
+                  isLoading.setValue(false);
+                  operationCompleted.setValue(true);
+                })
             .subscribe(this::onCreateBrandSuccess, this::onCreateBrandError);
 
     disposables.add(disposable);
