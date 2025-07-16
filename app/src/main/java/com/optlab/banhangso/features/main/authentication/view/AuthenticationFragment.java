@@ -1,7 +1,6 @@
 package com.optlab.banhangso.features.main.authentication.view;
 
 import static android.accounts.AccountManager.KEY_PASSWORD;
-
 import static com.optlab.banhangso.features.main.authentication.Constants.KEY_EMAIL;
 
 import android.content.Context;

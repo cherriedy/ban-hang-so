@@ -15,6 +15,7 @@ import static com.optlab.banhangso.internal.Config.OWNER;
 import static com.optlab.banhangso.internal.Config.STAFF;
 
 import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableArrayMap;
 import androidx.databinding.ObservableMap;
@@ -22,20 +23,24 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
+
 import com.optlab.banhangso.R;
-import com.optlab.banhangso.features.main.authentication.Constants;
 import com.optlab.banhangso.features.main.authentication.AuthValidator;
+import com.optlab.banhangso.features.main.authentication.Constants;
 import com.optlab.banhangso.models.application.AppError;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.remote.requestes.SignUpRequest;
 import com.optlab.banhangso.repositories.interfaces.AuthRepository;
+
+import java.util.function.Consumer;
+
+import javax.inject.Inject;
+
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import java.util.function.Consumer;
-import javax.inject.Inject;
 import timber.log.Timber;
 
 /**
