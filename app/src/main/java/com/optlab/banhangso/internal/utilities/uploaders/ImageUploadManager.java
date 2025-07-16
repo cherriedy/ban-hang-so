@@ -1,17 +1,13 @@
 package com.optlab.banhangso.internal.utilities.uploaders;
 
 import android.net.Uri;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
-
 import com.optlab.banhangso.models.application.UploadableImage;
 import com.optlab.banhangso.services.ImageUploader;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.Getter;
 
 public class ImageUploadManager {
@@ -78,7 +74,9 @@ public class ImageUploadManager {
           }
 
           @Override
-          public void onCompleted(List<String> urls) {}
+          public void onCompleted(List<String> urls) {
+              // Ignore this callback as we handle success in onSuccess.
+          }
         });
   }
 
