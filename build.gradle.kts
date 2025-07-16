@@ -1,4 +1,3 @@
-import com.android.build.gradle.internal.cxx.io.removeDuplicateFiles
 import com.diffplug.gradle.spotless.SpotlessPlugin
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
@@ -7,17 +6,13 @@ plugins {
     alias(libs.plugins.kotlin.android) version "2.1.20" apply false
     alias(libs.plugins.google.gms.google.services) apply false
     alias(libs.plugins.spotless) apply false
-    id("com.google.devtools.ksp") version "2.1.20-1.0.32" apply false
     id("com.google.dagger.hilt.android") version "2.56.1" apply false
+    id("com.google.devtools.ksp") version "2.1.20-1.0.32" apply false
 }
 
 buildscript {
-    repositories {
-        google()
-    }
-    dependencies {
-        classpath(libs.navigation.safe.args.gradle.plugin)
-    }
+    repositories { google() }
+    dependencies { classpath(libs.navigation.safe.args.gradle.plugin) }
 }
 
 subprojects {
@@ -40,8 +35,8 @@ subprojects {
         }
 
         kotlin {
-            target("**/*.kt")
-            ktlint("0.50.0").editorConfigOverride(mapOf("ktlint_code_style" to "google"))
+            target("**/*.kt", "**/*.kts")
+            ktlint(libs.versions.ktlint.get())
             trimTrailingWhitespace()
             endWithNewline()
         }

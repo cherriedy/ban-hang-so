@@ -4,10 +4,12 @@ core = "3.5.3"
 firebaseBom = "33.12.0"
 hiltAndroid = "2.56.1"
 hiltAndroidCompiler = "2.56.1"
+hiltNavigation = "1.2.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
+lifecycleLivedataKtxVersion = "2.9.1"
 lifecycleReactivestreams = "2.9.1"
 lombok = "1.18.38"
 material = "1.12.0"
@@ -46,14 +48,17 @@ okhttp3LoggingInterceptor = "4.12.0"
 paging = "3.3.0"
 autodispose = "2.2.1"
 zxingAndroidEmbedded = "4.3.0"
+ktlint = "1.2.1"
 
 [libraries]
+androidx-lifecycle-livedata-ktx-v291 = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtxVersion" }
 androidx-lifecycle-reactivestreams = { module = "androidx.lifecycle:lifecycle-reactivestreams", version.ref = "lifecycleReactivestreams" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
 core = { module = "com.google.zxing:core", version.ref = "core" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hiltNavigation" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
