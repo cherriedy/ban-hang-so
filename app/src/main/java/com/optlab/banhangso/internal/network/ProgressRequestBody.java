@@ -1,9 +1,7 @@
 package com.optlab.banhangso.internal.network;
 
 import androidx.annotation.NonNull;
-
 import java.io.IOException;
-
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.Buffer;

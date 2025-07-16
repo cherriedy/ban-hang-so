@@ -2,9 +2,9 @@ package com.optlab.banhangso.internal.injector;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
-import com.optlab.banhangso.internal.utilities.uploaders.qualifiers.ProductImageUploader;
 import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler;
 import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandlerImpl;
+import com.optlab.banhangso.internal.utilities.uploaders.qualifiers.ProductImageUploader;
 import com.optlab.banhangso.services.ImageUploader;
 import com.optlab.banhangso.services.interfaces.ProductService;
 import dagger.Module;
