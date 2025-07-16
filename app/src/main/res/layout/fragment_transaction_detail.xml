@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.optlab.banhangso.features.main.transaction.viewmodels.TransactionDetailViewModel" />
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/mtb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_top_dashboard"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="?attr/colorPrimaryContainer"
+            app:title="@string/transaction_details"
+            app:titleTextColor="?attr/colorPrimaryContainer" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/athens_gray"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_large"
+                    android:background="@color/white"
+                    android:padding="@dimen/spacing_large">
+
+                    <TextView
+                        android:id="@+id/tv_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:text="@{viewModel.transaction.id}"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textFontWeight="800"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="a81bc81b-dead-4e5d-abff-90865d1e13b1" />
+
+                    <TextView
+                        android:id="@+id/tv_created_at"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xmedium"
+                        android:fontFamily="@font/open_sans"
+                        android:text="@{viewModel.transaction.createdAt}"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:textColor="@color/million_gray"
+                        android:textFontWeight="800"
+                        app:layout_constraintStart_toStartOf="@id/tv_id"
+                        app:layout_constraintTop_toBottomOf="@id/tv_id"
+                        tools:text="T2, 10/03/2025 12:45:40" />
+
+                    <TextView
+                        android:id="@+id/tv_created_by"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_xmedium"
+                        android:fontFamily="@font/open_sans"
+                        android:text="@{@string/created_by + ` ` + viewModel.transaction.staff.name}"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                        android:textColor="@color/million_gray"
+                        android:textFontWeight="800"
+                        app:layout_constraintStart_toStartOf="@id/tv_created_at"
+                        app:layout_constraintTop_toBottomOf="@id/tv_created_at"
+                        tools:text="Tạo bởi John Doe" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/md"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        app:layout_constraintTop_toBottomOf="@id/tv_created_by" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        app:layout_constraintTop_toBottomOf="@id/md">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@{viewModel.transaction.finalPrices}"
+                            android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                            android:textFontWeight="800"
+                            tools:text="400.500 VND" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_medium"
+                            android:fontFamily="@font/open_sans"
+                            android:textAllCaps="true"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            app:stringResource="@{viewModel.transaction.paymentMethod}"
+                            android:textColor="?attr/colorPrimary"
+                            android:textFontWeight="800"
+                            tools:text="@string/cash" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_medium"
+                            android:fontFamily="@font/open_sans"
+                            android:maxHeight="@dimen/_120dp"
+                            android:text="@{viewModel.transaction.note}"
+                            android:textFontWeight="800"
+                            tools:text="@tools:sample/lorem/random" />
+
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_large"
+                    android:background="@color/white"
+                    android:padding="@dimen/spacing_large">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/civ_avatar"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        app:civ_border_color="@color/athens_gray"
+                        app:civ_border_width="1dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@tools:sample/avatars" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_large"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="@id/civ_avatar"
+                        app:layout_constraintStart_toEndOf="@id/civ_avatar"
+                        app:layout_constraintTop_toTopOf="@id/civ_avatar">
+
+                        <TextView
+                            android:id="@+id/tv_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@{viewModel.transaction.customer.name}"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                            android:textFontWeight="800"
+                            tools:text="@tools:sample/full_names" />
+
+                        <TextView
+                            android:id="@+id/tv_phone_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_small"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@{viewModel.transaction.customer.phone}"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                            android:textFontWeight="800"
+                            tools:text="@tools:sample/us_phones" />
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/ib_email"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="@dimen/spacing_middle"
+                        android:importantForAccessibility="no"
+                        android:src="@android:drawable/sym_action_email"
+                        android:visibility="@{!viewModel.transaction.customer.email.isEmpty ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintBottom_toBottomOf="@id/ib_call"
+                        app:layout_constraintEnd_toStartOf="@id/ib_call"
+                        app:layout_constraintTop_toTopOf="@id/ib_call"
+                        app:tint="?attr/colorPrimary" />
+
+                    <ImageButton
+                        android:id="@+id/ib_call"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:importantForAccessibility="no"
+                        android:src="@android:drawable/stat_sys_phone_call"
+                        android:visibility="@{!viewModel.transaction.customer.phone.isEmpty ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintBottom_toBottomOf="@id/civ_avatar"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/civ_avatar"
+                        app:tint="?attr/colorPrimary" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_transactions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_large"
+                    android:background="@color/white"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="5"
+                    tools:listitem="@layout/list_item_transaction_item" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_prices"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_large"
+                    android:background="@color/white"
+                    android:padding="@dimen/spacing_large">
+
+                    <TextView
+                        android:id="@+id/tv_selling_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:text="Giá bán gốc: "
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textFontWeight="800"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:maxLines="1"
+                        android:text="@{viewModel.transaction.totalSellingPrices}"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                        android:textFontWeight="800"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_selling_price"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_selling_price"
+                        tools:text="100.000 VND" />
+
+                    <TextView
+                        android:id="@+id/tv_discount_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:fontFamily="@font/open_sans"
+                        android:text="Khuyến mãi: "
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textFontWeight="800"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_selling_price" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:maxLines="1"
+                        android:text="@{viewModel.transaction.totalDiscountPrices}"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                        android:textColor="?attr/colorSecondary"
+                        android:textFontWeight="800"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_discount_price"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_discount_price"
+                        tools:text="80.000 VND" />
+
+
+                    <TextView
+                        android:id="@+id/tv_final_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:fontFamily="@font/open_sans"
+                        android:text="@string/final_price"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textFontWeight="800"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_discount_price" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/open_sans"
+                        android:maxLines="1"
+                        android:text="@{viewModel.transaction.finalPrices}"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                        android:textColor="?attr/colorPrimary"
+                        android:textFontWeight="800"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_final_price"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_final_price"
+                        tools:text="80.000 VND" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</layout>

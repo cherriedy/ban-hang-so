@@ -1,28 +1,18 @@
 <resources>
     <string name="app_name">Bán Hàng Số</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Tiếp tục</string>
     <string name="previous">Phía trước</string>
-
     <string name="homepage">Quản lý</string>
     <string name="order">Đơn hàng</string>
     <string name="product">Sản phẩm</string>
     <string name="warehouse">Kho hàng</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="store_name">Tên cửa hàng</string>
-
-    <string name="txt_managers">Managers</string>
     <string name="txt_mocked_product_price">1.000,000 USD</string>
     <string name="txt_mocked_product_description">Ví dụ: Mì tôm hảo hảo chua cay</string>
-
     <string name="hint_product_name">Mỳ Hảo Hảo</string>
     <string name="hint_product_price">0.000</string>
     <string name="hint_product_brand">Acecook</string>
     <string name="hint_product_category">Mì ăn liền</string>
-
     <string name="attr_upload_image">Tải ảnh lên</string>
     <string name="attr_take_a_pic">Chụp ảnh</string>
     <string name="attr_product_detail">Thông tin sản phẩm</string>
@@ -40,13 +30,10 @@
     <string name="attr_product_out_price">Giá bán</string>
     <string name="attr_product_in_price">Giá vốn</string>
     <string name="attr_product_type">Loại sản phẩm</string>
-
     <string name="value_in_stock">Còn hàng</string>
     <string name="value_out_stock">Hết hàng</string>
-
     <string name="delete">Xóa</string>
     <string name="update">Cập nhật</string>
-
     <string name="error_field_is_not_nullable">Thông tin bắt buộc</string>
     <string name="asterisk">*</string>
     <string name="hint_query">Nhập nội dung tìm kiếm…</string>
@@ -55,7 +42,6 @@
     <string name="tab_title_product">Sản phẩm</string>
     <string name="tab_title_category">Danh mục</string>
     <string name="tab_title_brand">Thương hiệu</string>
-
     <string name="currency_unit">VND</string>
     <string name="alert_product_name_non_null">Tên sản phẩm không được để trống</string>
     <string name="alter_product_name_max_chars">Tên sản phẩm không được quá 100 ký tự</string>
@@ -79,7 +65,7 @@
     <string name="notify_update_product_successfully">Cập nhật sản phẩm thành công</string>
     <string name="notify_delete_product_successfully">Xóa sản phẩm thành công</string>
     <string name="notify_create_product_fail">Tạo sản phẩm thất bại</string>
-    <string name="notify_update_product_fail">Cập nhật sản phẩm thất bại</string>
+    <string name="notify_update_product_fail">Cập nh���t sản phẩm thất bại</string>
     <string name="notify_delete_product_fail">Xóa sản phẩm thất bại</string>
     <string name="attr_brand_detail">Thông tin thương hiệu</string>
     <string name="attr_brand_name">Tên thương hiệu</string>
@@ -113,7 +99,6 @@
     <string name="register">Hãy đăng ký</string>
     <string name="sign_in">Đăng nhập</string>
     <string name="you_must_login_to_join">Bạn cần đăng nhập để sử dụng</string>
-    <string name="web_client_id">274555398023–7a5g6l02hhegcgfdde5n3s3ramoo0kpq.apps.googleusercontent.com</string>
     <string name="regex_vietnam_phone_number">(\\+84|84|0)(3|5|7|8|9|1[2689])[0-9]{8}</string>
     <string name="alert_phone_number_not_null">Số điện thoại không được để trống</string>
     <string name="alert_phone_number_not_valid">Số điện thoại không hợp lệ</string>
@@ -207,7 +192,7 @@
     <string name="add_store">Thêm cửa hàng</string>
     <string name="edit_store">Chỉnh sửa cửa hàng</string>
     <string name="create_store">Tạo cửa hàng</string>
-    <string name="notify_create_store_successful">Tạo cửa hàng thành công</string>
+    <string name="notify_create_store_successful">Tạo cửa hàng th��nh công</string>
     <string name="notify_create_store_fail">Tạo cửa hàng thất bại</string>
     <string name="error_while_selecting_store">Đã có lỗi xảy ra không khi chọn cửa hàng</string>
     <string name="error_invalid_inputs">Thông tin không hợp lệ, vui lòng kiểm tra lại</string>
@@ -259,4 +244,44 @@
     <string name="notify_empty_products">Không có sản phẩm nào</string>
     <string name="import_customer_with_contact_book">Thêm khách hàng bằng danh bạ</string>
     <string name="add_customer">Thêm khách hàng</string>
+    <string name="create_transaction">Tạo đơn hàng</string>
+    <string name="create_new">Thêm mới</string>
+    <string name="total_price">Tổng tiền</string>
+    <string name="empty_for_retail_customer">(Khách lẻ để trống)</string>
+    <string name="final_price">Tổng thanh toán:</string>
+    <string name="pay">Thanh toán</string>
+    <string name="take_note">Nhập ghi chú</string>
+    <string name="select_customer">Chọn khách hàng</string>
+    <string name="payment">Thanh toán</string>
+    <string name="payment_information">Thông tin thanh toán</string>
+    <string name="payment_method">Phương thức thanh toán</string>
+    <string name="cash">Tiền mặt</string>
+    <string name="mobile_banking">Chuyển khoản</string>
+    <string name="notify_transaction_create_success">Tạo giao dịch thành công</string>
+    <string name="bill_receipt">Hóa đơn bán hàng</string>
+    <string name="cashier_name">Người tạo</string>
+    <string name="creation_date">Ngày tạo</string>
+    <string name="quantity_short">SL</string>
+    <string name="exit">Thoát</string>
+    <string name="unit_price">Đơn giá</string>
+    <string name="total_amount">Thành tiền</string>
+    <string name="retail_customer">Khách lẻ</string>
+    <string name="created_by">Tạo bởi</string>
+    <string name="transaction_id">Mã đơn hàng</string>
+    <string name="filter">Bộ lọc</string>
+    <string name="date_time">Thời gian</string>
+    <string name="select_date_range">Chọn thời gian tùy chỉnh</string>
+    <string name="from">Từ</string>
+    <string name="to">Đến</string>
+    <string name="select_price_range">Chọn mức giá hóa đơn</string>
+    <string name="source_of_money">Nguồn tiền</string>
+    <string name="yesterday">Hôm qua</string>
+    <string name="this_month">Tháng này</string>
+    <string name="last_month">Tháng trước</string>
+    <string name="this_year">Năm nay</string>
+    <string name="title_quantity">SL:</string>
+    <string name="error_transaction_not_found">Không tìm thấy hóa đơn</string>
+    <string name="transaction_details">Chi tiết hóa đơn</string>
+    <string name="no_transactions">Không có hóa đơn nào</string>
+
 </resources>

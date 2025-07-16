@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="item"
+            type="com.optlab.banhangso.features.main.sale.models.CartUiModel.Item" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_margin="@dimen/spacing_xmedium">
+
+        <FrameLayout
+            android:id="@+id/fl_thumbnail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/siv_thumbnail"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="@dimen/spacing_middle"
+                android:src="@drawable/haohao"
+                app:imageResource="@{item.thumbnailUrl}"
+                app:shapeAppearance="@style/RoundedBorderShapeableImage"
+                app:strokeColor="@color/million_gray"
+                app:strokeWidth="1dp" />
+
+            <ImageButton
+                android:id="@+id/ib_remove"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/bg_cart_count_indicator"
+                android:elevation="8dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_close"
+                app:tint="@color/white" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_data"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_xmedium"
+            android:layout_marginTop="@dimen/spacing_middle"
+            android:orientation="vertical"
+            app:layout_constraintStart_toEndOf="@id/fl_thumbnail"
+            app:layout_constraintTop_toTopOf="@id/fl_thumbnail">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/open_sans"
+                android:maxLines="1"
+                android:text="@{item.name}"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:textFontWeight="800"
+                tools:text="Mỳ Hảo Hảo" />
+
+            <TextView
+                android:id="@+id/tv_discount_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xmedium"
+                android:fontFamily="@font/open_sans"
+                android:text="@{item.displayDiscountPrice}"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@{item.discountPrice > 0.0 ? @color/boston_blue : @color/million_gray}"
+                android:textFontWeight="800"
+                android:visibility="@{item.discountPrice > 0.0 ? View.VISIBLE : View.GONE}"
+                tools:text="8.000 VND" />
+
+            <TextView
+                android:id="@+id/tv_selling_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xmedium"
+                android:fontFamily="@font/open_sans"
+                android:text="@{item.displaySellingPrice}"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="@{item.discountPrice > 0.0 ? @color/million_gray : @color/boston_blue}"
+                android:textFontWeight="800"
+                app:strikeThrough="@{item.discountPrice > 0.0}"
+                tools:text="8.000 VND" />
+
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_large"
+            app:cardCornerRadius="@dimen/spacing_xmedium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:strokeColor="?attr/colorPrimary"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_xmedium">
+
+                <ImageButton
+                    android:id="@+id/ib_decrease"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:importantForAccessibility="no"
+                    android:padding="@dimen/spacing_xmedium"
+                    android:src="@drawable/ic_minus" />
+
+                <EditText
+                    android:id="@+id/et_quantity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/open_sans"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:text="@{String.valueOf(item.quantity)}"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:textFontWeight="800"
+                    tools:text="10" />
+
+                <ImageButton
+                    android:id="@+id/ib_increase"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:importantForAccessibility="no"
+                    android:padding="@dimen/spacing_xmedium"
+                    android:src="@drawable/ic_plus" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -13,7 +13,7 @@
         tools:context=".features.main.stock.StockListFragment">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tool_bar"
+            android:id="@+id/mtb"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/boston_blue"
@@ -32,7 +32,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tool_bar" />
+            app:layout_constraintTop_toBottomOf="@id/mtb" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

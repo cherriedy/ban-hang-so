@@ -12,13 +12,9 @@
         android:title="@string/product" />
 
     <item
-        android:id="@+id/productTabHostFragment"
+        android:id="@+id/transaction_navigation"
         android:icon="@drawable/ic_bill"
         android:title="@string/order" />
-
-    <item
-        android:icon="@drawable/ic_warehouse"
-        android:title="@string/warehouse" />
 
     <item
         android:icon="@drawable/ic_more"

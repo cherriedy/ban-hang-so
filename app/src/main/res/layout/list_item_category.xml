@@ -14,8 +14,7 @@
         android:layout_height="wrap_content"
         app:cardCornerRadius="12dp"
         app:strokeWidth="1dp"
-        tools:layout_margin="8dp"
-        >
+        tools:layout_margin="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,13 +23,6 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="16dp">
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/siv_logo"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:scaleType="centerCrop"
-                tools:srcCompat="@drawable/ic_vegetable" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -58,8 +50,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:ellipsize="end"
-                    android:text="@{category.productCount + ` ` + @string/product}"
                     android:maxLines="1"
+                    android:text="@{category.productCount + ` ` + @string/product}"
                     android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                     android:textColor="@android:color/darker_gray"
                     tools:text="125 products" />

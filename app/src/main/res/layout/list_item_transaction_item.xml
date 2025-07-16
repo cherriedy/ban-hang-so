@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.optlab.banhangso.features.main.transaction.models.TransactionRecordUiModel.Item" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/spacing_large">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/siv_thumbnail"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@color/athens_gray"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:imageResource="@{item.thumbnailUrl}"
+            app:shapeAppearanceOverlay="@style/RoundedBorderShapeableImage"
+            app:strokeColor="@color/alto"
+            app:strokeWidth="1dp"
+            tools:src="@drawable/haohao" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:fontFamily="@font/open_sans"
+            android:text="@{item.name}"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textFontWeight="800"
+            app:layout_constraintStart_toEndOf="@id/siv_thumbnail"
+            app:layout_constraintTop_toTopOf="@id/siv_thumbnail"
+            tools:text="Mì tôm Hảo Hảo" />
+
+        <TextView
+            android:id="@+id/tv_brand_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:ellipsize="end"
+            android:fontFamily="@font/open_sans"
+            android:maxLines="1"
+            android:text="@{item.brandName + `|` + item.categoryName}"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="@color/silver_chalice"
+            android:textFontWeight="800"
+            app:layout_constraintStart_toStartOf="@id/tv_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            tools:text="Mì ăn liền | Acecook" />
+
+        <TextView
+            android:id="@+id/tv_quantity_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:fontFamily="@font/open_sans"
+            android:text="@string/title_quantity"
+            android:textColor="@color/silver_chalice"
+            android:textFontWeight="800"
+            app:layout_constraintStart_toStartOf="@id/tv_brand_category"
+            app:layout_constraintTop_toBottomOf="@id/tv_brand_category" />
+
+        <TextView
+            android:id="@+id/tv_quantity_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_medium"
+            android:fontFamily="@font/open_sans"
+            android:textFontWeight="800"
+            android:text="@{String.valueOf(item.quantity)}"
+            app:layout_constraintStart_toEndOf="@id/tv_quantity_title"
+            app:layout_constraintTop_toTopOf="@id/tv_quantity_title"
+            tools:text="100" />
+
+        <TextView
+            android:id="@+id/tv_final_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/open_sans"
+            android:text="@{item.displayUnitPrice}"
+            android:textColor="?attr/colorPrimary"
+            android:textFontWeight="800"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_quantity_value"
+            tools:text="5.500 VND" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

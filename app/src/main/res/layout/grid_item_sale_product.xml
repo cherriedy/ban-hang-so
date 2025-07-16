@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.optlab.banhangso.features.main.sale.models.CartUiModel.Item" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        app:cardCornerRadius="@dimen/spacing_xmedium"
+        tools:layout_margin="@dimen/spacing_xmedium"
+        tools:layout_width="150dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/colorPrimaryContainer">
+
+            <!-- Product Image -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/siv_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:scaleType="centerCrop"
+                app:imageResource="@{item.thumbnailUrl}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/haohao" />
+
+            <!-- Price Overlay -->
+            <TextView
+                android:id="@+id/tv_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/semi_transparent_black"
+                android:fontFamily="@font/open_sans"
+                android:padding="@dimen/spacing_xmedium"
+                android:text="@{item.discountPrice > 0.0 ? item.displayDiscountPrice : item.displaySellingPrice}"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                android:textColor="@android:color/white"
+                android:textFontWeight="800"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/siv_thumbnail"
+                app:layout_constraintTop_toTopOf="@id/siv_thumbnail"
+                tools:text="100.000 VND" />
+
+            <!-- Product Name -->
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_middle"
+                android:layout_marginTop="@dimen/spacing_xmedium"
+                android:layout_marginEnd="@dimen/spacing_middle"
+                android:ellipsize="end"
+                android:fontFamily="@font/open_sans"
+                android:maxLines="2"
+                android:text="@{item.name}"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textFontWeight="800"
+                app:layout_constraintBottom_toTopOf="@id/rl_control"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/siv_thumbnail"
+                tools:text="My Tom Hao Hao" />
+
+
+            <!-- Quantity Controls -->
+            <RelativeLayout
+                android:id="@+id/rl_control"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <ImageButton
+                    android:id="@+id/ib_decrease"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:importantForAccessibility="no"
+                    android:padding="@dimen/spacing_xmedium"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_minus" />
+
+                <EditText
+                    android:id="@+id/et_quantity"
+                    android:layout_width="48dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginHorizontal="8dp"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/open_sans"
+                    android:gravity="center"
+                    android:importantForAutofill="no"
+                    android:inputType="number"
+                    android:maxLength="3"
+                    android:text="@{String.valueOf(item.quantity)}"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textFontWeight="800"
+                    tools:ignore="LabelFor"
+                    tools:text="10" />
+
+                <ImageButton
+                    android:id="@+id/ib_increase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:importantForAccessibility="no"
+                    android:padding="@dimen/spacing_xmedium"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_plus" />
+            </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>
