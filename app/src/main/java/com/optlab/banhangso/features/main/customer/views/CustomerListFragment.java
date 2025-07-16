@@ -11,7 +11,6 @@ import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -22,7 +21,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
-
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import com.optlab.banhangso.databinding.FragmentCustomerListBinding;
 import com.optlab.banhangso.features.main.customer.adapters.CustomerListAdapter;
 import com.optlab.banhangso.features.main.customer.models.CustomerUiModel;
@@ -31,15 +31,10 @@ import com.optlab.banhangso.internal.utilities.ContactUtils;
 import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingStrategy;
-
-import org.jetbrains.annotations.Contract;
-
+import dagger.hilt.android.AndroidEntryPoint;
 import java.util.EnumSet;
 import java.util.Map;
-
-import autodispose2.AutoDispose;
-import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
-import dagger.hilt.android.AndroidEntryPoint;
+import org.jetbrains.annotations.Contract;
 import timber.log.Timber;
 
 @AndroidEntryPoint

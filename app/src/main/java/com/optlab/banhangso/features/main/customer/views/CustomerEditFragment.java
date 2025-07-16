@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-
 import com.optlab.banhangso.databinding.FragmentCustomerEditBinding;
 import com.optlab.banhangso.features.main.customer.models.CustomerUiModel;
 import com.optlab.banhangso.features.main.customer.viewmodels.CustomerEditViewModel;
@@ -21,10 +19,8 @@ import com.optlab.banhangso.features.shared.views.DatePickerDialog;
 import com.optlab.banhangso.features.shared.views.DeleteConfirmationDialog;
 import com.optlab.banhangso.features.shared.views.ExitConfirmationDialog;
 import com.optlab.banhangso.features.shared.views.LoadingDialog;
-
-import java.util.Objects;
-
 import dagger.hilt.android.AndroidEntryPoint;
+import java.util.Objects;
 
 @AndroidEntryPoint
 public class CustomerEditFragment extends Fragment {
@@ -64,7 +60,6 @@ public class CustomerEditFragment extends Fragment {
     if (passedCustomer != null) {
       viewModel.setUiModel(passedCustomer);
     }
-
   }
 
   @Override

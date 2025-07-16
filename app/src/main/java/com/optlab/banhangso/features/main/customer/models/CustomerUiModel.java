@@ -2,28 +2,28 @@ package com.optlab.banhangso.features.main.customer.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
-
-import org.jetbrains.annotations.Contract;
-
+import java.io.Serializable;
 import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Contract;
 
+/**
+ * @noinspection LombokGetterMayBeUsed
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class CustomerUiModel extends BaseObservable implements Parcelable {
+public class CustomerUiModel extends BaseObservable implements Serializable, Parcelable {
 
   private String id;
   private String name;
@@ -66,6 +66,10 @@ public class CustomerUiModel extends BaseObservable implements Parcelable {
         }
       };
 
+  public String getId() {
+    return id;
+  }
+
   @Bindable
   public String getName() {
     return name;
@@ -104,6 +108,16 @@ public class CustomerUiModel extends BaseObservable implements Parcelable {
   public void setDob(String dob) {
     this.dob = dob;
     notifyPropertyChanged(BR.dob);
+  }
+
+  @Bindable
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
+    notifyPropertyChanged(BR.address);
   }
 
   @Override
