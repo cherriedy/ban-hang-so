@@ -1,6 +1,5 @@
-package com.optlab.banhangso.features.main.home;
+package com.optlab.banhangso.features.main.home.views;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +17,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentHomeBinding;
+import com.optlab.banhangso.features.main.home.viewmodels.HomeViewModel;
 import com.optlab.banhangso.features.shared.views.LoadingDialog;
 import com.optlab.banhangso.internal.utilities.NavigationUtils;
 import dagger.hilt.android.AndroidEntryPoint;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.TimeZone;
 
 @AndroidEntryPoint
 public class HomeFragment extends Fragment implements View.OnClickListener {
@@ -53,11 +49,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
     navController = NavHostFragment.findNavController(this);
     NavigationUI.setupWithNavController(binding.bnv, navController);
-
-    setCurrentDate();
+    binding.srlMain.setOnRefreshListener(
+        () -> {
+          viewModel.fetchReportSummary();
+          binding.srlMain.setRefreshing(false);
+        });
     observeViewModel();
   }
 
@@ -75,15 +73,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     } else if (viewId == R.id.mcv_customer) {
       NavDirections action = HomeFragmentDirections.actionToCustomer();
       controller.navigate(action);
+    } else if (viewId == R.id.mcv_sale) {
+      NavDirections action = HomeFragmentDirections.actionToSale();
+      controller.navigate(action);
+    } else if (viewId == R.id.mcv_transaction) {
+      NavDirections action = HomeFragmentDirections.actionToTransaction();
+      controller.navigate(action);
+    } else if (viewId == R.id.mcv_store) {
+      NavDirections action = HomeFragmentDirections.actionToEditStore(false);
+      controller.navigate(action);
     }
-  }
-
-  @SuppressLint("SetTextI18n")
-  private void setCurrentDate() {
-    ZoneId zoneId = ZoneId.of(TimeZone.getDefault().getID());
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    String currentDate = LocalDate.now(zoneId).format(formatter);
-    binding.tvDay.setText(getString(R.string.today) + ": " + currentDate);
   }
 
   @Override
@@ -98,6 +97,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
   }
 
   private void handleLoadingState(@NonNull Boolean result) {
+    // Always hide SwipeRefreshLayout spinner
+    if (binding != null) {
+      binding.srlMain.setRefreshing(false);
+    }
+
     if (result) {
       loadingDialog.show(
           getParentFragmentManager(), "loadingDialog_" + this.getClass().getSimpleName());
