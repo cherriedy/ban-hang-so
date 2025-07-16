@@ -1,7 +1,6 @@
 package com.optlab.banhangso.repositories;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.User;
@@ -19,7 +18,6 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import java.util.concurrent.atomic.AtomicReference;
-import org.jetbrains.annotations.Contract;
 import timber.log.Timber;
 
 public class AuthRepositoryImpl implements AuthRepository {
@@ -76,7 +74,6 @@ public class AuthRepositoryImpl implements AuthRepository {
    * @param response The response object containing user data.
    * @return A Single that emits a Result indicating success or failure.
    */
-  @Nullable @Contract(pure = true)
   private Single<Result<Void>> handleSignUpSuccess(@NonNull Response<UserFirebaseObject> response) {
     UserFirebaseObject userFirebaseObject = response.data();
     User user = UserFirebaseObjectMapper.toDomain(userFirebaseObject);

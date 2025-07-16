@@ -1,13 +1,16 @@
 package com.optlab.banhangso.repositories.interfaces;
 
+import android.util.Pair;
+import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.domain.store.RoleStore;
 import io.reactivex.rxjava3.core.Single;
+import org.jetbrains.annotations.NotNull;
 
 public interface BaseRepository {
 
-  PreferencesRepository getPreferencesRepository();
+  @NotNull PreferencesRepository getPreferencesRepository();
 
-  default Single<String> getStoreId() {
+  @NotNull default Single<String> getStoreId() {
     return getPreferencesRepository()
         .getStore()
         .switchIfEmpty(Single.just(RoleStore.empty()))
@@ -19,5 +22,23 @@ public interface BaseRepository {
                 return store.getId();
               }
             });
+  }
+
+  @NotNull default Single<String> getUserId() {
+    return getPreferencesRepository()
+        .getUser()
+        .switchIfEmpty(Single.just(User.empty()))
+        .map(
+            user -> {
+              if (user == null || user.isEmpty()) {
+                throw new IllegalStateException("User is not set in preferences");
+              } else {
+                return user.getId();
+              }
+            });
+  }
+
+  @NotNull default Single<Pair<String, String>> getStoreUserIdPair() {
+    return Single.zip(getStoreId(), getUserId(), Pair::new);
   }
 }
