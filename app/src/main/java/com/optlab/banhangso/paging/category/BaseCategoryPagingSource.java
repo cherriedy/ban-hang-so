@@ -17,7 +17,7 @@ public abstract class BaseCategoryPagingSource extends BasePagingSource<Category
   public final CategoryService categoryService;
 
   protected BaseCategoryPagingSource(
-          PreferencesRepository preferencesRepository, CategoryService categoryService) {
+      PreferencesRepository preferencesRepository, CategoryService categoryService) {
     super(preferencesRepository);
     this.categoryService = categoryService;
   }
