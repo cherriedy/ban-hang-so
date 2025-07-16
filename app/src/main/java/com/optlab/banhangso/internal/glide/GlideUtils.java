@@ -57,4 +57,8 @@ public class GlideUtils {
   public static void load(@NonNull ImageView view, @NonNull Uri imageUri) {
     Glide.with(view.getContext()).load(imageUri).into(view);
   }
+
+  public static void load(@NonNull ImageView view, @DrawableRes int imageResId) {
+    Glide.with(view.getContext()).load(imageResId).into(view);
+  }
 }

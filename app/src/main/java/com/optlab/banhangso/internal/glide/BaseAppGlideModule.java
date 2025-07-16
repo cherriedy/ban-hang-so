@@ -74,9 +74,10 @@ public class BaseAppGlideModule extends AppGlideModule {
       builder.setLogLevel(android.util.Log.ERROR);
     }
 
-    Timber.tag(TAG).d(
-        "Glide configuration applied: Memory Cache Size: %d bytes, Bitmap Pool Size: %d bytes, Disk Cache Size: %d bytes",
-        MEMORY_CACHE_SIZE_BYTES, BITMAP_POOL_SIZE_BYTES, DISK_CACHE_SIZE_BYTES);
+    Timber.tag(TAG)
+        .d(
+            "Glide configuration applied: Memory Cache Size: %d bytes, Bitmap Pool Size: %d bytes, Disk Cache Size: %d bytes",
+            MEMORY_CACHE_SIZE_BYTES, BITMAP_POOL_SIZE_BYTES, DISK_CACHE_SIZE_BYTES);
   }
 
   @Override
