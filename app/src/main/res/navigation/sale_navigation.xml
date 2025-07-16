@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sale_navigation"
+    app:startDestination="@id/saleListFragment">
+
+    <fragment
+        android:id="@+id/saleListFragment"
+        android:name="com.optlab.banhangso.features.main.sale.views.SaleListFragment"
+        android:label="SaleListFragment"
+        tools:layout="@layout/fragment_sale_list">
+
+        <action
+            android:id="@+id/action_to_cart"
+            app:destination="@id/cartListFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/cartListFragment"
+        android:name="com.optlab.banhangso.features.main.sale.views.CartListFragment"
+        android:label="CartListFragment"
+        tools:layout="@layout/fragment_cart_list">
+
+        <action
+            android:id="@+id/action_to_customer_selection"
+            app:destination="@id/customerSelectionFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right">
+
+            <argument
+                android:name="customerId"
+                app:argType="string" />
+
+        </action>
+
+        <action
+            android:id="@+id/action_to_payment"
+            app:destination="@id/paymentFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/customerSelectionFragment"
+        android:name="com.optlab.banhangso.features.main.customer.views.CustomerSelectionFragment"
+        android:label="CustomerSelectionFragment"
+        tools:layout="@layout/fragment_option_selection">
+
+        <argument
+            android:name="customerId"
+            app:argType="string" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/paymentFragment"
+        android:name="com.optlab.banhangso.features.main.sale.views.PaymentFragment"
+        android:label="PaymentFragment"
+        tools:layout="@layout/fragment_payment">
+
+        <action
+            android:id="@+id/action_to_receipt"
+            app:destination="@id/saleReceiptFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/saleReceiptFragment"
+        android:name="com.optlab.banhangso.features.main.sale.views.SaleReceiptFragment"
+        android:label="SaleReceiptFragment"
+        tools:layout="@layout/fragment_sale_receipt" />
+
+</navigation>

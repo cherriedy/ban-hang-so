@@ -13,10 +13,19 @@
         app:popEnterAnim="@anim/anim_slide_in_left"
         app:popExitAnim="@anim/anim_slide_out_right" />
 
+    <action
+        android:id="@+id/action_to_home_global"
+        app:destination="@id/homeFragment"
+        app:enterAnim="@anim/anim_slide_in_right"
+        app:exitAnim="@anim/anim_slide_out_left"
+        app:popEnterAnim="@anim/anim_slide_in_left"
+        app:popExitAnim="@anim/anim_slide_out_right" />
+
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.optlab.banhangso.features.main.home.HomeFragment"
+        android:name="com.optlab.banhangso.features.main.home.views.HomeFragment"
         android:label="Home"
+        app:launchSingleTop="true"
         tools:layout="@layout/fragment_home">
 
         <action
@@ -65,6 +74,21 @@
             app:popEnterAnim="@anim/anim_slide_in_left"
             app:popExitAnim="@anim/anim_slide_out_right" />
 
+        <action
+            android:id="@+id/action_to_sale"
+            app:destination="@+id/sale_navigation"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
+        <action
+            android:id="@+id/action_to_transaction"
+            app:destination="@+id/transaction_navigation"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
     </fragment>
 
     <fragment
@@ -110,4 +134,6 @@
     <include app:graph="@navigation/category_navigation" />
     <include app:graph="@navigation/staff_navigation" />
     <include app:graph="@navigation/customer_navigation" />
+    <include app:graph="@navigation/sale_navigation" />
+    <include app:graph="@navigation/transaction_navigation" />
 </navigation>

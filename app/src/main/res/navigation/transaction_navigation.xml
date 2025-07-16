@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/transaction_navigation"
+    app:startDestination="@id/transactionListFragment">
+
+    <fragment
+        android:id="@+id/transactionListFragment"
+        android:name="com.optlab.banhangso.features.main.transaction.views.TransactionListFragment"
+        android:label="TransactionListFragment"
+        tools:layout="@layout/fragment_transaction_list">
+
+        <action
+            android:id="@+id/action_to_detail"
+            app:destination="@id/transactionDetailFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right">
+
+            <argument
+                android:name="transactionId"
+                app:argType="string" />
+        </action>
+
+        <action
+            android:id="@+id/action_to_filters"
+            app:destination="@id/transactionFiltersBottomSheet"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/transactionDetailFragment"
+        android:name="com.optlab.banhangso.features.main.transaction.views.TransactionDetailFragment"
+        android:label="TransactionDetailFragment"
+        tools:layout="@layout/fragment_transaction_detail">
+
+        <argument
+            android:name="transactionId"
+            app:argType="string" />
+
+    </fragment>
+
+    <dialog
+        android:id="@+id/transactionFiltersBottomSheet"
+        android:name="com.optlab.banhangso.features.main.transaction.views.TransactionFiltersBottomSheet"
+        android:label="TransactionFiltersBottomSheet"
+        tools:layout="@layout/bottom_sheet_transaction_filters" />
+
+</navigation>
