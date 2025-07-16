@@ -46,9 +46,9 @@ public class CategoryEditFragment extends BottomSheetDialogFragment {
     BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
     dialog.setOnKeyListener(
         (dialogInterface, keyCode, event) -> {
-            // KEYCODE_BACK is used to detect back button presses.
-            // ACTION_UP is used to ensure the dialog is shown only when the button is released.
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+          // KEYCODE_BACK is used to detect back button presses.
+          // ACTION_UP is used to ensure the dialog is shown only when the button is released.
+          if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
             showExitConfirmationDialog();
             return true;
           }

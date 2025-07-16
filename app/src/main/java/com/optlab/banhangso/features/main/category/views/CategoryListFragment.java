@@ -28,7 +28,6 @@ import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
 import dagger.hilt.android.AndroidEntryPoint;
 import java.util.EnumSet;
-
 import kotlin.Unit;
 import timber.log.Timber;
 
