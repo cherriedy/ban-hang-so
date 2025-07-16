@@ -3,19 +3,11 @@ package com.optlab.banhangso.features.main.product.binding;
 import android.text.TextUtils;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.InverseMethod;
-import androidx.recyclerview.widget.RecyclerView;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.features.main.brand.models.BrandUiModel;
 import com.optlab.banhangso.features.main.category.models.CategoryUiModel;
-import com.optlab.banhangso.features.shared.adapters.FileUploadAdapter;
-import com.optlab.banhangso.models.application.UploadableImage;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import timber.log.Timber;
 
 public class ProductBindingAdapter {
   /**

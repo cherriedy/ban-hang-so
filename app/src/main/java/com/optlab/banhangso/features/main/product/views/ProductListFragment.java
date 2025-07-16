@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -17,8 +18,7 @@ import androidx.paging.LoadState;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import autodispose2.AutoDispose;
-import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentProductListBinding;
 import com.optlab.banhangso.features.main.product.adapters.ProductListAdapter;
@@ -28,9 +28,14 @@ import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingStrategy;
 import com.optlab.banhangso.repositories.interfaces.CategoryRepository;
-import dagger.hilt.android.AndroidEntryPoint;
+
 import java.util.EnumSet;
+
 import javax.inject.Inject;
+
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import timber.log.Timber;
 
@@ -105,7 +110,7 @@ public class ProductListFragment extends Fragment {
   }
 
   private void handlePagingLoadState(@NonNull CombinedLoadStates loadStates) {
-    if (binding == null){
+    if (binding == null) {
       Timber.w("Binding is null, skipping load state handling");
       return;
     }
@@ -154,16 +159,19 @@ public class ProductListFragment extends Fragment {
     Context context = requireContext();
 
     // Set the item layout resource for the adapter based on the layout type.
-    listAdapter.setItemLayoutRes(isGrid ? R.layout.grid_item_product : R.layout.list_item_product);
+    listAdapter.setItemLayoutRes(
+        Boolean.TRUE.equals(isGrid) ? R.layout.grid_item_product : R.layout.list_item_product);
 
     // Set the layout manager for the RecyclerView based on the layout type.
     binding.rvProducts.setLayoutManager(
-        isGrid ? new GridLayoutManager(context, 2) : new LinearLayoutManager(context));
+        Boolean.TRUE.equals(isGrid)
+            ? new GridLayoutManager(context, 2)
+            : new LinearLayoutManager(context));
 
     // Add spacing decoration to the RecyclerView based on the layout type.
     addSpacingDecoration(
         binding.rvProducts,
-        isGrid
+        Boolean.TRUE.equals(isGrid)
             ? new GridSpacingStrategy(context, 8)
             : new LinearSpacingStrategy(
                 context, 8, EnumSet.allOf(LinearSpacingStrategy.Direction.class)));

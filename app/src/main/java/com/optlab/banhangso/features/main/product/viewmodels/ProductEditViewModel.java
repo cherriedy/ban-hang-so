@@ -74,7 +74,6 @@ public class ProductEditViewModel extends UiViewModel<ProductUiModel> {
     this.productValidator = productValidator;
     this.imageUploader = imageUploader;
     initProductInputsListener();
-
   }
 
   @Override
@@ -358,9 +357,7 @@ public class ProductEditViewModel extends UiViewModel<ProductUiModel> {
       if (imageUrls != null && !imageUrls.isEmpty()) {
         internalUploadableImages.clear();
         internalUploadableImages.addAll(
-            imageUrls.stream()
-                .map(UploadableImage::new)
-                .collect(Collectors.toList()));
+            imageUrls.stream().map(UploadableImage::new).collect(Collectors.toList()));
 
         uploadableImage.setValue(internalUploadableImages);
       }
@@ -528,7 +525,9 @@ public class ProductEditViewModel extends UiViewModel<ProductUiModel> {
             }
 
             @Override
-            public void onCompleted(List<String> imageUrls) {}
+            public void onCompleted(List<String> imageUrls) {
+              // Ignore this callback for retry uploads.
+            }
           });
     }
   }

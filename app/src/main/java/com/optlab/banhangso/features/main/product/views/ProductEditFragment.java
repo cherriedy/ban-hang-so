@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
@@ -27,7 +26,6 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.journeyapps.barcodescanner.CaptureActivity;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
@@ -48,14 +46,11 @@ import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration
 import com.optlab.banhangso.models.application.UploadableImage;
 import com.optlab.banhangso.repositories.interfaces.BrandRepository;
 import com.optlab.banhangso.repositories.interfaces.CategoryRepository;
-
+import dagger.hilt.android.AndroidEntryPoint;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
-
 import javax.inject.Inject;
-
-import dagger.hilt.android.AndroidEntryPoint;
 import timber.log.Timber;
 
 @AndroidEntryPoint
@@ -395,7 +390,9 @@ public class ProductEditFragment extends Fragment {
     viewModel.updateBarcode(trimmedScannedData);
   }
 
-  /** @noinspection unused*/
+  /**
+   * @noinspection unused
+   */
   public void launchTakePicture(@NonNull View view) {
     ContentValues contentValues = new ContentValues();
 

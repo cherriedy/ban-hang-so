@@ -2,14 +2,11 @@ package com.optlab.banhangso.features.main.product.models;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
-
 import com.optlab.banhangso.BR;
 import com.optlab.banhangso.features.main.brand.models.BrandUiModel;
 import com.optlab.banhangso.features.main.category.models.CategoryUiModel;
-
 import java.util.Date;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -140,5 +137,15 @@ public class ProductUiModel extends BaseObservable {
   public void setNote(String note) {
     this.note = note;
     notifyPropertyChanged(BR.note);
+  }
+
+  @Bindable
+  public String getBarcode() {
+    return barcode;
+  }
+
+  public void setBarcode(String barcode) {
+    this.barcode = barcode;
+    notifyPropertyChanged(BR.barcode);
   }
 }

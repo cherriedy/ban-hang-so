@@ -5,42 +5,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
+
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentProductTabHostBinding;
 import com.optlab.banhangso.features.main.product.adapters.ProductViewPagerAdapter;
-import com.optlab.banhangso.features.main.product.viewmodels.ProductTabHostSharedViewModel;
 import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
-import dagger.hilt.android.AndroidEntryPoint;
+
 import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class ProductTabHostFragment extends Fragment {
-  @Inject protected PreferencesRepository preferenceRepository;
 
   private FragmentProductTabHostBinding binding;
-  private ProductTabHostSharedViewModel viewModel;
-
-  @Override
-  public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    initViewModel();
-  }
-
-  private void initViewModel() {
-    NavBackStackEntry productTabsEntry =
-        NavHostFragment.findNavController(this).getBackStackEntry(R.id.nav_graph_product_tabs);
-    viewModel = new ViewModelProvider(productTabsEntry).get(ProductTabHostSharedViewModel.class);
-  }
+  @Inject PreferencesRepository preferenceRepository;
 
   @Override
   public View onCreateView(
@@ -53,29 +39,8 @@ public class ProductTabHostFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     initViewPager();
-    setupTabBehavior();
+    setupTitle();
     setupTabLayout();
-    observeQueryText();
-  }
-
-  private void setupTabBehavior() {
-    setupQueryHintText(); // Change the hint text based on the selected tab
-  }
-
-  private void observeQueryText() {
-    binding.searchView.setOnQueryTextListener(
-        new SearchView.OnQueryTextListener() {
-          @Override
-          public boolean onQueryTextSubmit(String query) {
-            return false;
-          }
-
-          @Override
-          public boolean onQueryTextChange(String newText) {
-            viewModel.setSearchQuery(newText);
-            return true;
-          }
-        });
   }
 
   private void initViewPager() {
@@ -106,17 +71,17 @@ public class ProductTabHostFragment extends Fragment {
         .attach();
   }
 
-  private void setupQueryHintText() {
-    int[] hintQueryRes = {
-      R.string.hint_query, R.string.hint_query_category, R.string.hint_query_brand
+  private void setupTitle() {
+    int[] tabTitles = {
+      R.string.tab_title_product, R.string.tab_title_category, R.string.tab_title_brand
     };
 
     binding.viewPager.registerOnPageChangeCallback(
         new OnPageChangeCallback() {
           @Override
           public void onPageSelected(int position) {
-            if (position >= 0 && position <= hintQueryRes.length) {
-              binding.searchView.setQueryHint(getString(hintQueryRes[position]));
+            if (position >= 0 && position <= tabTitles.length) {
+              binding.mtb.setTitle(getString(tabTitles[position]));
             }
           }
         });
