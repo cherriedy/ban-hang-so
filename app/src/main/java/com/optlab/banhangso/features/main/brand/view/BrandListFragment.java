@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -17,8 +18,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.CombinedLoadStates;
 import androidx.paging.LoadState;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import autodispose2.AutoDispose;
-import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentBrandListBinding;
 import com.optlab.banhangso.features.main.brand.adapters.BrandListAdapter;
@@ -28,13 +28,20 @@ import com.optlab.banhangso.features.main.product.views.ProductTabHostFragmentDi
 import com.optlab.banhangso.features.shared.views.DeleteConfirmationDialog;
 import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
-import dagger.hilt.android.AndroidEntryPoint;
+
 import java.util.EnumSet;
+
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import timber.log.Timber;
 
 @AndroidEntryPoint
 public class BrandListFragment extends Fragment {
+
+  public static final String BRAND_LIST_REQUEST_KEY = "BRAND_LIST_REQUEST_KEY";
+  public static final String BRAND_REFRESH_FLAG = "BRAND_REFRESH_FLAG";
 
   private static final String PENDING_DELETE_BRAND_ID = "PENDING_DELETE_BRAND_ID";
 
@@ -54,7 +61,7 @@ public class BrandListFragment extends Fragment {
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentBrandListBinding.inflate(inflater, container, false);
-    binding.setLifecycleOwner(this);
+    binding.setLifecycleOwner(getViewLifecycleOwner());
     binding.setViewModel(viewModel);
     binding.setFragment(this);
     return binding.getRoot();
@@ -69,12 +76,6 @@ public class BrandListFragment extends Fragment {
     observeViewModel();
     registerDeleteConfirmationListener();
     registerBrandListRefreshListener();
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    listAdapter.refresh();
   }
 
   /**
@@ -97,13 +98,13 @@ public class BrandListFragment extends Fragment {
     requireActivity()
         .getSupportFragmentManager()
         .setFragmentResultListener(
-            BrandEditFragment.BRAND_EDIT_RESULT,
+            BRAND_LIST_REQUEST_KEY,
             getViewLifecycleOwner(),
             (requestKey, result) -> handleBrandRefresh(result));
   }
 
   private void handleBrandRefresh(@NonNull Bundle result) {
-    if (result.getBoolean(BrandEditFragment.REFRESH_FLAG, false)) {
+    if (result.getBoolean(BRAND_REFRESH_FLAG, false)) {
       listAdapter.refresh();
     }
   }
@@ -135,7 +136,11 @@ public class BrandListFragment extends Fragment {
     viewModel
         .getBrands()
         .to(AutoDispose.autoDisposable(AndroidLifecycleScopeProvider.from(this)))
-        .subscribe(categories -> listAdapter.submitData(getLifecycle(), categories));
+        .subscribe(
+            categories -> {
+              Timber.d("Received brands from ViewModel");
+              listAdapter.submitData(getLifecycle(), categories);
+            });
 
     viewModel.getMessageResId().observe(getViewLifecycleOwner(), this::showToast);
     viewModel

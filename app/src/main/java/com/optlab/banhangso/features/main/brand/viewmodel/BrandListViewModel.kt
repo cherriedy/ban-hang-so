@@ -19,7 +19,6 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.processors.BehaviorProcessor
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,7 +32,7 @@ class BrandListViewModel @Inject constructor(private val brandRepository: BrandR
 
   private val _searchProcessor: BehaviorProcessor<String> = BehaviorProcessor.createDefault("")
 
-  @OptIn(ExperimentalCoroutinesApi::class)
+  @Suppress("OPT_IN_USAGE")
   private val _brands: Flowable<PagingData<BrandUiModel>> =
     _searchProcessor
       .distinctUntilChanged()
