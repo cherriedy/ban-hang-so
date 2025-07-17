@@ -102,6 +102,19 @@ public class CategoryEditFragment extends BottomSheetDialogFragment {
   private void observeViewModel() {
     viewModel.getMessageResId().observe(getViewLifecycleOwner(), this::showToast);
     viewModel.isLoading().observe(getViewLifecycleOwner(), this::handleLoadingState);
+    viewModel
+        .getOperationCompleted()
+        .observe(getViewLifecycleOwner(), this::handleOperationCompleted);
+  }
+
+  private void handleOperationCompleted(@NonNull Boolean completed) {
+    if (completed) {
+      Bundle result = new Bundle();
+      result.putBoolean(CategoryListFragment.CATEGORY_REFRESH_FLAG, true);
+      requireActivity()
+          .getSupportFragmentManager()
+          .setFragmentResult(CategoryListFragment.CATEGORY_LIST_REQUEST_KEY, result);
+    }
   }
 
   private void showToast(@NonNull Integer messageResId) {

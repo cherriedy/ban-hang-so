@@ -3,11 +3,13 @@ package com.optlab.banhangso.features.main.category.viewmodel;
 import static com.optlab.banhangso.features.main.category.Constants.ERROR_NAME;
 
 import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.databinding.Observable;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.features.main.category.CategoryValidator;
 import com.optlab.banhangso.features.main.category.models.CategoryUiModel;
@@ -17,12 +19,15 @@ import com.optlab.banhangso.models.application.AppError;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.Category;
 import com.optlab.banhangso.repositories.interfaces.CategoryRepository;
+
+import java.util.Objects;
+
+import javax.inject.Inject;
+
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import java.util.Objects;
-import javax.inject.Inject;
 import timber.log.Timber;
 
 @HiltViewModel
@@ -32,6 +37,7 @@ public class CategoryEditViewModel extends UiViewModel<CategoryUiModel> {
   private final CategoryValidator categoryValidator;
   private final MutableLiveData<Boolean> isEditing = new MutableLiveData<>();
   private final MutableLiveData<Boolean> canSubmit = new MutableLiveData<>();
+  private final MutableLiveData<Boolean> operationCompleted = new MutableLiveData<>();
 
   private Observable.OnPropertyChangedCallback categoryOnPropertyChangedCallback;
 
@@ -87,6 +93,10 @@ public class CategoryEditViewModel extends UiViewModel<CategoryUiModel> {
 
   @NonNull public LiveData<Boolean> isEditing() {
     return isEditing;
+  }
+
+  @NonNull public LiveData<Boolean> getOperationCompleted() {
+    return operationCompleted;
   }
 
   public void getCategoryById(@NonNull String categoryId) {
@@ -147,8 +157,10 @@ public class CategoryEditViewModel extends UiViewModel<CategoryUiModel> {
 
   private void onCreateCategorySuccess(Result<Void> result) {
     if (result instanceof Result.Success<Void>) {
+      operationCompleted.setValue(true);
       messageResId.setValue(R.string.notify_category_create_success);
     } else if (result instanceof Result.Failure<Void> failure) {
+      operationCompleted.setValue(false);
       AppError appError = failure.getError();
       if (appError instanceof AppError.NetServiceError) {
         messageResId.setValue(R.string.error_network);
@@ -161,6 +173,7 @@ public class CategoryEditViewModel extends UiViewModel<CategoryUiModel> {
   }
 
   private void onCreateCategoryError(Throwable throwable) {
+    operationCompleted.setValue(false);
     messageResId.setValue(R.string.error_unknown);
     Timber.e(
         throwable, "There was an error while creating the category :%s", throwable.getMessage());
@@ -168,8 +181,10 @@ public class CategoryEditViewModel extends UiViewModel<CategoryUiModel> {
 
   private void onUpdateCategorySuccess(Result<Void> result) {
     if (result instanceof Result.Success<Void>) {
+      operationCompleted.setValue(true);
       messageResId.setValue(R.string.notify_category_update_success);
     } else if (result instanceof Result.Failure<Void> failure) {
+      operationCompleted.setValue(false);
       AppError appError = failure.getError();
       if (appError instanceof AppError.NetServiceError) {
         messageResId.setValue(R.string.error_network);
@@ -184,6 +199,7 @@ public class CategoryEditViewModel extends UiViewModel<CategoryUiModel> {
   }
 
   private void onUpdateCategoryError(Throwable throwable) {
+    operationCompleted.setValue(false);
     messageResId.setValue(R.string.error_unknown);
     Timber.e(
         throwable, "There was an error while updating the category :%s", throwable.getMessage());

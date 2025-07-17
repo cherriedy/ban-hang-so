@@ -1,10 +1,13 @@
 package com.optlab.banhangso.features.main.category.views;
 
+import static com.optlab.banhangso.features.shared.utilities.LoadStateErrorUtil.handleLoadStateError;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -15,8 +18,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.CombinedLoadStates;
 import androidx.paging.LoadState;
 import androidx.recyclerview.widget.ItemTouchHelper;
-import autodispose2.AutoDispose;
-import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentCategoryListBinding;
 import com.optlab.banhangso.features.main.category.adapters.CategoryListAdapter;
@@ -26,13 +28,20 @@ import com.optlab.banhangso.features.main.product.views.ProductTabHostFragmentDi
 import com.optlab.banhangso.features.shared.views.DeleteConfirmationDialog;
 import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
-import dagger.hilt.android.AndroidEntryPoint;
+
 import java.util.EnumSet;
+
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
+import dagger.hilt.android.AndroidEntryPoint;
 import kotlin.Unit;
 import timber.log.Timber;
 
 @AndroidEntryPoint
 public class CategoryListFragment extends Fragment {
+
+  public static final String CATEGORY_LIST_REQUEST_KEY = "CATEGORY_LIST_REQUEST_KEY";
+  public static final String CATEGORY_REFRESH_FLAG = "CATEGORY_REFRESH_FLAG";
 
   private static final String PENDING_DELETE_CATEGORY_ID = "PENDING_DELETE_CATEGORY_ID";
 
@@ -66,6 +75,21 @@ public class CategoryListFragment extends Fragment {
     initRecyclerView();
     observeViewModel();
     registerDeleteConfirmationListener();
+    registerCategoryListRefreshListener();
+  }
+
+  private void registerCategoryListRefreshListener() {
+    requireActivity()
+        .getSupportFragmentManager()
+        .setFragmentResultListener(
+            CATEGORY_LIST_REQUEST_KEY,
+            getViewLifecycleOwner(),
+            (requestKey, result) -> {
+              boolean refresh = result.getBoolean(CATEGORY_REFRESH_FLAG);
+              if (refresh) {
+                listAdapter.refresh();
+              }
+            });
   }
 
   /**
@@ -107,6 +131,7 @@ public class CategoryListFragment extends Fragment {
     listAdapter.addLoadStateListener(
         loadStates -> {
           handlePagingLoadState(loadStates);
+          handleLoadStateError(requireContext(), loadStates);
           return Unit.INSTANCE;
         });
   }
