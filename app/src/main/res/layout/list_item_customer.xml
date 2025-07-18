@@ -13,89 +13,90 @@
 
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:strokeColor="@color/athens_gray"
-        app:strokeWidth="1dp"
-        tools:layout_margin="8dp">
+        android:background="@android:color/white"
+        android:padding="@dimen/spacing_large"
+        >
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/spacing_large">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civ_avatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:civ_border_color="@color/athens_gray"
+            app:civ_border_width="1dp"
+            app:imageResource="@{customer.imageUrl}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/civ_avatar"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                app:civ_border_color="@color/athens_gray"
-                app:civ_border_width="1dp"
-                app:imageResource="@{customer.imageUrl}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@tools:sample/avatars" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/civ_avatar"
+            app:layout_constraintEnd_toStartOf="@id/ib_email"
+            app:layout_constraintStart_toEndOf="@id/civ_avatar"
+            app:layout_constraintTop_toTopOf="@id/civ_avatar">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_large"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@id/civ_avatar"
-                app:layout_constraintStart_toEndOf="@id/civ_avatar"
-                app:layout_constraintTop_toTopOf="@id/civ_avatar">
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{customer.name}"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                tools:text="@tools:sample/full_names" />
 
-                <TextView
-                    android:id="@+id/tv_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/open_sans"
-                    android:text="@{customer.name}"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                    android:textFontWeight="800"
-                    tools:text="@tools:sample/full_names" />
+            <TextView
+                android:id="@+id/tv_phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_small"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{customer.phone}"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="@android:color/darker_gray"
+                android:visibility="@{!customer.phone.isBlank ? View.VISIBLE : View.GONE}"
+                tools:text="@tools:sample/us_phones" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_phone_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_small"
-                    android:fontFamily="@font/open_sans"
-                    android:text="@{customer.phone}"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                    android:textFontWeight="800"
-                    android:visibility="@{!customer.phone.isBlank ? View.VISIBLE : View.GONE}"
-                    tools:text="@tools:sample/us_phones" />
-            </LinearLayout>
+        <ImageButton
+            android:id="@+id/ib_email"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:importantForAccessibility="no"
+            android:src="@android:drawable/sym_action_email"
+            android:visibility="@{customer.email != null &amp;&amp; !customer.email.isBlank ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/civ_avatar"
+            app:layout_constraintEnd_toStartOf="@id/ib_call"
+            app:layout_constraintTop_toTopOf="@id/civ_avatar"
+            app:tint="?attr/colorPrimary" />
 
-            <ImageButton
-                android:id="@+id/ib_email"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="@dimen/spacing_middle"
-                android:importantForAccessibility="no"
-                android:src="@android:drawable/sym_action_email"
-                android:visibility="@{customer.email != null &amp;&amp; !customer.email.isBlank ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="@id/ib_call"
-                app:layout_constraintEnd_toStartOf="@id/ib_call"
-                app:layout_constraintTop_toTopOf="@id/ib_call"
-                app:tint="?attr/colorPrimary" />
+        <ImageButton
+            android:id="@+id/ib_call"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:importantForAccessibility="no"
+            android:src="@android:drawable/stat_sys_phone_call"
+            android:visibility="@{customer.phone != null &amp;&amp; !customer.phone.isBlank ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/civ_avatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/civ_avatar"
+            app:tint="?attr/colorPrimary" />
 
-            <ImageButton
-                android:id="@+id/ib_call"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:importantForAccessibility="no"
-                android:src="@android:drawable/stat_sys_phone_call"
-                android:visibility="@{customer.phone != null &amp;&amp; !customer.phone.isBlank ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="@id/civ_avatar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/civ_avatar"
-                app:tint="?attr/colorPrimary" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </com.google.android.material.card.MaterialCardView>
 
 </layout>

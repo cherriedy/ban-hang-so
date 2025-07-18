@@ -27,11 +27,9 @@
             android:background="@drawable/bg_top_dashboard"
             android:fontFamily="@font/open_sans"
             android:textFontWeight="800"
-            app:navigationIcon="@drawable/ic_left_arrow"
+            app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="@color/white"
             app:title="@string/choose_store"
-            app:titleCentered="true"
-            app:titleTextAppearance="@style/TextAppearance.Material3.BodyLarge"
             app:titleTextColor="@color/white" />
 
         <TextView

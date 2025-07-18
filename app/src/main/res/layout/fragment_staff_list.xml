@@ -28,7 +28,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_back"
-            app:navigationIconTint="?attr/colorOnBackground" />
+            app:navigationIconTint="?attr/colorOnPrimary"
+            app:title="@string/staff"
+            app:titleTextColor="?attr/colorOnPrimary" />
 
         <LinearLayout
             android:id="@+id/mcv_search"
@@ -75,6 +77,19 @@
                 tools:listitem="@layout/list_item_staff" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/tv_empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notify_empty_staffs"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/srl_staffs"
+            app:layout_constraintEnd_toEndOf="@id/srl_staffs"
+            app:layout_constraintStart_toStartOf="@id/srl_staffs"
+            app:layout_constraintTop_toTopOf="@id/srl_staffs" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_actions"

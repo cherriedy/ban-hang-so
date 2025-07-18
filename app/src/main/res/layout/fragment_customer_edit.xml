@@ -19,25 +19,33 @@
     </data>
 
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/athens_gray"
-        android:orientation="vertical">
+        android:background="@color/athens_gray">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/mtb"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_top_dashboard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_back"
-            app:navigationIconTint="?attr/colorOnBackground" />
+            app:navigationIconTint="?attr/colorPrimaryContainer"
+            app:title="@{viewModel.isEditing ? viewModel.customer.name : @string/add_customer}"
+            app:titleTextColor="?attr/colorPrimaryContainer" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/avatar_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:padding="16dp">
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mtb">
 
             <TextView
                 android:id="@+id/tv_avatar"
@@ -111,16 +119,19 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
+            android:id="@+id/scroll_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true">
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/layout_action_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/avatar_section">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -374,12 +385,7 @@
 
             </LinearLayout>
 
-        </androidx.core.widget.NestedScrollView>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        </ScrollView>
 
         <LinearLayout
             android:id="@+id/layout_action_button"
@@ -387,7 +393,10 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:orientation="horizontal"
-            android:padding="@dimen/spacing_large">
+            android:padding="@dimen/spacing_large"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_delete"
@@ -430,6 +439,6 @@
 
         </LinearLayout>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

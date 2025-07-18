@@ -283,5 +283,8 @@
     <string name="error_transaction_not_found">Không tìm thấy hóa đơn</string>
     <string name="transaction_details">Chi tiết hóa đơn</string>
     <string name="no_transactions">Không có hóa đơn nào</string>
+    <string name="notify_empty_customer">Không có khách hàng nào</string>
+    <string name="notify_empty_staffs">Không có nhân viên nào</string>
+    <string name="add_staff">Thêm nhân viên</string>
 
 </resources>

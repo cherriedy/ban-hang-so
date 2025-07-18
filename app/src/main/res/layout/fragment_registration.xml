@@ -37,7 +37,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@drawable/bg_top_dashboard"
                 app:contentInsetStartWithNavigation="0dp"
-                app:navigationIcon="@drawable/ic_left_arrow"
+                app:navigationIcon="@drawable/ic_back"
                 app:navigationIconTint="@color/white" />
 
             <TextView

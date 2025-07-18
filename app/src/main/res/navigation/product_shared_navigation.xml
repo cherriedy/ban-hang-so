@@ -76,20 +76,5 @@
         android:name="com.optlab.banhangso.features.main.product.views.ProductListFragment"
         tools:layout="@layout/fragment_product_list" />
 
-    <dialog
-        android:id="@+id/productSortSelectionFragment"
-        android:name="com.optlab.banhangso.features.main.product.views.ProductSortSelectionFragment"
-        tools:layout="@layout/list_item_sort_selection" />
-
-    <dialog
-        android:id="@+id/brandSortSelectionFragment"
-        android:name="com.optlab.banhangso.features.main.brand.view.BrandSortSelectionFragment"
-        tools:layout="@layout/list_item_sort_selection" />
-
-    <dialog
-        android:id="@+id/categorySortSelectionFragment"
-        android:name="com.optlab.banhangso.features.main.category.views.CategorySortSelectionFragment"
-        tools:layout="@layout/list_item_sort_selection" />
-
 </navigation>
 

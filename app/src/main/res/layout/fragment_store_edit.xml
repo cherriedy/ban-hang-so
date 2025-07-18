@@ -25,11 +25,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_top_dashboard"
-            app:navigationIcon="@drawable/ic_left_arrow"
+            app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="@color/white"
             app:title="@{isCreateMode ? @string/create_store : @string/edit_store}"
-            app:titleCentered="true"
-            app:titleTextAppearance="@style/TextAppearance.Material3.BodyLarge"
             app:titleTextColor="@color/white" />
 
         <androidx.core.widget.NestedScrollView
