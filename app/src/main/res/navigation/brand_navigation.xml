@@ -10,10 +10,13 @@
         android:name="com.optlab.banhangso.features.main.brand.view.BrandEditFragment"
         android:label="BrandEditFragment"
         tools:layout="@layout/fragment_brand_edit"
-        app:enterAnim="@anim/anim_slide_in_right"
-        app:exitAnim="@anim/anim_slide_out_left"
-        app:popEnterAnim="@anim/anim_slide_in_left"
-        app:popExitAnim="@anim/anim_slide_out_right">
+        app:enterAnim="@anim/anim_fade_in"
+        app:exitAnim="@anim/anim_fade_out"
+        app:popEnterAnim="@anim/anim_fade_in"
+        app:popExitAnim="@anim/anim_fade_out">
+
+        <deepLink app:uri="app://banhangso/brand/edit/{brandId}" />
+        <deepLink app:uri="app://banhangso/brand/create" />
 
         <argument
             android:name="brandId"
@@ -24,4 +27,3 @@
             app:argType="boolean" />
     </dialog>
 </navigation>
-

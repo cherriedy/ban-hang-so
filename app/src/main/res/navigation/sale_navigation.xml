@@ -11,6 +11,9 @@
         android:label="SaleListFragment"
         tools:layout="@layout/fragment_sale_list">
 
+        <deepLink app:uri="app://banhangso/sale/list" />
+        <deepLink app:uri="app://banhangso/sale/pos" />
+
         <action
             android:id="@+id/action_to_cart"
             app:destination="@id/cartListFragment"
@@ -26,6 +29,8 @@
         android:name="com.optlab.banhangso.features.main.sale.views.CartListFragment"
         android:label="CartListFragment"
         tools:layout="@layout/fragment_cart_list">
+
+        <deepLink app:uri="app://banhangso/sale/cart" />
 
         <action
             android:id="@+id/action_to_customer_selection"
@@ -57,9 +62,13 @@
         android:label="CustomerSelectionFragment"
         tools:layout="@layout/fragment_option_selection">
 
+        <deepLink app:uri="app://banhangso/sale/customer/select" />
+
         <argument
             android:name="customerId"
-            app:argType="string" />
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
     </fragment>
 
@@ -68,6 +77,8 @@
         android:name="com.optlab.banhangso.features.main.sale.views.PaymentFragment"
         android:label="PaymentFragment"
         tools:layout="@layout/fragment_payment">
+
+        <deepLink app:uri="app://banhangso/sale/payment" />
 
         <action
             android:id="@+id/action_to_receipt"
@@ -82,6 +93,9 @@
         android:id="@+id/saleReceiptFragment"
         android:name="com.optlab.banhangso.features.main.sale.views.SaleReceiptFragment"
         android:label="SaleReceiptFragment"
-        tools:layout="@layout/fragment_sale_receipt" />
+        tools:layout="@layout/fragment_sale_receipt">
+
+        <deepLink app:uri="app://banhangso/sale/receipt" />
+    </fragment>
 
 </navigation>

@@ -8,20 +8,25 @@
     <dialog
         android:id="@+id/categoryEditFragment"
         android:name="com.optlab.banhangso.features.main.category.views.CategoryEditFragment"
-        android:label="BrandEditFragment"
-        app:enterAnim="@anim/anim_slide_in_right"
-        app:exitAnim="@anim/anim_slide_out_left"
-        app:popEnterAnim="@anim/anim_slide_in_left"
-        app:popExitAnim="@anim/anim_slide_out_right"
+        android:label="CategoryEditFragment"
+        app:enterAnim="@anim/anim_fade_in"
+        app:exitAnim="@anim/anim_fade_out"
+        app:popEnterAnim="@anim/anim_fade_in"
+        app:popExitAnim="@anim/anim_fade_out"
         tools:layout="@layout/fragment_category_edit">
+
+        <deepLink app:uri="app://banhangso/category/edit/{categoryId}" />
+        <deepLink app:uri="app://banhangso/category/create" />
 
         <argument
             android:name="categoryId"
-            app:argType="string" />
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
         <argument
             android:name="isEditing"
+            android:defaultValue="false"
             app:argType="boolean" />
     </dialog>
 </navigation>
-

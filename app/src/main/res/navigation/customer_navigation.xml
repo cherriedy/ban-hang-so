@@ -11,9 +11,15 @@
         android:label="CustomerListFragment"
         tools:layout="@layout/fragment_customer_list">
 
+        <deepLink app:uri="app://banhangso/customer/list" />
+
         <action
             android:id="@+id/action_to_edit"
-            app:destination="@id/customerEditFragment">
+            app:destination="@id/customerEditFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right">
 
             <argument
                 android:name="customerId"
@@ -27,12 +33,17 @@
 
         <action
             android:id="@+id/action_to_create"
-            app:destination="@id/customerEditFragment">
+            app:destination="@id/customerEditFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right">
 
             <argument
                 android:name="customerId"
-                android:defaultValue=""
-                app:argType="string" />
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
 
             <argument
                 android:name="isEditing"
@@ -42,7 +53,11 @@
 
         <action
             android:id="@+id/action_to_edit_with_parcelable"
-            app:destination="@id/customerEditFragment">
+            app:destination="@id/customerEditFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right">
 
             <argument
                 android:name="customer"
@@ -62,14 +77,18 @@
         android:label="CustomerEditFragment"
         tools:layout="@layout/fragment_customer_edit">
 
+        <deepLink app:uri="app://banhangso/customer/edit/{customerId}" />
+        <deepLink app:uri="app://banhangso/customer/create" />
+
         <argument
             android:name="customerId"
-            android:defaultValue=""
-            app:argType="string" />
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
         <argument
             android:name="isEditing"
-            android:defaultValue="true"
+            android:defaultValue="false"
             app:argType="boolean" />
 
         <argument

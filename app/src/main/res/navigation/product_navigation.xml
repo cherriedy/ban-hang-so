@@ -10,6 +10,9 @@
         android:name="com.optlab.banhangso.features.main.product.views.ProductEditFragment"
         tools:layout="@layout/fragment_product_list">
 
+        <deepLink app:uri="app://banhangso/product/edit/{productId}" />
+        <deepLink app:uri="app://banhangso/product/create" />
+
         <argument
             android:name="productId"
             app:argType="string" />
@@ -41,6 +44,8 @@
         android:label="fragment_option_selection"
         tools:layout="@layout/fragment_option_selection">
 
+        <deepLink app:uri="app://banhangso/brand/select" />
+
         <argument
             android:name="brandId"
             app:argType="string" />
@@ -52,9 +57,10 @@
         android:label="category_selection_fragment"
         tools:layout="@layout/fragment_option_selection">
 
+        <deepLink app:uri="app://banhangso/category/select" />
+
         <argument
             android:name="categoryId"
             app:argType="string" />
     </fragment>
 </navigation>
-

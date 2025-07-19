@@ -25,10 +25,10 @@
     <action
         android:id="@+id/action_to_brand_edit"
         app:destination="@id/nav_graph_brand_edit"
-        app:enterAnim="@anim/anim_slide_in_right"
-        app:exitAnim="@anim/anim_slide_out_left"
-        app:popEnterAnim="@anim/anim_slide_in_left"
-        app:popExitAnim="@anim/anim_slide_out_right">
+        app:enterAnim="@anim/anim_fade_in"
+        app:exitAnim="@anim/anim_fade_out"
+        app:popEnterAnim="@anim/anim_fade_in"
+        app:popExitAnim="@anim/anim_fade_out">
 
         <argument
             android:name="brandId"
@@ -42,10 +42,10 @@
     <action
         android:id="@+id/action_to_category_edit"
         app:destination="@id/nav_graph_category_edit"
-        app:enterAnim="@anim/anim_slide_in_right"
-        app:exitAnim="@anim/anim_slide_out_left"
-        app:popEnterAnim="@anim/anim_slide_in_left"
-        app:popExitAnim="@anim/anim_slide_out_right">
+        app:enterAnim="@anim/anim_fade_in"
+        app:exitAnim="@anim/anim_fade_out"
+        app:popEnterAnim="@anim/anim_fade_in"
+        app:popExitAnim="@anim/anim_fade_out">
 
         <argument
             android:name="categoryId"
@@ -59,22 +59,33 @@
     <fragment
         android:id="@+id/productTabHostFragment"
         android:name="com.optlab.banhangso.features.main.product.views.ProductTabHostFragment"
-        tools:layout="@layout/fragment_product_tab_host" />
+        tools:layout="@layout/fragment_product_tab_host">
+
+        <deepLink app:uri="app://banhangso/product/tabs" />
+    </fragment>
 
     <fragment
         android:id="@+id/categoryListFragment"
         android:name="com.optlab.banhangso.features.main.category.views.CategoryListFragment"
-        tools:layout="@layout/fragment_category_list" />
+        tools:layout="@layout/fragment_category_list">
+
+        <deepLink app:uri="app://banhangso/category/list" />
+    </fragment>
 
     <fragment
         android:id="@+id/brandListFragment"
         android:name="com.optlab.banhangso.features.main.brand.view.BrandListFragment"
-        tools:layout="@layout/fragment_brand_list" />
+        tools:layout="@layout/fragment_brand_list">
+
+        <deepLink app:uri="app://banhangso/brand/list" />
+    </fragment>
 
     <fragment
         android:id="@+id/productListFragment"
         android:name="com.optlab.banhangso.features.main.product.views.ProductListFragment"
-        tools:layout="@layout/fragment_product_list" />
+        tools:layout="@layout/fragment_product_list">
+
+        <deepLink app:uri="app://banhangso/product/list" />
+    </fragment>
 
 </navigation>
-

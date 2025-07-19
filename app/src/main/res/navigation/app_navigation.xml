@@ -28,10 +28,11 @@
         app:launchSingleTop="true"
         tools:layout="@layout/fragment_home">
 
+        <deepLink app:uri="app://banhangso/home" />
+
         <action
             android:id="@+id/action_to_product_tabs"
             app:destination="@id/nav_graph_product_tabs"
-            app:enterAnim="@anim/anim_slide_in_right"
             app:exitAnim="@anim/anim_slide_out_left"
             app:popEnterAnim="@anim/anim_slide_in_left"
             app:popExitAnim="@anim/anim_slide_out_right" />
@@ -117,13 +118,16 @@
         android:name="com.optlab.banhangso.features.main.store.view.StoreEditFragment"
         tools:layout="@layout/fragment_store_edit">
 
+        <deepLink app:uri="app://banhangso/store/edit/{storeId}" />
+        <deepLink app:uri="app://banhangso/store/create" />
+
         <argument
             android:name="storeId"
             android:defaultValue=""
             app:argType="string" />
 
         <argument
-            android:name="isCreateMode"
+            android:name="isEditing"
             app:argType="boolean" />
     </fragment>
 

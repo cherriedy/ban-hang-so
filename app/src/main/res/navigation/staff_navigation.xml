@@ -11,6 +11,8 @@
         android:label="StaffListFragment"
         tools:layout="@layout/fragment_staff_list">
 
+        <deepLink app:uri="app://banhangso/staff/list" />
+
         <action
             android:id="@+id/action_to_staff_edit"
             app:destination="@id/staffEditFragment"
@@ -25,6 +27,9 @@
         android:name="com.optlab.banhangso.features.main.staff.views.StaffEditFragment"
         android:label="StaffEditFragment"
         tools:layout="@layout/fragment_staff_edit">
+
+        <deepLink app:uri="app://banhangso/staff/edit/{staffId}" />
+        <deepLink app:uri="app://banhangso/staff/create" />
 
         <argument
             android:name="staffId"
