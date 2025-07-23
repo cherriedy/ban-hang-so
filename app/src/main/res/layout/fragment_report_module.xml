@@ -10,9 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/athens_gray"
-        android:orientation="vertical"
-        tools:context=".ui.main.product.editText.ProductTabHostFragment">
+        android:orientation="vertical">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/mtb"
@@ -22,22 +20,33 @@
             android:elevation="4dp"
             app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="?attr/colorPrimaryContainer"
-            app:titleTextColor="?attr/colorPrimaryContainer"
-            tools:title="@string/tab_title_category" />
+            app:title="Báo cáo bán hàng"
+            app:titleTextColor="?attr/colorPrimaryContainer" />
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
+            android:id="@+id/tl_report"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:tabIndicatorColor="?attr/colorPrimary"
-            app:tabMode="fixed"
             app:tabSelectedTextColor="@color/boston_blue"
             app:tabTextAppearance="@style/TabTextAppearance"
-            app:tabTextColor="@color/raven" />
+            app:tabTextColor="@color/raven">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="@string/sale" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="@string/customer" />
+
+        </com.google.android.material.tabs.TabLayout>
 
         <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/view_pager"
+            android:id="@+id/vp_report"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

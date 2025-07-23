@@ -274,16 +274,33 @@
                             android:layout_weight="1"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/tv_title_purchase_price"
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="8dp"
-                                android:fontFamily="@font/open_sans"
-                                android:text="@string/attr_product_in_price"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                                android:textColor="@color/raven"
-                                android:textFontWeight="800" />
+                                android:layout_marginBottom="8dp">
+
+                                <TextView
+                                    android:id="@+id/tv_title_purchase_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/open_sans"
+                                    android:text="@string/attr_product_in_price"
+                                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                                    android:textColor="@color/raven"
+                                    android:textFontWeight="800"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_toEndOf="@id/tv_title_purchase_price"
+                                    android:text="@string/asterisk"
+                                    android:textColor="@color/red"
+                                    app:layout_constraintBottom_toBottomOf="@id/tv_title_purchase_price"
+                                    app:layout_constraintStart_toEndOf="@id/tv_title_purchase_price" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_purchase_price"

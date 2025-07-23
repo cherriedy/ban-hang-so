@@ -14,19 +14,21 @@
             type="com.optlab.banhangso.features.main.store.viewmodel.SelectStoreViewModel" />
     </data>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/mtb"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:background="@drawable/bg_top_dashboard"
             android:fontFamily="@font/open_sans"
             android:textFontWeight="800"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="@color/white"
             app:title="@string/choose_store"
@@ -36,80 +38,92 @@
             android:id="@+id/tv_choose_store"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/mtb"
             android:layout_marginStart="@dimen/spacing_large"
             android:layout_marginTop="@dimen/spacing_large"
             android:fontFamily="@font/open_sans"
             android:text="@string/choose_one_store"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             android:textColor="@color/black"
-            android:textFontWeight="800" />
+            android:textFontWeight="800"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mtb" />
 
         <TextView
             android:id="@+id/tv_chain_stores"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_choose_store"
             android:layout_marginStart="@dimen/spacing_large"
             android:layout_marginTop="@dimen/spacing_middle"
             android:fontFamily="@font/open_sans"
             android:text="@{@string/chain_of_stores + ` ` + viewModel.user.name}"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             android:textColor="@color/black"
-            android:textFontWeight="800" />
+            android:textFontWeight="800"
+            tools:text="@string/chain_of_stores"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_choose_store" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/srlStores"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/spacing_middle"
+            android:layout_marginBottom="@dimen/spacing_large"
+            app:layout_constraintBottom_toTopOf="@id/mb_add_store"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_chain_stores"
+            app:swipeRefreshLayoutProgressSpinnerBackgroundColor="?attr/colorPrimary">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="@dimen/spacing_large"
+                android:paddingEnd="@dimen/spacing_large"
+                android:paddingBottom="@dimen/spacing_large">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_stores"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/list_item_store" />
+
+            </LinearLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/mb_add_store"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_marginStart="@dimen/spacing_large"
             android:layout_marginEnd="@dimen/spacing_large"
             android:layout_marginBottom="@dimen/spacing_large"
             android:onClick="@{fragment}"
             android:padding="@dimen/spacing_large"
             android:text="@string/add_store"
-            app:cornerRadius="@dimen/spacing_medium" />
+            app:cornerRadius="@dimen/spacing_medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swStores"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/mb_add_store"
-            android:layout_below="@id/tv_chain_stores"
-            app:swipeRefreshLayoutProgressSpinnerBackgroundColor="?attr/colorPrimary">
+        <TextView
+            android:id="@+id/tv_empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notify_empty_stores"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/srlStores"
+            app:layout_constraintEnd_toEndOf="@id/srlStores"
+            app:layout_constraintStart_toStartOf="@id/srlStores"
+            app:layout_constraintTop_toTopOf="@id/srlStores" />
 
-            <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/spacing_middle"
-                android:fillViewport="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingStart="@dimen/spacing_large"
-                    android:paddingEnd="@dimen/spacing_large"
-                    android:paddingBottom="@dimen/spacing_large">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_stores"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipToPadding="false"
-                        android:nestedScrollingEnabled="false"
-                        android:orientation="vertical"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:itemCount="2"
-                        tools:listitem="@layout/list_item_store" />
-
-                </LinearLayout>
-
-            </androidx.core.widget.NestedScrollView>
-
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

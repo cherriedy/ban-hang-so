@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/report_navigation"
+    app:startDestination="@id/reportModuleFragment">
+
+    <action
+        android:id="@+id/action_to_filters"
+        app:destination="@id/reportFilterBottomSheet" />
+
+    <fragment
+        android:id="@+id/reportModuleFragment"
+        android:name="com.optlab.banhangso.features.main.report.views.ReportModuleFragment"
+        android:label="ReportModuleFragment"
+        tools:layout="@layout/fragment_report_module" />
+
+    <fragment
+        android:id="@+id/saleReportFragment"
+        android:name="com.optlab.banhangso.features.main.report.views.SaleReportFragment"
+        android:label="SaleReportFragment"
+        tools:layout="@layout/fragment_sale_report" />
+
+    <dialog
+        android:id="@+id/reportFilterBottomSheet"
+        android:name="com.optlab.banhangso.features.main.report.views.ReportFilterBottomSheet"
+        android:label="ReportFilterBottomSheet"
+        app:enterAnim="@anim/anim_bottom_sheet_enter"
+        app:exitAnim="@anim/anim_bottom_sheet_exit"
+        app:popEnterAnim="@anim/anim_fade_in"
+        app:popExitAnim="@anim/anim_bottom_sheet_exit"
+        tools:layout="@layout/bottom_sheet_report_module_filters" />
+
+</navigation>

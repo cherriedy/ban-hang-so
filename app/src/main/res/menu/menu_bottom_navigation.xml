@@ -14,10 +14,10 @@
     <item
         android:id="@+id/transaction_navigation"
         android:icon="@drawable/ic_bill"
-        android:title="@string/order" />
+        android:title="@string/transactions" />
 
-    <item
-        android:icon="@drawable/ic_more"
-        android:title="@string/more" />
+<!--    <item-->
+<!--        android:icon="@drawable/ic_more"-->
+<!--        android:title="@string/more" />-->
 
 </menu>

@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.optlab.banhangso.features.main.report.viewmodels.SaleReportViewModel" />
+
+        <variable
+            name="moduleViewModel"
+            type="com.optlab.banhangso.features.main.report.viewmodels.ReportModuleViewModel" />
+
+        <variable
+            name="fragment"
+            type="com.optlab.banhangso.features.main.report.views.SaleReportFragment" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/athens_gray"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/spacing_mlarge"
+                    android:paddingVertical="@dimen/spacing_mxlarge">
+
+                    <ImageButton
+                        android:id="@+id/ib_filter"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_schedule"
+                        app:tint="@color/million_gray" />
+
+                    <RadioGroup
+                        android:id="@+id/rg_methods"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/spacing_xxlarge"
+                        android:layout_marginStart="@dimen/spacing_large"
+                        android:background="@drawable/bg_radio_group_rounded"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/mrb_today"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/spacing_medium"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_role_radio"
+                            android:button="@android:color/transparent"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center"
+                            android:text="@string/today"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textColor="@color/color_interval_selection_text"
+                            android:textFontWeight="800" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/mrb_yesterday"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_role_radio"
+                            android:button="@android:color/transparent"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center"
+                            android:text="@string/yesterday"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textColor="@color/color_interval_selection_text"
+                            android:textFontWeight="800" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/mrb_this_month"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_role_radio"
+                            android:button="@android:color/transparent"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center"
+                            android:text="@string/this_month"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textColor="@color/color_interval_selection_text"
+                            android:textFontWeight="800" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/spacing_mlarge"
+                    android:paddingVertical="@dimen/spacing_mxlarge">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="85dp"
+                        android:layout_weight="0.5"
+                        app:cardCornerRadius="@dimen/spacing_xmedium"
+                        app:strokeColor="@color/alto"
+                        app:strokeWidth="1dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="@dimen/spacing_middle">
+
+                            <TextView
+                                android:id="@+id/tv_revenue_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/open_sans"
+                                android:text="@string/revenue"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                                android:textColor="@color/black"
+                                android:textFontWeight="800" />
+
+                            <ImageView
+                                android:id="@+id/iv_dollar_sign"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_alignParentBottom="true"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_dollar_sign" />
+
+                            <TextView
+                                android:id="@+id/tv_revenue_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_marginStart="@dimen/spacing_medium"
+                                android:layout_toEndOf="@id/iv_dollar_sign"
+                                android:fontFamily="@font/open_sans"
+                                android:maxLines="1"
+                                android:text="@{viewModel.saleReport.revenue}"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                android:textColor="@color/black"
+                                android:textFontWeight="800"
+                                tools:text="1,234.56" />
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <Space
+                        android:layout_width="@dimen/spacing_middle"
+                        android:layout_height="0dp" />
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="85dp"
+                        android:layout_weight="0.5"
+                        app:cardCornerRadius="@dimen/spacing_xmedium"
+                        app:strokeColor="@color/alto"
+                        app:strokeWidth="1dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:padding="@dimen/spacing_middle">
+
+                            <TextView
+                                android:id="@+id/tv_transaction_title"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/open_sans"
+                                android:text="@string/transactions"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                                android:textColor="@color/black"
+                                android:textFontWeight="800" />
+
+                            <ImageView
+                                android:id="@+id/iv_transaction_sign"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_alignParentBottom="true"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_transaction_sign" />
+
+                            <TextView
+                                android:id="@+id/tv_transaction_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_marginStart="@dimen/spacing_medium"
+                                android:layout_toEndOf="@id/iv_transaction_sign"
+                                android:fontFamily="@font/open_sans"
+                                android:maxLines="1"
+                                android:text="@{String.valueOf(viewModel.saleReport.summary.totalTransactions)}"
+                                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                android:textColor="@color/black"
+                                android:textFontWeight="800"
+                                tools:text="10" />
+
+                        </RelativeLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/spacing_mlarge"
+                    android:paddingVertical="@dimen/spacing_mxlarge">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@string/revenue"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="@color/black"
+                            android:textFontWeight="800" />
+
+                        <TextView
+                            android:id="@+id/tv_total_revenue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@{viewModel.saleReport.revenue}"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="@color/black"
+                            android:textFontWeight="800"
+                            tools:ignore="RelativeOverlap"
+                            tools:text="$1,234.56" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@string/cost"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="@color/black"
+                            android:textFontWeight="800" />
+
+                        <TextView
+                            android:id="@+id/tv_total_cost"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@{viewModel.saleReport.cost}"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="@color/black"
+                            android:textFontWeight="800"
+                            tools:ignore="RelativeOverlap"
+                            tools:text="$1,000.56" />
+
+                    </RelativeLayout>
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/spacing_mlarge"
+                        app:dividerColor="@color/alto" />
+
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@string/profit"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="@color/black"
+                            android:textFontWeight="800" />
+
+                        <TextView
+                            android:id="@+id/tv_total_profit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@{viewModel.saleReport.profit}"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="@color/black"
+                            android:textFontWeight="800"
+                            tools:ignore="RelativeOverlap"
+                            tools:text="$234.56" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/open_sans"
+                    android:paddingHorizontal="@dimen/spacing_mlarge"
+                    android:paddingVertical="@dimen/spacing_mxlarge"
+                    android:text="@string/growth_chart"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:textFontWeight="800" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <RadioGroup
+                        android:layout_width="250dp"
+                        android:layout_height="55dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginVertical="@dimen/spacing_mlarge"
+                        android:background="@drawable/bg_radio_group_rounded_20dp"
+                        android:checkedButton="@+id/mrb_revenue"
+                        android:gravity="center"
+                        android:onCheckedChanged="@{fragment::onChartTypeSelected}"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/mrb_revenue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/spacing_medium"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/selector_sign_in_radio"
+                            android:button="@android:color/transparent"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center"
+                            android:text="@string/revenue"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                            android:textColor="@color/color_report_selection_text"
+                            android:textFontWeight="800" />
+
+                        <com.google.android.material.radiobutton.MaterialRadioButton
+                            android:id="@+id/mrb_transactions"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/selector_sign_up_radio"
+                            android:button="@android:color/transparent"
+                            android:checked="false"
+                            android:fontFamily="@font/open_sans"
+                            android:gravity="center"
+                            android:text="@string/transactions"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                            android:textColor="@color/color_report_selection_text"
+                            android:textFontWeight="800" />
+                    </RadioGroup>
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/lc_report"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</layout>

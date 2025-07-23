@@ -3,7 +3,7 @@
     <string name="next">Tiếp tục</string>
     <string name="previous">Phía trước</string>
     <string name="homepage">Quản lý</string>
-    <string name="order">Đơn hàng</string>
+    <string name="transactions">Đơn hàng</string>
     <string name="product">Sản phẩm</string>
     <string name="warehouse">Kho hàng</string>
     <string name="store_name">Tên cửa hàng</string>
@@ -192,7 +192,7 @@
     <string name="add_store">Thêm cửa hàng</string>
     <string name="edit_store">Chỉnh sửa cửa hàng</string>
     <string name="create_store">Tạo cửa hàng</string>
-    <string name="notify_create_store_successful">Tạo cửa hàng th��nh công</string>
+    <string name="notify_create_store_successful">Tạo cửa hàng thành công</string>
     <string name="notify_create_store_fail">Tạo cửa hàng thất bại</string>
     <string name="error_while_selecting_store">Đã có lỗi xảy ra không khi chọn cửa hàng</string>
     <string name="error_invalid_inputs">Thông tin không hợp lệ, vui lòng kiểm tra lại</string>
@@ -286,5 +286,24 @@
     <string name="notify_empty_customer">Không có khách hàng nào</string>
     <string name="notify_empty_staffs">Không có nhân viên nào</string>
     <string name="add_staff">Thêm nhân viên</string>
+    <string name="notify_empty_stores">Không có cửa hàng nào</string>
+    <string name="error_store_not_found">Không tìm thấy cửa hàng</string>
+    <string name="alter_store_delete_title">Xóa cửa hàng</string>
+    <string name="alter_store_delete_message">Hành động này không thể hoàn tác, các sản phẩm, thương hiệu,... sẽ  bị xóa vĩnh viễn</string>
+    <string name="notify_delete_store_success">Xóa cửa hàng thành công</string>
+    <string name="notify_update_store_successful">Cập nhật cửa hàng thành công</string>
+    <string name="camera_requirement">Cần cấp quyền máy ảnh để chụp hình</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sale">Bán hàng</string>
+    <string name="reset">Thiếp lập lại</string>
+    <string name="cost">Chi phí vốn</string>
+    <string name="profit">Lợi nhuận</string>
+    <string name="growth_chart">Biểu đồ tăng trưởng</string>
+    <string name="price_unit_thousand">trăm nghìn</string>
+    <string name="price_unit_million">triệu</string>
+    <string name="price_unit_billion">tỷ</string>
+    <string name="no_data_available">Không có dữ liệu khả dụng</string>
+    <string name="update_later">Cập nhật sau</string>
 
 </resources>

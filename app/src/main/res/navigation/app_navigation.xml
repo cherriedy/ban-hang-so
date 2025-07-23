@@ -90,6 +90,15 @@
             app:exitAnim="@anim/anim_slide_out_left"
             app:popEnterAnim="@anim/anim_slide_in_left"
             app:popExitAnim="@anim/anim_slide_out_right" />
+
+        <action
+            android:id="@+id/action_to_report"
+            app:destination="@+id/report_navigation"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
+
     </fragment>
 
     <fragment
@@ -122,11 +131,6 @@
         <deepLink app:uri="app://banhangso/store/create" />
 
         <argument
-            android:name="storeId"
-            android:defaultValue=""
-            app:argType="string" />
-
-        <argument
             android:name="isEditing"
             app:argType="boolean" />
     </fragment>
@@ -140,4 +144,5 @@
     <include app:graph="@navigation/customer_navigation" />
     <include app:graph="@navigation/sale_navigation" />
     <include app:graph="@navigation/transaction_navigation" />
+    <include app:graph="@navigation/report_navigation" />
 </navigation>
