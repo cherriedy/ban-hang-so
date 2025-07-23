@@ -1,159 +1,177 @@
-package com.optlab.banhangso.features.main.store.viewmodel;
+package com.optlab.banhangso.features.main.store.viewmodel
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import com.optlab.banhangso.features.main.store.models.RoleStoreUiModel;
-import com.optlab.banhangso.features.main.store.models.mappers.RoleStoreUiModelMapper;
-import com.optlab.banhangso.models.application.Result;
-import com.optlab.banhangso.models.domain.User;
-import com.optlab.banhangso.models.domain.store.RoleStore;
-import com.optlab.banhangso.repositories.interfaces.AuthRepository;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
-import com.optlab.banhangso.repositories.interfaces.StoreRepository;
-import dagger.hilt.android.lifecycle.HiltViewModel;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.schedulers.Schedulers;
-import java.util.List;
-import javax.inject.Inject;
-import timber.log.Timber;
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.map
+import androidx.paging.rxjava3.cachedIn
+import com.optlab.banhangso.R
+import com.optlab.banhangso.features.main.store.models.RoleStoreUiModel
+import com.optlab.banhangso.features.main.store.models.mappers.RoleStoreUiModelMapper
+import com.optlab.banhangso.features.shared.viewmodels.RxViewModel
+import com.optlab.banhangso.models.application.AppError
+import com.optlab.banhangso.models.application.Result
+import com.optlab.banhangso.models.domain.User
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt
+import com.optlab.banhangso.repositories.interfaces.StoreRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import timber.log.Timber
+import javax.inject.Inject
 
 @HiltViewModel
-public class SelectStoreViewModel extends ViewModel {
+class SelectStoreViewModel
+    @Inject
+    constructor(
+        private val storeRepository: StoreRepository,
+        private val preferencesRepositoryKt: PreferencesRepositoryKt,
+    ) : RxViewModel() {
+        @OptIn(ExperimentalCoroutinesApi::class)
+        private val _stores: Flowable<PagingData<RoleStoreUiModel>> =
+            storeRepository.userStores
+                .map { pagingData -> pagingData.map(RoleStoreUiModelMapper::fromDomain) }
+                .cachedIn(viewModelScope)
 
-  private final AuthRepository authRepository;
-  private final StoreRepository storeRepository;
-  private final PreferencesRepository preferencesRepository;
-  private final CompositeDisposable disposables = new CompositeDisposable();
-  private final MutableLiveData<User> user = new MutableLiveData<>();
-  private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
-  private final MutableLiveData<Boolean> setStoreResult = new MutableLiveData<>();
-  private final MutableLiveData<List<RoleStoreUiModel>> stores = new MutableLiveData<>();
+        val stores: Flowable<PagingData<RoleStoreUiModel>>
+            get() = _stores
 
-  @Inject
-  public SelectStoreViewModel(
-      AuthRepository authRepository,
-      StoreRepository storeRepository,
-      PreferencesRepository preferencesRepository) {
-    this.authRepository = authRepository;
-    this.storeRepository = storeRepository;
-    this.preferencesRepository = preferencesRepository;
+        private val _selectStoreResult: MutableLiveData<Boolean> = MutableLiveData()
+        val selectStoreResult: MutableLiveData<Boolean>
+            get() = _selectStoreResult
 
-    observeUserUpdates();
-  }
+        private val _refresh: MutableLiveData<Boolean> = MutableLiveData()
+        val refresh: MutableLiveData<Boolean>
+            get() = _refresh
 
-  private void observeUserUpdates() {
-    Disposable disposable =
-        authRepository
-            .getUser()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::handleUserResult);
+        private val _navigateToAuthentication: MutableLiveData<Boolean> = MutableLiveData()
+        val navigateToAuthentication: MutableLiveData<Boolean>
+            get() = _navigateToAuthentication
 
-    disposables.add(disposable);
-  }
+        private val _user: MutableLiveData<User> = MutableLiveData()
+        val user: MutableLiveData<User>
+            get() = _user
 
-  private void handleUserResult(Result<User> userResult, Throwable throwable) {
-    if (throwable != null) {
-      Timber.e(throwable, "Error fetching user: %s", throwable.getMessage());
-      return;
+        init {
+            preferencesRepositoryKt
+                .getUserRx()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onGetUserSuccess, this::onGetUserError)
+                .also { disposables.add(it) }
+        }
+
+        private fun onGetUserSuccess(user: User) {
+            _user.value = user
+            Timber.d("The user has been retrieved successfully: $user")
+        }
+
+        private fun onGetUserError(throwable: Throwable) {
+            messageResId.value = R.string.error_unknown
+            Timber.e(throwable, "There was an error retrieving the user: ${throwable.message}")
+        }
+
+        fun setSelectedStore(roleStoreUiModel: RoleStoreUiModel) =
+            RoleStoreUiModelMapper.toDomain(roleStoreUiModel).let { roleStore ->
+                preferencesRepositoryKt
+                    .setStoreRx(roleStore)
+                    .flatMap { success ->
+                        if (success) {
+                            preferencesRepositoryKt.setStoreSelectedRx(true)
+                        } else {
+                            Single.just(false)
+                        }
+                    }
+                    .subscribeOn(Schedulers.io())
+                    .doOnSubscribe { isLoading.postValue(true) }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doFinally { isLoading.value = false }
+                    .subscribe(this::onSetSelectedStoreSuccess, this::onSetSelectedStoreError)
+                    .also { disposables.add(it) }
+            }
+
+        private fun onSetSelectedStoreSuccess(result: Boolean) {
+            _selectStoreResult.value = result
+            Timber.d("The store has been set successfully: $result")
+        }
+
+        private fun onSetSelectedStoreError(throwable: Throwable) {
+            _selectStoreResult.value = false
+            messageResId.value = R.string.error_unknown
+            Timber.e(throwable, "There was an error setting the store: ${throwable.message}")
+        }
+
+        fun deleteStore(storeId: String) {
+            storeRepository
+                .deleteStore(storeId)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe { isLoading.postValue(true) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally {
+                    isLoading.value = false
+                    _refresh.value = true
+                }
+                .subscribe(this::onDeleteStoreSuccess, this::onDeleteStoreError)
+                .let { disposables.add(it) }
+        }
+
+        private fun onDeleteStoreSuccess(result: Result<Void>) {
+            fun clearPreferencesStore() {
+                preferencesRepositoryKt
+                    .clearStore()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        {
+                            messageResId.value = R.string.notify_delete_store_success
+                        },
+                        { throwable ->
+                            messageResId.value = R.string.error_unknown
+                            Timber.e(
+                                throwable,
+                                "There was an error clearing the store: ${throwable.message}",
+                            )
+                        },
+                    )
+                    .also { disposables.add(it) }
+            }
+
+            when (result) {
+                is Result.Success -> {
+                    clearPreferencesStore()
+                }
+                is Result.Failure ->
+                    when (result.error) {
+                        is AppError.NetServiceError -> messageResId.value = R.string.error_network
+                        is AppError.ForbiddenError -> messageResId.value = R.string.error_forbidden
+                        else -> messageResId.value = R.string.error_unknown
+                    }
+            }
+        }
+
+        private fun onDeleteStoreError(throwable: Throwable) {
+            _refresh.value = false
+            messageResId.value = R.string.error_unknown
+            Timber.e(throwable, "There was an error deleting the store: ${throwable.message}")
+        }
+
+        fun onSignOut() {
+            preferencesRepositoryKt
+                .clearStore()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        _navigateToAuthentication.value = true
+                    },
+                    { throwable ->
+                        messageResId.value = R.string.error_unknown
+                        Timber.e(throwable, "There was an error clearing the store: ${throwable.message}")
+                    },
+                )
+                .also { disposables.add(it) }
+        }
     }
-
-    if (userResult instanceof Result.Success<User> success) {
-      user.setValue(success.getData()); // Update user LiveData
-      retrieveStores(); // Fetch stores after user is fetched
-      Timber.d("User fetched successfully: %s", userResult);
-    } else if (userResult instanceof Result.Failure<User> failure) {
-      // TODO: handle failure case, e.g., show error message
-    }
-  }
-
-  @Override
-  protected void onCleared() {
-    disposables.clear();
-    super.onCleared();
-  }
-
-  public LiveData<List<RoleStoreUiModel>> getStores() {
-    return stores;
-  }
-
-  public LiveData<Boolean> getIsLoading() {
-    return isLoading;
-  }
-
-  public LiveData<User> getUser() {
-    return user;
-  }
-
-  public LiveData<Boolean> getSetStoreResult() {
-    return setStoreResult;
-  }
-
-  public void retrieveStores() {
-    User authenticatedUser = user.getValue();
-    if (authenticatedUser == null) {
-      Timber.w("User is not authenticated, cannot retrieve stores");
-      return;
-    }
-
-    Disposable disposable =
-        storeRepository
-            .getUserStores(authenticatedUser.getId())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe(__ -> isLoading.setValue(true))
-            .doFinally(() -> isLoading.setValue(false))
-            .subscribe(this::onGetUserStoresSuccess, this::onGetUserStoresFailure);
-
-    disposables.add(disposable);
-  }
-
-  private void onGetUserStoresFailure(Throwable e) {
-    Timber.e(e, "Error fetching stores: %s", e.getMessage());
-  }
-
-  private void onGetUserStoresSuccess(Result<List<RoleStore>> result) {
-    if (result instanceof Result.Success<List<RoleStore>> success) {
-      List<RoleStore> roleStores = success.getData();
-
-      if (roleStores == null || roleStores.isEmpty()) {
-        Timber.w("No stores found for the user");
-        stores.setValue(null);
-        return;
-      }
-
-      Timber.d("Fetched %d stores successfully", roleStores.size());
-      stores.setValue(RoleStoreUiModelMapper.fromDomains(roleStores));
-    } else if (result instanceof Result.Failure failure) {
-      // TODO: handle failure case, e.g., show error message
-    }
-  }
-
-  public void setSelectedStore(@NonNull RoleStoreUiModel roleStoreUiModel) {
-    RoleStore store = RoleStoreUiModelMapper.toDomain(roleStoreUiModel);
-    Disposable disposable =
-        preferencesRepository
-            .setStore(store)
-            .subscribeOn(Schedulers.io())
-            .doOnSubscribe(__ -> isLoading.postValue(true))
-            .observeOn(AndroidSchedulers.mainThread())
-            .doFinally(() -> isLoading.setValue(false))
-            .subscribe(this::onSetSelectedStoreSuccess, this::onSetSelectedStoreError);
-
-    disposables.add(disposable);
-  }
-
-  private void onSetSelectedStoreSuccess() {
-    Timber.d("Selected store set successfully");
-    setStoreResult.setValue(true);
-  }
-
-  private void onSetSelectedStoreError(Throwable throwable) {
-    Timber.e(throwable, "Error setting selected store: %s", throwable.getMessage());
-    setStoreResult.setValue(false);
-  }
-}

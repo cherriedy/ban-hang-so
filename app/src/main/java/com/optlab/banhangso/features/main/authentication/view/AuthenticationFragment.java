@@ -1,10 +1,11 @@
 package com.optlab.banhangso.features.main.authentication.view;
 
-import static android.accounts.AccountManager.KEY_PASSWORD;
 import static com.optlab.banhangso.features.main.authentication.Constants.KEY_EMAIL;
+import static com.optlab.banhangso.features.main.authentication.Constants.KEY_PASSWORD;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentAuthenticationBinding;
+import com.optlab.banhangso.features.main.activity.SharedViewModel;
 import com.optlab.banhangso.features.main.authentication.viewmodel.AuthenticationViewModel;
 import com.optlab.banhangso.features.shared.views.LoadingDialog;
 import com.optlab.banhangso.internal.utilities.NavigationUtils;
@@ -33,12 +35,14 @@ public class AuthenticationFragment extends Fragment {
   private final LoadingDialog loadingDialog = new LoadingDialog();
   private FragmentAuthenticationBinding binding;
   private AuthenticationViewModel viewModel;
+  private SharedViewModel sharedViewModel;
   private NavController navController;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     viewModel = new ViewModelProvider(this).get(AuthenticationViewModel.class);
+    sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
   }
 
   @Override
@@ -58,6 +62,30 @@ public class AuthenticationFragment extends Fragment {
     observeViewModel();
   }
 
+  private void handleAuthStateChange(@NonNull Pair<Boolean, Boolean> authState) {
+    Boolean isAuthenticated = authState.first;
+    Boolean isStoreSelected = authState.second;
+
+    Timber.d(
+        "Auth state updated: isAuthenticated=%s, isStoreSelected=%s",
+        isAuthenticated, isStoreSelected);
+
+    if (isAuthenticated != null && isAuthenticated) {
+      Timber.d("User is authenticated, checking store selection");
+      if (isStoreSelected != null && isStoreSelected) {
+        Timber.d("User has store selected, navigating to home");
+        navigateToHome();
+      } else {
+        sharedViewModel.setIsChecking(false); // Disable splash screen checking.
+        Timber.d("User has no store selected, navigating to select store");
+        navigateToSelectStore();
+      }
+    } else {
+      sharedViewModel.setIsChecking(false); // Disable splash screen checking.
+      Timber.d("User is not authenticated, staying in authentication screen");
+    }
+  }
+
   @Override
   public void onDestroyView() {
     binding = null;
@@ -65,33 +93,10 @@ public class AuthenticationFragment extends Fragment {
   }
 
   private void observeViewModel() {
-    viewModel.isAuthenticated().observe(getViewLifecycleOwner(), this::handleIsAuthenticatedState);
-    viewModel.getIsLoading().observe(getViewLifecycleOwner(), this::showLoadingDialog);
-    viewModel.getAuthResult().observe(getViewLifecycleOwner(), this::handleAuthResult);
+    viewModel.getAuthState().observe(getViewLifecycleOwner(), this::handleAuthStateChange);
+    viewModel.isLoading().observe(getViewLifecycleOwner(), this::showLoadingDialog);
     viewModel.getRegistrationFlag().observe(getViewLifecycleOwner(), this::handleRegistrationFlag);
     viewModel.getErrorFlag().observe(getViewLifecycleOwner(), this::handleErrorFlag);
-  }
-
-  private void handleIsAuthenticatedState(@NonNull Boolean result) {
-    if (result) {
-      Timber.d("User is already authenticated, checking store selection");
-      // If the user is already authenticated, check if they have a store selected
-      viewModel
-          .getStore()
-          .observe(
-              getViewLifecycleOwner(),
-              store -> {
-                if (store != null && !store.isEmpty()) {
-                  Timber.d("User has store selected, navigating to home");
-                  navigateToHome();
-                } else {
-                  Timber.d("User has no store selected, navigating to select store");
-                  navigateToSelectStore();
-                }
-              });
-    } else {
-      Timber.d("User is not authenticated, staying in authentication screen");
-    }
   }
 
   private void handleErrorFlag(Boolean result) {
@@ -105,12 +110,6 @@ public class AuthenticationFragment extends Fragment {
     if (Boolean.TRUE.equals(flag)) {
       navigateToRegistration();
       viewModel.setRegistrationFlag(false);
-    }
-  }
-
-  private void handleAuthResult(Boolean result) {
-    if (Boolean.TRUE.equals(result)) {
-      navigateToHome();
     }
   }
 

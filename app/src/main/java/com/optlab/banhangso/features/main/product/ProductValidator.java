@@ -52,6 +52,7 @@ public final class ProductValidator extends BaseValidator {
 
     // Purchase price rules (basic, comparison with selling price done in validation method)
     List<ValidationRule<Double>> purchasePriceRules = new ArrayList<>();
+    purchasePriceRules.add(ValidationRules.nonZero(R.string.alert_product_price_non_null));
     purchasePriceRules.add(ValidationRules.positiveNumber(R.string.alert_product_price_invalid));
     doubleRules.put("purchasePrice", purchasePriceRules);
 

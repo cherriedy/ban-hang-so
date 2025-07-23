@@ -2,6 +2,9 @@ package com.optlab.banhangso.features.main.store.models;
 
 import java.util.Date;
 
+/**
+ * @noinspection LombokGetterMayBeUsed, LombokSetterMayBeUsed
+ */
 public class RoleStoreUiModel extends StoreUiModel {
   private String role;
 

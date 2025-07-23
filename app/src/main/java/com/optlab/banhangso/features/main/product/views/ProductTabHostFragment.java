@@ -5,22 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
-
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentProductTabHostBinding;
 import com.optlab.banhangso.features.main.product.adapters.ProductViewPagerAdapter;
 import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
-
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
 
 @AndroidEntryPoint
 public class ProductTabHostFragment extends Fragment {
@@ -38,6 +35,8 @@ public class ProductTabHostFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    binding.mtb.setNavigationOnClickListener(
+        v -> NavHostFragment.findNavController(this).navigateUp());
     initViewPager();
     setupTitle();
     setupTabLayout();

@@ -25,7 +25,6 @@ import java.util.EnumSet
 
 @AndroidEntryPoint
 class CartListFragment : Fragment() {
-
     private var _binding: FragmentCartListBinding? = null
     private val binding: FragmentCartListBinding
         get() = _binding!!
@@ -67,7 +66,10 @@ class CartListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         navController = NavHostFragment.findNavController(this)
         binding.mtb.setNavigationOnClickListener { navController.navigateUp() }
@@ -85,7 +87,7 @@ class CartListFragment : Fragment() {
             @Suppress("DEPRECATION")
             val customer =
                 result.getSerializable(CustomerSelectionFragment.CUSTOMER_SELECTION_RESULT)
-                        as CustomerUiModel
+                    as CustomerUiModel
             viewModel.setCustomer(customer)
         }
     }
@@ -102,7 +104,9 @@ class CartListFragment : Fragment() {
         super.onDestroyView()
     }
 
-    fun navigateToCustomerSelection(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun navigateToCustomerSelection(
+        @Suppress("UNUSED_PARAMETER") view: View,
+    ) {
         val customerId = viewModel.cart.value?.customer?.id.orEmpty()
         CartListFragmentDirections.actionToCustomerSelection(customerId).also {
             Timber.d("Navigating to customer selection with ID: $customerId")
@@ -110,7 +114,9 @@ class CartListFragment : Fragment() {
         }
     }
 
-    fun navigateToPayment(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun navigateToPayment(
+        @Suppress("UNUSED_PARAMETER") view: View,
+    ) {
         CartListFragmentDirections.actionToPayment().also { navController.navigate(it) }
     }
 

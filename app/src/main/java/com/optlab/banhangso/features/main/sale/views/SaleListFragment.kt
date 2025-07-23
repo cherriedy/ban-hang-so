@@ -30,7 +30,6 @@ import java.net.ConnectException
 
 @AndroidEntryPoint
 class SaleListFragment : Fragment() {
-
     private var _binding: FragmentSaleListBinding? = null
     private val binding: FragmentSaleListBinding
         get() = _binding!!
@@ -73,7 +72,10 @@ class SaleListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         navController = NavHostFragment.findNavController(this)
         binding.mtb.setNavigationOnClickListener { navController.navigateUp() }
@@ -132,13 +134,17 @@ class SaleListFragment : Fragment() {
         binding.rvProducts.addItemDecoration(SpacingItemDecoration(gridSpacingStrategy))
     }
 
-    fun displayPrices(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun displayPrices(
+        @Suppress("UNUSED_PARAMETER") view: View,
+    ) {
         val isVisible = binding.bsPrices.clPrices.isVisible
         binding.bsPrices.clPrices.visibility = if (isVisible) View.GONE else View.VISIBLE
         binding.vOverlay.visibility = if (isVisible) View.GONE else View.VISIBLE
     }
 
-    fun navigateToCart(@Suppress("UNUSED_PARAMETER") view: View) {
+    fun navigateToCart(
+        @Suppress("UNUSED_PARAMETER") view: View,
+    ) {
         val action: NavDirections = SaleListFragmentDirections.actionToCart()
         navController.navigate(action)
     }

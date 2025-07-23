@@ -26,7 +26,6 @@ import java.util.EnumSet
 
 @AndroidEntryPoint
 class CustomerSelectionFragment : Fragment() {
-
     companion object {
         const val CUSTOMER_SELECTION_TRACKER = "CUSTOMER_SELECTION_TRACKER"
         const val CUSTOMER_SELECTION_REQUEST = "CUSTOMER_SELECTION_REQUEST"
@@ -59,7 +58,10 @@ class CustomerSelectionFragment : Fragment() {
         selectionTracker?.onSaveInstanceState(outState)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         args = CustomerSelectionFragmentArgs.fromBundle(requireArguments())
 
@@ -91,15 +93,15 @@ class CustomerSelectionFragment : Fragment() {
     private fun setupSelectionTracker(savedInstanceState: Bundle?) {
         selectionTracker =
             SelectionTracker.Builder(
-                    CUSTOMER_SELECTION_TRACKER,
-                    binding.rvOptions,
-                    CustomerSelectionAdapter.CustomerKeyProvider(listAdapter),
-                    CustomerSelectionAdapter.CustomerDetailsLookup(binding.rvOptions),
-                    StorageStrategy.createStringStorage(),
-                )
+                CUSTOMER_SELECTION_TRACKER,
+                binding.rvOptions,
+                CustomerSelectionAdapter.CustomerKeyProvider(listAdapter),
+                CustomerSelectionAdapter.CustomerDetailsLookup(binding.rvOptions),
+                StorageStrategy.createStringStorage(),
+            )
                 .withSelectionPredicate(
                     // Allow selection of a single item at a time
-                    SelectionPredicates.createSelectSingleAnything()
+                    SelectionPredicates.createSelectSingleAnything(),
                 )
                 .withOnItemActivatedListener { item, _ ->
                     item.selectionKey?.let { key ->
@@ -129,7 +131,7 @@ class CustomerSelectionFragment : Fragment() {
                         }
                     }
                 }
-            }
+            },
         )
     }
 
@@ -137,8 +139,8 @@ class CustomerSelectionFragment : Fragment() {
         with(binding.rvOptions) {
             addItemDecoration(
                 SpacingItemDecoration(
-                    LinearSpacingStrategy(context, 8, EnumSet.allOf(Direction::class.java))
-                )
+                    LinearSpacingStrategy(context, 8, EnumSet.allOf(Direction::class.java)),
+                ),
             )
             layoutManager = LinearLayoutManager(context, VERTICAL, false)
             adapter = listAdapter

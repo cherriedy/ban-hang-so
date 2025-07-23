@@ -14,18 +14,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategorySelectionViewModel
-@Inject
-constructor(private val categoryRepository: CategoryRepository) : ViewModel() {
+    @Inject
+    constructor(private val categoryRepository: CategoryRepository) : ViewModel() {
+        private val _categories: Flowable<PagingData<CategoryUiModel>>
+        val categories: Flowable<PagingData<CategoryUiModel>>
+            get() = _categories
 
-  private val _categories: Flowable<PagingData<CategoryUiModel>>
-  val categories: Flowable<PagingData<CategoryUiModel>>
-    get() = _categories
-
-  init {
-    @Suppress("OPT_IN_USAGE")
-    _categories =
-      categoryRepository.categories
-        .map { pagingData -> pagingData.map(CategoryUiModelMapper::fromDomain) }
-        .cachedIn(viewModelScope)
-  }
-}
+        init {
+            @Suppress("OPT_IN_USAGE")
+            _categories =
+                categoryRepository.categories
+                    .map { pagingData -> pagingData.map(CategoryUiModelMapper::fromDomain) }
+                    .cachedIn(viewModelScope)
+        }
+    }

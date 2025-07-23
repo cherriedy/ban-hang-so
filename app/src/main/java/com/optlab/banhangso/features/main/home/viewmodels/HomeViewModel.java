@@ -1,10 +1,12 @@
 package com.optlab.banhangso.features.main.home.viewmodels;
 
 import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 import androidx.lifecycle.MutableLiveData;
+
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.features.main.home.models.ReportSummaryUiModel;
 import com.optlab.banhangso.features.main.home.models.mappers.ReportSummaryUiModelMapper;
@@ -15,14 +17,17 @@ import com.optlab.banhangso.models.domain.ReportSummary;
 import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.domain.store.RoleStore;
 import com.optlab.banhangso.repositories.interfaces.AuthRepository;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.repositories.interfaces.ReportRepository;
+
+import java.util.Objects;
+
+import javax.inject.Inject;
+
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import java.util.Objects;
-import javax.inject.Inject;
 import timber.log.Timber;
 
 /**
@@ -33,24 +38,35 @@ public class HomeViewModel extends RxViewModel {
 
   private final AuthRepository authRepository;
   private final ReportRepository reportRepository;
-  private final PreferencesRepository preferencesRepository;
   private final MutableLiveData<Boolean> signOutResult = new MutableLiveData<>();
   private final MutableLiveData<ReportSummaryUiModel> reportSummary = new MutableLiveData<>();
 
-  private LiveData<User> user;
-  private LiveData<RoleStore> store;
+  private final LiveData<User> user;
+  private final LiveData<RoleStore> store;
 
   @Inject
   public HomeViewModel(
       AuthRepository authRepository,
-      PreferencesRepository preferencesRepository,
+      PreferencesRepositoryKt preferencesRepositoryKt,
       ReportRepository reportRepository) {
     this.authRepository = authRepository;
-    this.preferencesRepository = preferencesRepository;
     this.reportRepository = reportRepository;
 
-    user = LiveDataReactiveStreams.fromPublisher(preferencesRepository.getUser().toFlowable());
-    store = LiveDataReactiveStreams.fromPublisher(preferencesRepository.getStore().toFlowable());
+    user =
+        LiveDataReactiveStreams.fromPublisher(
+            preferencesRepositoryKt
+                .getUserRx()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()));
+
+    store =
+        LiveDataReactiveStreams.fromPublisher(
+            preferencesRepositoryKt
+                .getStoreRx()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()));
+    Timber.d(
+        "HomeViewModel initialized with user: %s, store: %s", user.getValue(), store.getValue());
 
     fetchReportSummary();
   }

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -18,7 +17,8 @@ import androidx.paging.LoadState;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentProductListBinding;
 import com.optlab.banhangso.features.main.product.adapters.ProductListAdapter;
@@ -28,14 +28,9 @@ import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingStrategy;
 import com.optlab.banhangso.repositories.interfaces.CategoryRepository;
-
-import java.util.EnumSet;
-
-import javax.inject.Inject;
-
-import autodispose2.AutoDispose;
-import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import dagger.hilt.android.AndroidEntryPoint;
+import java.util.EnumSet;
+import javax.inject.Inject;
 import kotlin.Unit;
 import timber.log.Timber;
 

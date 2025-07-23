@@ -5,18 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.optlab.banhangso.databinding.FragmentBrandEditBinding;
 import com.optlab.banhangso.features.main.brand.viewmodel.BrandEditViewModel;
 import com.optlab.banhangso.features.shared.views.LoadingDialog;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint

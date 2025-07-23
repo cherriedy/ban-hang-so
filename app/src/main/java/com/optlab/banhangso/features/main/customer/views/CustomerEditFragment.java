@@ -144,6 +144,17 @@ public class CustomerEditFragment extends Fragment {
   private void observeViewModel() {
     viewModel.isLoading().observe(getViewLifecycleOwner(), this::handleLoadingState);
     viewModel.getMessageResId().observe(getViewLifecycleOwner(), this::showToast);
+    viewModel.getOperationCompleted().observe(getViewLifecycleOwner(), this::handleRefreshFlag);
+  }
+
+  private void handleRefreshFlag(@NonNull Boolean completed) {
+    if (completed) {
+      Bundle result = new Bundle();
+      result.putBoolean(CustomerListFragment.CUSTOMER_REFRESH_FLAG, true);
+      requireActivity()
+          .getSupportFragmentManager()
+          .setFragmentResult(CustomerListFragment.CUSTOMER_LIST_REQUEST_KEY, result);
+    }
   }
 
   private void showToast(@NonNull Integer messageResId) {

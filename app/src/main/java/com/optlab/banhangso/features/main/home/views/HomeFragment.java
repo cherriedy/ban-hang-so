@@ -17,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentHomeBinding;
+import com.optlab.banhangso.features.main.activity.SharedViewModel;
 import com.optlab.banhangso.features.main.home.viewmodels.HomeViewModel;
 import com.optlab.banhangso.features.shared.views.LoadingDialog;
 import com.optlab.banhangso.internal.utilities.NavigationUtils;
@@ -34,6 +35,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+    SharedViewModel sharedViewModel =
+        new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+    sharedViewModel.setIsChecking(false); // Disable splash screen checking.
   }
 
   @Override
@@ -51,12 +55,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     super.onViewCreated(view, savedInstanceState);
     navController = NavHostFragment.findNavController(this);
     NavigationUI.setupWithNavController(binding.bnv, navController);
-    binding.srlMain.setOnRefreshListener(
-        () -> {
-          viewModel.fetchReportSummary();
-          binding.srlMain.setRefreshing(false);
-        });
+    binding.srlMain.setOnRefreshListener(this::refreshReportSummary);
     observeViewModel();
+  }
+
+  private void refreshReportSummary() {
+    viewModel.fetchReportSummary();
+    binding.srlMain.setRefreshing(false);
   }
 
   @Override
@@ -80,8 +85,13 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
       NavDirections action = HomeFragmentDirections.actionToTransaction();
       controller.navigate(action);
     } else if (viewId == R.id.mcv_store) {
-      NavDirections action = HomeFragmentDirections.actionToEditStore(false);
+      NavDirections action = HomeFragmentDirections.actionToEditStore(true);
       controller.navigate(action);
+    } else if (viewId == R.id.mcv_report || viewId == R.id.tv_more_overview) {
+      NavDirections action = HomeFragmentDirections.actionToReport();
+      controller.navigate(action);
+    } else if (viewId == R.id.mcv_warehouse) {
+      Toast.makeText(requireContext(), getString(R.string.update_later), Toast.LENGTH_SHORT).show();
     }
   }
 
@@ -102,7 +112,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
       binding.srlMain.setRefreshing(false);
     }
 
-    if (result) {
+    if (result && !loadingDialog.isAdded()) {
       loadingDialog.show(
           getParentFragmentManager(), "loadingDialog_" + this.getClass().getSimpleName());
     } else if (loadingDialog.isAdded()) {

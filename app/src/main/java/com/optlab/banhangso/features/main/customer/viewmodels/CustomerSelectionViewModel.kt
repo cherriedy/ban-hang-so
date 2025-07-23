@@ -14,15 +14,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CustomerSelectionViewModel
-@Inject
-constructor(private val customerRepository: CustomerRepository) : ViewModel() {
+    @Inject
+    constructor(private val customerRepository: CustomerRepository) : ViewModel() {
+        @Suppress("OPT_IN_USAGE")
+        private val _customers: Flowable<PagingData<CustomerUiModel>> =
+            customerRepository.customers
+                .map { pagingData -> pagingData.map(CustomerUiModelMappers::fromDomain) }
+                .cachedIn(viewModelScope)
 
-    @Suppress("OPT_IN_USAGE")
-    private val _customers: Flowable<PagingData<CustomerUiModel>> =
-        customerRepository.customers
-            .map { pagingData -> pagingData.map(CustomerUiModelMappers::fromDomain) }
-            .cachedIn(viewModelScope)
-
-    val customers: Flowable<PagingData<CustomerUiModel>>
-        get() = _customers
-}
+        val customers: Flowable<PagingData<CustomerUiModel>>
+            get() = _customers
+    }

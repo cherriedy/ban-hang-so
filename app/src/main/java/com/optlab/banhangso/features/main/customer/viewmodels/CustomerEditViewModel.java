@@ -34,6 +34,7 @@ public class CustomerEditViewModel extends UiViewModel<CustomerUiModel> {
   private final CustomerValidator customerValidator;
   private final MutableLiveData<Boolean> isEditing = new MutableLiveData<>();
   private final MutableLiveData<Boolean> canSubmit = new MutableLiveData<>();
+  private final MutableLiveData<Boolean> operationCompleted = new MutableLiveData<>();
 
   private Observable.OnPropertyChangedCallback customerOnPropertyChangedCallback;
 
@@ -116,6 +117,10 @@ public class CustomerEditViewModel extends UiViewModel<CustomerUiModel> {
     return canSubmit;
   }
 
+  @NonNull public LiveData<Boolean> getOperationCompleted() {
+    return operationCompleted;
+  }
+
   public void loadCustomerById(@NonNull String customerId) {
     CustomerUiModel currentCustomer = uiModel.getValue();
     if (currentCustomer == null) {
@@ -189,6 +194,7 @@ public class CustomerEditViewModel extends UiViewModel<CustomerUiModel> {
 
   private void onCreateCustomerSuccess(Result<Void> result) {
     if (result instanceof Result.Success<Void>) {
+      operationCompleted.setValue(true);
       messageResId.setValue(R.string.alter_customer_create_success);
     } else if (result instanceof Result.Failure<Void> failure) {
       AppError appError = failure.getError();
@@ -207,6 +213,7 @@ public class CustomerEditViewModel extends UiViewModel<CustomerUiModel> {
 
   private void onDeleteCustomerSuccess(Result<Void> result) {
     if (result instanceof Result.Success<Void>) {
+      operationCompleted.setValue(true);
       Timber.d("Customer deleted successfully.");
       messageResId.setValue(R.string.alter_customer_delete_success);
     } else if (result instanceof Result.Failure<Void> failure) {
@@ -235,6 +242,7 @@ public class CustomerEditViewModel extends UiViewModel<CustomerUiModel> {
   private void onUpdateCustomerSuccess(Result<Void> result) {
     if (result instanceof Result.Success) {
       messageResId.setValue(R.string.alter_update_customer_success);
+      operationCompleted.setValue(true);
       Timber.d("Customer updated successfully.");
     } else if (result instanceof Result.Failure<Void> failure) {
       AppError appError = failure.getError();

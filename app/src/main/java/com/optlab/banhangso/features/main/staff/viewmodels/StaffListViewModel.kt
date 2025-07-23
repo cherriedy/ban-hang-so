@@ -13,56 +13,55 @@ import com.optlab.banhangso.repositories.interfaces.StaffRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.processors.BehaviorProcessor
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class StaffListViewModel
-@Inject
-constructor(
-    private val staffRepository: StaffRepository,
-) : ViewModel() {
-    private val staffs: Flowable<PagingData<StaffUiModel>>
-    private val searchQuery: ObservableField<String> = ObservableField("")
-    private val searchProcessor: BehaviorProcessor<String> = BehaviorProcessor.createDefault("")
+    @Inject
+    constructor(
+        private val staffRepository: StaffRepository,
+    ) : ViewModel() {
+        private val _staffs: Flowable<PagingData<StaffUiModel>>
+        val staffs: Flowable<PagingData<StaffUiModel>>
+            get() = _staffs
 
-    init {
-        staffs =
-            searchProcessor.distinctUntilChanged().doOnNext { Timber.d("Staff search query: $it") }
-                .switchMap { query ->
-                    if (query.isBlank()) {
-                        return@switchMap staffRepository.staffs.map { pagingData ->
-                            pagingData.map(StaffUiModelMapper::fromDomain)
-                        }.cachedIn(viewModelScope)
-                    } else {
-                        return@switchMap staffRepository.searchStaffs(query).map { pagingData ->
+        private val _searchQuery: ObservableField<String> = ObservableField("")
+        val searchQuery: ObservableField<String>
+            get() = _searchQuery
+
+        private val searchProcessor: BehaviorProcessor<String> = BehaviorProcessor.createDefault("")
+
+        init {
+            _staffs =
+                searchProcessor.distinctUntilChanged().doOnNext { Timber.d("Staff search query: $it") }
+                    .switchMap { query ->
+                        @Suppress("OPT_IN_USAGE")
+                        if (query.isBlank()) {
+                            staffRepository.staffs
+                        } else {
+                            staffRepository.searchStaffs(query)
+                        }.map { pagingData ->
                             pagingData.map(StaffUiModelMapper::fromDomain)
                         }.cachedIn(viewModelScope)
                     }
-                }
 
-        observeSearchQuery()
+            observeSearchQuery()
+        }
+
+        private fun observeSearchQuery() {
+            _searchQuery.addOnPropertyChangedCallback(
+                object : Observable.OnPropertyChangedCallback() {
+                    override fun onPropertyChanged(
+                        sender: Observable?,
+                        propertyId: Int,
+                    ) {
+                        @Suppress("UNCHECKED_CAST")
+                        val query =
+                            (sender as ObservableField<String?>).get()
+                        searchProcessor.onNext(query ?: "")
+                    }
+                },
+            )
+        }
     }
-
-    private fun observeSearchQuery() {
-        searchQuery.addOnPropertyChangedCallback(
-            object : Observable.OnPropertyChangedCallback() {
-                override fun onPropertyChanged(
-                    sender: Observable?,
-                    propertyId: Int,
-                ) {
-                    @Suppress("UNCHECKED_CAST")
-                    val query =
-                        (sender as ObservableField<String?>).get()
-                    searchProcessor.onNext(query ?: "")
-                }
-            },
-        )
-    }
-
-    fun getStaffs() = staffs
-
-    fun getSearchQuery() = searchQuery
-}

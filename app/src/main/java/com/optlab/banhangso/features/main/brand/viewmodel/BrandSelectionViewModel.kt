@@ -13,18 +13,19 @@ import io.reactivex.rxjava3.core.Flowable
 import javax.inject.Inject
 
 @HiltViewModel
-class BrandSelectionViewModel @Inject constructor(private val brandRepository: BrandRepository) :
-  ViewModel() {
+class BrandSelectionViewModel
+    @Inject
+    constructor(private val brandRepository: BrandRepository) :
+    ViewModel() {
+        private val _brands: Flowable<PagingData<BrandUiModel>>
+        val brands: Flowable<PagingData<BrandUiModel>>
+            get() = _brands
 
-  private val _brands: Flowable<PagingData<BrandUiModel>>
-  val brands: Flowable<PagingData<BrandUiModel>>
-    get() = _brands
-
-  init {
-    @Suppress("OPT_IN_USAGE")
-    _brands =
-      brandRepository.brands
-        .map { pagingData -> pagingData.map(BrandUiModelMapper::fromDomain) }
-        .cachedIn(viewModelScope)
-  }
-}
+        init {
+            @Suppress("OPT_IN_USAGE")
+            _brands =
+                brandRepository.brands
+                    .map { pagingData -> pagingData.map(BrandUiModelMapper::fromDomain) }
+                    .cachedIn(viewModelScope)
+        }
+    }

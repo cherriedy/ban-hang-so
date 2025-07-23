@@ -5,6 +5,7 @@ import static com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingS
 import static com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy.Direction.RIGHT;
 
 import android.content.ContentValues;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,6 +20,7 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -44,24 +46,17 @@ import com.optlab.banhangso.features.shared.views.LoadingDialog;
 import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
 import com.optlab.banhangso.models.application.UploadableImage;
-import com.optlab.banhangso.repositories.interfaces.BrandRepository;
-import com.optlab.banhangso.repositories.interfaces.CategoryRepository;
 import dagger.hilt.android.AndroidEntryPoint;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
-import javax.inject.Inject;
 import timber.log.Timber;
 
 @AndroidEntryPoint
-@SuppressWarnings({"SimplifiableIfStatement", "FieldCanBeLocal"})
 public class ProductEditFragment extends Fragment {
 
   public static final String PRODUCT_EDIT_REQUEST = "PRODUCT_EDIT_REQUEST";
   public static final String REFRESH_FLAG = "REFRESH_FLAG";
-
-  @Inject BrandRepository brandRepository;
-  @Inject CategoryRepository categoryRepository;
 
   private final LoadingDialog loadingDialog = new LoadingDialog();
   private FragmentProductEditBinding binding;
@@ -72,6 +67,7 @@ public class ProductEditFragment extends Fragment {
   private ActivityResultLauncher<PickVisualMediaRequest> pickMultipleImagesLauncher;
   private ActivityResultLauncher<ScanOptions> barcodeScannerLauncher;
   private ActivityResultLauncher<Uri> takePictureLauncher;
+  private ActivityResultLauncher<String> requestCameraPermissionLauncher;
   private Uri capturedPictureUri;
 
   @Override
@@ -80,6 +76,7 @@ public class ProductEditFragment extends Fragment {
     pickMultipleImagesLauncher = registerPickMultipleImagesLauncher();
     takePictureLauncher = registerTakePictureLauncher();
     barcodeScannerLauncher = registerScanContractLauncher();
+    requestCameraPermissionLauncher = registerCameraPermissionLauncher();
 
     viewModel = new ViewModelProvider(this).get(ProductEditViewModel.class);
     args = ProductEditFragmentArgs.fromBundle(requireArguments());
@@ -356,6 +353,20 @@ public class ProductEditFragment extends Fragment {
         });
   }
 
+  @NonNull private ActivityResultLauncher<String> registerCameraPermissionLauncher() {
+    return registerForActivityResult(
+        new ActivityResultContracts.RequestPermission(),
+        isGranted -> {
+          if (Boolean.TRUE.equals(isGranted)) {
+            launchCameraForImageCapture();
+          } else {
+            Toast.makeText(
+                    requireContext(), getString(R.string.camera_requirement), Toast.LENGTH_SHORT)
+                .show();
+          }
+        });
+  }
+
   /**
    * Handles the click event for the barcode scanner icon. This method will be called when the user
    * taps the scanner icon in the text input fields (barcode or description).
@@ -394,12 +405,22 @@ public class ProductEditFragment extends Fragment {
    * @noinspection unused
    */
   public void launchTakePicture(@NonNull View view) {
+    if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
+        != PackageManager.PERMISSION_GRANTED) {
+      requestCameraPermissionLauncher.launch(android.Manifest.permission.CAMERA);
+      return;
+    }
+
+    launchCameraForImageCapture();
+  }
+
+  private void launchCameraForImageCapture() {
     ContentValues contentValues = new ContentValues();
 
     contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg");
 
     // Add name with 'image_' prefix and random UUID to ensure uniqueness
-    String displayName = "image_" + System.currentTimeMillis() + ".jpep";
+    String displayName = "image_" + System.currentTimeMillis() + ".jpg";
     contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, displayName);
 
     // Create a placeholder URI for the image taken by the camera.

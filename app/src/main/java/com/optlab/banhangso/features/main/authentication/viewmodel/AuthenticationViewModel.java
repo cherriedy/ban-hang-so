@@ -8,6 +8,7 @@ import static com.optlab.banhangso.features.main.authentication.Constants.KEY_EM
 import static com.optlab.banhangso.features.main.authentication.Constants.KEY_IS_SIGN_IN;
 import static com.optlab.banhangso.features.main.authentication.Constants.KEY_PASSWORD;
 
+import android.util.Pair;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.databinding.ObservableArrayMap;
@@ -15,19 +16,17 @@ import androidx.databinding.ObservableMap;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.SavedStateHandle;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.Transformations;
 import com.optlab.banhangso.features.main.authentication.AuthValidator;
+import com.optlab.banhangso.features.shared.viewmodels.RxViewModel;
 import com.optlab.banhangso.models.application.AppError;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.store.RoleStore;
 import com.optlab.banhangso.repositories.interfaces.AuthRepository;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.core.BackpressureStrategy;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.util.function.Consumer;
@@ -38,62 +37,71 @@ import timber.log.Timber;
  * @noinspection LombokGetterMayBeUsed
  */
 @HiltViewModel
-public class AuthenticationViewModel extends ViewModel {
+public class AuthenticationViewModel extends RxViewModel {
 
   private final SavedStateHandle savedStateHandle;
   private final AuthValidator validator;
   private final AuthRepository authRepository;
-  private final PreferencesRepository preferencesRepository;
-  private final CompositeDisposable disposables = new CompositeDisposable();
-  private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
-  private final MutableLiveData<Boolean> authResult = new MutableLiveData<>(false);
+  private final PreferencesRepositoryKt preferencesRepositoryKt;
   private final MutableLiveData<Boolean> registrationFlag = new MutableLiveData<>(false);
   private final MutableLiveData<Boolean> canAuthenticate = new MutableLiveData<>(false);
   private final ObservableArrayMap<String, String> inputFields = new ObservableArrayMap<>();
   private final ObservableArrayMap<String, String> errors = new ObservableArrayMap<>();
   private final MutableLiveData<Boolean> errorFlag = new MutableLiveData<>();
+  private final MutableLiveData<Boolean> isChecking = new MutableLiveData<>(false);
 
-  private final LiveData<Boolean> isAuthenticated;
-  private final LiveData<RoleStore> store;
+  /**
+   * The first value indicates whether the user is authenticated, and the second value indicates
+   * whether the store is empty or not.
+   */
+  private final LiveData<Pair<Boolean, Boolean>> authState;
 
-  private Observer<Object> signInFlag;
+  /** LiveData that clears errors when sign-in state changes */
+  private final LiveData<Boolean> errorClearingSignInState;
+
+  private final LiveData<Boolean> isAuthenticatedLiveData;
+  private final LiveData<RoleStore> storeLiveData;
 
   @Inject
   public AuthenticationViewModel(
       SavedStateHandle savedStateHandle,
-      @NonNull PreferencesRepository preferencesRepository,
+      @NonNull PreferencesRepositoryKt preferencesRepositoryKt,
       AuthValidator validator,
       @NonNull AuthRepository authRepository) {
     this.savedStateHandle = savedStateHandle;
-    this.preferencesRepository = preferencesRepository;
+    this.preferencesRepositoryKt = preferencesRepositoryKt;
     this.validator = validator;
     this.authRepository = authRepository;
 
-    isAuthenticated = observeIsAuthenticated();
-    store = observeStoreUpdates();
+    isAuthenticatedLiveData =
+        LiveDataReactiveStreams.fromPublisher(
+            preferencesRepositoryKt
+                .isAuthenticatedRx()
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(__ -> isChecking.postValue(true))
+                .observeOn(AndroidSchedulers.mainThread()));
+
+    storeLiveData =
+        LiveDataReactiveStreams.fromPublisher(
+            preferencesRepositoryKt
+                .getStoreRx()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()));
+
+    errorClearingSignInState = initSignInState();
+    authState = Transformations.switchMap(isAuthenticatedLiveData, this::handleAuthenticationState);
 
     initAuthInputsListener();
-    initSignInState();
   }
 
-  @NonNull private LiveData<RoleStore> observeStoreUpdates() {
-    return LiveDataReactiveStreams.fromPublisher(
-        preferencesRepository
-            .observeStore()
-            .subscribeOn(Schedulers.io())
-            .toFlowable(BackpressureStrategy.LATEST));
-  }
-
-  @NonNull private LiveData<Boolean> observeIsAuthenticated() {
-    return LiveDataReactiveStreams.fromPublisher(
-        authRepository
-            .isAuthenticated()
-            .subscribeOn(Schedulers.io())
-            .toFlowable(BackpressureStrategy.LATEST));
-  }
-
-  public LiveData<RoleStore> getStore() {
-    return store;
+  @NonNull private LiveData<Pair<Boolean, Boolean>> handleAuthenticationState(
+      @NonNull Boolean isAuthenticated) {
+    if (!isAuthenticated) {
+      return new MutableLiveData<>(new Pair<>(false, null));
+    } else {
+      return Transformations.map(
+          storeLiveData, store -> new Pair<>(true, store != null && !store.isEmpty()));
+    }
   }
 
   public ObservableArrayMap<String, String> getInputFields() {
@@ -133,23 +141,21 @@ public class AuthenticationViewModel extends ViewModel {
   protected void onCleared() {
     inputFields.clear();
     errors.clear();
-
-    savedStateHandle.getLiveData(KEY_IS_SIGN_IN).removeObserver(signInFlag);
-    savedStateHandle.remove(KEY_IS_SIGN_IN);
-
-    disposables.clear();
     super.onCleared();
   }
 
-  private void initSignInState() {
-    // Observer to clear errors when the sign-in flag changes
-    signInFlag = isSignIn -> errors.clear();
+  @NonNull private LiveData<Boolean> initSignInState() {
     // Retrieve the sign-in state from SavedStateHandle
     Boolean isSignIn = savedStateHandle.get(KEY_IS_SIGN_IN);
     // If the sign-in state is not set, default to true (sign-in mode)
     savedStateHandle.set(KEY_IS_SIGN_IN, isSignIn == null || isSignIn);
-    // Observe changes to the sign-in flag to clear errors
-    savedStateHandle.getLiveData(KEY_IS_SIGN_IN).observeForever(signInFlag);
+
+    return Transformations.map(
+        savedStateHandle.getLiveData(KEY_IS_SIGN_IN, false),
+        signedIn -> {
+          errors.clear();
+          return signedIn;
+        });
   }
 
   public LiveData<Boolean> isSignIn() {
@@ -160,12 +166,8 @@ public class AuthenticationViewModel extends ViewModel {
     savedStateHandle.set(KEY_IS_SIGN_IN, isSignIn);
   }
 
-  public LiveData<Boolean> getIsLoading() {
-    return isLoading;
-  }
-
-  public LiveData<Boolean> getAuthResult() {
-    return authResult;
+  public LiveData<Boolean> isChecking() {
+    return isChecking;
   }
 
   public LiveData<Boolean> getRegistrationFlag() {
@@ -180,8 +182,8 @@ public class AuthenticationViewModel extends ViewModel {
     registrationFlag.setValue(shouldNavigate);
   }
 
-  public LiveData<Boolean> isAuthenticated() {
-    return isAuthenticated;
+  public LiveData<Pair<Boolean, Boolean>> getAuthState() {
+    return authState;
   }
 
   public LiveData<Boolean> getErrorFlag() {
@@ -263,11 +265,7 @@ public class AuthenticationViewModel extends ViewModel {
           authRepository
               .logInWithEmailAndPassword(email, password)
               .subscribeOn(Schedulers.io())
-              .doOnSubscribe(
-                  __ -> {
-                    isLoading.postValue(true);
-                    Timber.d("Starting authentication for email: %s", email);
-                  })
+              .doOnSubscribe(__ -> isLoading.postValue(true))
               .observeOn(AndroidSchedulers.mainThread())
               .doFinally(() -> isLoading.setValue(false))
               .subscribe(this::onLogInSuccess, this::onLogInError);
@@ -279,17 +277,14 @@ public class AuthenticationViewModel extends ViewModel {
   }
 
   private void onLogInError(Throwable throwable) {
-    authResult.setValue(false);
     errorFlag.setValue(true);
     Timber.e(throwable, "Authentication failed: %s", throwable.getMessage());
   }
 
   private void onLogInSuccess(Result<Void> result) {
     if (result instanceof Result.Success<Void>) {
-      authResult.setValue(true);
       Timber.d("Authentication successful");
     } else if (result instanceof Result.Failure<Void> failure) {
-      authResult.setValue(false);
       if (failure.getError() instanceof AppError.UnknownError) {
         errorFlag.setValue(true);
       }

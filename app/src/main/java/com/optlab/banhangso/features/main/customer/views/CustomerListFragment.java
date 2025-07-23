@@ -1,5 +1,6 @@
 package com.optlab.banhangso.features.main.customer.views;
 
+import static com.optlab.banhangso.features.shared.utilities.LoadStateUtils.handleLoadStateError;
 import static com.optlab.banhangso.internal.utilities.ContactUtils.getDetails;
 
 import android.app.Activity;
@@ -21,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.paging.LoadState;
 import autodispose2.AutoDispose;
 import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import com.optlab.banhangso.databinding.FragmentCustomerListBinding;
@@ -28,17 +30,17 @@ import com.optlab.banhangso.features.main.customer.adapters.CustomerListAdapter;
 import com.optlab.banhangso.features.main.customer.models.CustomerUiModel;
 import com.optlab.banhangso.features.main.customer.viewmodels.CustomerListViewModel;
 import com.optlab.banhangso.internal.utilities.ContactUtils;
-import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy;
-import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
-import com.optlab.banhangso.internal.utilities.itemspacing.SpacingStrategy;
 import dagger.hilt.android.AndroidEntryPoint;
-import java.util.EnumSet;
 import java.util.Map;
+import kotlin.Unit;
 import org.jetbrains.annotations.Contract;
 import timber.log.Timber;
 
 @AndroidEntryPoint
 public class CustomerListFragment extends Fragment {
+
+  public static final String CUSTOMER_LIST_REQUEST_KEY = "CUSTOMER_LIST_REQUEST_KEY";
+  public static final String CUSTOMER_REFRESH_FLAG = "CUSTOMER_REFRESH_FLAG";
 
   private FragmentCustomerListBinding binding;
   private CustomerListViewModel viewModel;
@@ -116,8 +118,24 @@ public class CustomerListFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     navController = NavHostFragment.findNavController(this);
+    binding.mtb.setNavigationOnClickListener(v -> navController.navigateUp());
     setUpRecyclerView();
     observeViewModel();
+    registerCustomerRefreshListener();
+  }
+
+  private void registerCustomerRefreshListener() {
+    requireActivity()
+        .getSupportFragmentManager()
+        .setFragmentResultListener(
+            CUSTOMER_LIST_REQUEST_KEY,
+            getViewLifecycleOwner(),
+            (requestKey, result) -> {
+              boolean complete = result.getBoolean(CUSTOMER_REFRESH_FLAG, false);
+              if (complete) {
+                listAdapter.refresh();
+              }
+            });
   }
 
   /**
@@ -182,14 +200,24 @@ public class CustomerListFragment extends Fragment {
 
   private void setUpRecyclerView() {
     binding.srlCustomers.setOnRefreshListener(listAdapter::refresh);
-
-    SpacingStrategy spacingStrategy =
-        new LinearSpacingStrategy(
-            requireContext(), 8, EnumSet.allOf(LinearSpacingStrategy.Direction.class));
-    binding.rvCustomers.addItemDecoration(new SpacingItemDecoration(spacingStrategy));
-
+    setupContactLoadingState();
     binding.rvCustomers.setHasFixedSize(true);
     binding.rvCustomers.setAdapter(listAdapter);
+  }
+
+  private void setupContactLoadingState() {
+    listAdapter.addLoadStateListener(
+        loadState -> {
+          boolean isLoading = loadState.getRefresh() instanceof LoadState.Loading;
+          binding.srlCustomers.setRefreshing(isLoading);
+
+          boolean empty = !isLoading && listAdapter.getItemCount() == 0;
+          binding.tvEmptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
+
+          handleLoadStateError(requireContext(), loadState);
+
+          return Unit.INSTANCE;
+        });
   }
 
   private void navigateToDetail(@NonNull String customerId) {

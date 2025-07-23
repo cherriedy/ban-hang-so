@@ -18,7 +18,6 @@ import com.optlab.banhangso.internal.utilities.itemspacing.GridSpacingStrategy
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration
 
 class PaymentFragment : Fragment() {
-
     private var _binding: FragmentPaymentBinding? = null
     private val binding: FragmentPaymentBinding
         get() = _binding!!
@@ -50,7 +49,10 @@ class PaymentFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         navController = NavHostFragment.findNavController(this)
         binding.mtb.setNavigationOnClickListener { navController.navigateUp() }

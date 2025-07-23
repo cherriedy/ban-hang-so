@@ -4,15 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
-import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentStoreEditBinding;
 import com.optlab.banhangso.features.main.store.viewmodel.StoreEditViewModel;
 import com.optlab.banhangso.features.shared.views.LoadingDialog;
@@ -24,12 +22,20 @@ public class StoreEditFragment extends Fragment {
   private FragmentStoreEditBinding binding;
   private StoreEditFragmentArgs args;
   private StoreEditViewModel viewModel;
+  private NavController navController;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     args = StoreEditFragmentArgs.fromBundle(requireArguments());
     viewModel = new ViewModelProvider(this).get(StoreEditViewModel.class);
+    configureInteractionMode();
+  }
+
+  private void configureInteractionMode() {
+    boolean isEditing = args.getIsEditing();
+    viewModel.setIsEditing(isEditing);
+    if (isEditing) viewModel.loadStore();
   }
 
   @Override
@@ -37,7 +43,6 @@ public class StoreEditFragment extends Fragment {
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     binding = FragmentStoreEditBinding.inflate(inflater, container, false);
     binding.setLifecycleOwner(getViewLifecycleOwner());
-    binding.setIsCreateMode(args.getIsCreateMode());
     binding.setViewModel(viewModel);
     return binding.getRoot();
   }
@@ -45,44 +50,37 @@ public class StoreEditFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    binding.mtb.setNavigationOnClickListener(v -> Navigation.findNavController(v).navigateUp());
-    viewModel.loadStoreById(args.getStoreId()); // Load the store data based on id
+    navController = NavHostFragment.findNavController(this);
+    binding.mtb.setNavigationOnClickListener(v -> navController.navigateUp());
     observeViewModel();
   }
 
   private void observeViewModel() {
-    viewModel.getIsLoading().observe(getViewLifecycleOwner(), this::handleLoadingState);
-    viewModel.getSaveResult().observe(getViewLifecycleOwner(), this::handleCreateStoreResult);
+    viewModel.isLoading().observe(getViewLifecycleOwner(), this::handleLoadingState);
+    viewModel.getMessageResId().observe(getViewLifecycleOwner(), this::showToast);
+    viewModel.getOperationCompleted().observe(getViewLifecycleOwner(), this::handleRefreshRequest);
   }
 
-  private void handleLoadingState(Boolean isProcessing) {
-    if (Boolean.TRUE.equals(isProcessing)) {
-      showLoadingDialog();
-    } else {
-      dismissLoadingDialog();
+  private void handleRefreshRequest(@NonNull Boolean completed) {
+    if (completed) {
+      Bundle result = new Bundle();
+      result.putBoolean(SelectStoreFragment.STORE_REFRESH_KEY, true);
+      requireActivity()
+          .getSupportFragmentManager()
+          .setFragmentResult(SelectStoreFragment.SELECT_STORE_REQUEST_KEY, result);
     }
   }
 
-  private void handleCreateStoreResult(Boolean result) {
-    if (Boolean.TRUE.equals(result)) {
-      Snackbar.make(
-              requireView(),
-              R.string.notify_create_store_successful,
-              BaseTransientBottomBar.LENGTH_SHORT)
-          .show();
-      NavHostFragment.findNavController(this).navigateUp();
-    }
+  private void showToast(int messageResId) {
+    navController.navigateUp(); // Navigate up to close the fragment.
+    Toast.makeText(requireContext(), getString(messageResId), Toast.LENGTH_SHORT).show();
   }
 
-  private void showLoadingDialog() {
-    if (!loadingDialog.isAdded()) {
+  private void handleLoadingState(@NonNull Boolean result) {
+    if (result && !loadingDialog.isAdded()) {
       loadingDialog.show(
           getParentFragmentManager(), "loadingDialog_" + this.getClass().getSimpleName());
-    }
-  }
-
-  private void dismissLoadingDialog() {
-    if (loadingDialog.isAdded()) {
+    } else if (loadingDialog.isAdded()) {
       loadingDialog.dismiss();
     }
   }

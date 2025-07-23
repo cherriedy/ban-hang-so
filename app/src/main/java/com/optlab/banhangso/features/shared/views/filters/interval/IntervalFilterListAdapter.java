@@ -1,4 +1,4 @@
-package com.optlab.banhangso.features.main.transaction.adapters;
+package com.optlab.banhangso.features.shared.views.filters.interval;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -13,11 +13,11 @@ public class IntervalFilterListAdapter
     extends RecyclerView.Adapter<IntervalFilterListAdapter.ViewHolder> {
 
   @NonNull private final List<Interval> intervals = Interval.getIntervals();
-  @NonNull private final Consumer<String> consumer;
+  @NonNull private final Consumer<Interval> consumer;
 
   private int selectedPosition = RecyclerView.NO_POSITION;
 
-  public IntervalFilterListAdapter(@NonNull Consumer<String> consumer) {
+  public IntervalFilterListAdapter(@NonNull Consumer<Interval> consumer) {
     this.consumer = consumer;
   }
 
@@ -31,6 +31,14 @@ public class IntervalFilterListAdapter
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     holder.bind(intervals.get(position));
+  }
+
+  public void setSelectedPosition(@NonNull Interval interval) {
+    int intervalPosition = intervals.indexOf(interval);
+    // If the position is -1, it means the interval is not found in the list.
+    // If the interval is not found, we do not change the selected position.
+    if (intervalPosition == -1) return;
+    setSelectedPosition(intervalPosition);
   }
 
   public void setSelectedPosition(int newPosition) {
@@ -65,7 +73,7 @@ public class IntervalFilterListAdapter
     public void bind(@NonNull Interval interval) {
       binding.setFilter(interval);
 
-      int currentPosition = getLayoutPosition();
+      int currentPosition = getBindingAdapterPosition();
       boolean checked = selectedPosition == currentPosition;
       binding.chipInterval.setChecked(checked);
       binding.chipInterval.setCheckedIconVisible(checked);
@@ -74,11 +82,13 @@ public class IntervalFilterListAdapter
 
       binding
           .getRoot()
-          .setOnClickListener(
-              v -> {
-                setSelectedPosition(currentPosition);
-                consumer.accept(interval.getValue());
-              });
+          .setOnClickListener(__ -> onItemSelected(interval, currentPosition, checked));
+    }
+
+    private void onItemSelected(@NonNull Interval interval, int currentPosition, boolean checked) {
+      setSelectedPosition(currentPosition); // Toggle the selection state.
+      // Notify the consumer with the selected interval or null if unselected.
+      consumer.accept(checked ? null : interval);
     }
   }
 }

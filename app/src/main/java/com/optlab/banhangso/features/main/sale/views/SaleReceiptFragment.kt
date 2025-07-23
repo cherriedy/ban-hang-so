@@ -5,7 +5,6 @@ import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.navigation.findNavController
@@ -21,7 +20,6 @@ import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration
 import java.util.EnumSet
 
 class SaleReceiptFragment : Fragment() {
-
     private var _binding: FragmentSaleReceiptBinding? = null
     private val binding: FragmentSaleReceiptBinding
         get() = _binding!!
@@ -43,7 +41,10 @@ class SaleReceiptFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         observeViewModel()
@@ -68,10 +69,7 @@ class SaleReceiptFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.receipt.observe(viewLifecycleOwner) {
-            Toast.makeText(context, "Receipt loaded successfully", Toast.LENGTH_SHORT).show()
-            listAdapter.submitList(it.items)
-        }
+        viewModel.receipt.observe(viewLifecycleOwner) { listAdapter.submitList(it.items) }
     }
 
     private fun setupScrollableNote() {

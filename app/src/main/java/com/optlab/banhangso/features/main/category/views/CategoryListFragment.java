@@ -1,13 +1,12 @@
 package com.optlab.banhangso.features.main.category.views;
 
-import static com.optlab.banhangso.features.shared.utilities.LoadStateErrorUtil.handleLoadStateError;
+import static com.optlab.banhangso.features.shared.utilities.LoadStateUtils.handleLoadStateError;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -18,7 +17,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.paging.CombinedLoadStates;
 import androidx.paging.LoadState;
 import androidx.recyclerview.widget.ItemTouchHelper;
-
+import autodispose2.AutoDispose;
+import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.databinding.FragmentCategoryListBinding;
 import com.optlab.banhangso.features.main.category.adapters.CategoryListAdapter;
@@ -28,12 +28,8 @@ import com.optlab.banhangso.features.main.product.views.ProductTabHostFragmentDi
 import com.optlab.banhangso.features.shared.views.DeleteConfirmationDialog;
 import com.optlab.banhangso.internal.utilities.itemspacing.LinearSpacingStrategy;
 import com.optlab.banhangso.internal.utilities.itemspacing.SpacingItemDecoration;
-
-import java.util.EnumSet;
-
-import autodispose2.AutoDispose;
-import autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider;
 import dagger.hilt.android.AndroidEntryPoint;
+import java.util.EnumSet;
 import kotlin.Unit;
 import timber.log.Timber;
 

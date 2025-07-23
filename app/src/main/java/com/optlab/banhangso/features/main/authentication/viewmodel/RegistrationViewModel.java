@@ -22,11 +22,11 @@ import androidx.databinding.ObservableMap;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
-import androidx.lifecycle.ViewModel;
 
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.features.main.authentication.AuthValidator;
 import com.optlab.banhangso.features.main.authentication.Constants;
+import com.optlab.banhangso.features.shared.viewmodels.RxViewModel;
 import com.optlab.banhangso.models.application.AppError;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.remote.requestes.SignUpRequest;
@@ -38,7 +38,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
@@ -47,18 +46,15 @@ import timber.log.Timber;
  * @noinspection LombokGetterMayBeUsed, LombokSetterMayBeUsed
  */
 @HiltViewModel
-public class RegistrationViewModel extends ViewModel {
+public class RegistrationViewModel extends RxViewModel {
 
   private final SavedStateHandle savedStateHandle;
   private final AuthValidator validator;
   private final AuthRepository authRepository;
-  private final CompositeDisposable disposables = new CompositeDisposable();
   private final ObservableArrayMap<String, String> inputFields = new ObservableArrayMap<>();
   private final ObservableArrayMap<String, String> errors = new ObservableArrayMap<>();
-  private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
   private final MutableLiveData<Boolean> signUpResult = new MutableLiveData<>();
   private final MutableLiveData<Boolean> canRegister = new MutableLiveData<>();
-  private final MutableLiveData<Integer> errorMessageResId = new MutableLiveData<>();
 
   private String email;
   private String password;
@@ -134,10 +130,6 @@ public class RegistrationViewModel extends ViewModel {
     return savedStateHandle.getLiveData(Constants.KEY_IS_OWNER);
   }
 
-  public LiveData<Integer> getErrorMessageResId() {
-    return errorMessageResId;
-  }
-
   public void setIsAdmin(boolean isAdmin) {
     savedStateHandle.set(Constants.KEY_IS_OWNER, isAdmin);
   }
@@ -148,10 +140,6 @@ public class RegistrationViewModel extends ViewModel {
 
   public void setPassword(String password) {
     this.password = password;
-  }
-
-  public LiveData<Boolean> getIsLoading() {
-    return isLoading;
   }
 
   public LiveData<Boolean> getSignUpResult() {
@@ -314,18 +302,18 @@ public class RegistrationViewModel extends ViewModel {
     } else if (result instanceof Result.Failure<Void> failure) {
       signUpResult.setValue(false);
       if (failure.getError() instanceof AppError.InvalidArgument) {
-        errorMessageResId.setValue(R.string.error_invalid_inputs);
+        messageResId.setValue(R.string.error_invalid_inputs);
       } else if (failure.getError() instanceof AppError.DuplicateError) {
-        errorMessageResId.setValue(R.string.error_email_already_in_use);
+        messageResId.setValue(R.string.error_email_already_in_use);
       } else {
-        errorMessageResId.setValue(R.string.error_unknown);
+        messageResId.setValue(R.string.error_unknown);
       }
     }
   }
 
   private void onSignUpError(Throwable throwable) {
     signUpResult.setValue(false);
-    errorMessageResId.setValue(R.string.error_unknown);
+    messageResId.setValue(R.string.error_unknown);
     Timber.e(throwable, "There was an error during sign-up: %s", throwable.getMessage());
   }
 }

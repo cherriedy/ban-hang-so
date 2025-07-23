@@ -34,6 +34,7 @@ public class StaffEditViewModel extends UiViewModel<StaffUiModel> {
   private final StaffValidator staffValidator;
   private final MutableLiveData<Boolean> isEditing = new MutableLiveData<>();
   private final MutableLiveData<Boolean> canSubmit = new MutableLiveData<>();
+  private final MutableLiveData<Boolean> operationCompleted = new MutableLiveData<>();
 
   private Observable.OnPropertyChangedCallback staffOnPropertyChangedCallback;
 
@@ -75,6 +76,10 @@ public class StaffEditViewModel extends UiViewModel<StaffUiModel> {
 
   @NonNull public LiveData<Boolean> canSubmit() {
     return canSubmit;
+  }
+
+  @NonNull public LiveData<Boolean> getOperationCompleted() {
+    return operationCompleted;
   }
 
   /**
@@ -198,6 +203,7 @@ public class StaffEditViewModel extends UiViewModel<StaffUiModel> {
 
   private void onDeleteStaffSuccess(Result<Void> result) {
     if (result instanceof Result.Success<Void>) {
+      operationCompleted.setValue(true);
       messageResId.setValue(R.string.alter_delete_staff_success);
     } else if (result instanceof Result.Failure<Void> failure) {
       AppError appError = failure.getError();
@@ -218,6 +224,7 @@ public class StaffEditViewModel extends UiViewModel<StaffUiModel> {
 
   private void onCreateStaffSuccess(Result<Void> result) {
     if (result instanceof Result.Success<Void>) {
+      operationCompleted.setValue(true);
       messageResId.setValue(R.string.alter_create_staff_success);
     } else if (result instanceof Result.Failure<Void> failure) {
       AppError appError = failure.getError();
@@ -238,6 +245,7 @@ public class StaffEditViewModel extends UiViewModel<StaffUiModel> {
 
   private void onUpdateStaffSuccess(Result<Staff> result) {
     if (result instanceof Result.Success<Staff>) {
+      operationCompleted.setValue(true);
       messageResId.setValue(R.string.alert_staff_update_success);
       Timber.d("Staff updated successfully");
     } else if (result instanceof Result.Failure<Staff> failure) {

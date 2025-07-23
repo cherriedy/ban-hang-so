@@ -57,6 +57,17 @@ public class StaffEditFragment extends Fragment {
   private void observeViewModel() {
     viewModel.getMessageResId().observe(getViewLifecycleOwner(), this::showToast);
     viewModel.isLoading().observe(getViewLifecycleOwner(), this::handleLoadingState);
+    viewModel.getOperationCompleted().observe(getViewLifecycleOwner(), this::handleRefreshFlag);
+  }
+
+  private void handleRefreshFlag(@NonNull Boolean completed) {
+    if (completed) {
+      Bundle result = new Bundle();
+      result.putBoolean(StaffListFragment.STAFF_REFRESH_FLAG, true);
+      requireActivity()
+          .getSupportFragmentManager()
+          .setFragmentResult(StaffListFragment.STAFF_LIST_REQUEST_KEY, result);
+    }
   }
 
   private void handleLoadingState(@NonNull Boolean isLoading) {

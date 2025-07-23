@@ -18,47 +18,50 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class CustomerListViewModel @Inject constructor(private val customerRepository: CustomerRepository) :
+class CustomerListViewModel
+    @Inject
+    constructor(private val customerRepository: CustomerRepository) :
     ViewModel() {
-    private val _customers: Flowable<PagingData<CustomerUiModel>>
-    val customers: Flowable<PagingData<CustomerUiModel>>
-        get() = _customers
+        private val _customers: Flowable<PagingData<CustomerUiModel>>
+        val customers: Flowable<PagingData<CustomerUiModel>>
+            get() = _customers
 
-    private val _searchQuery: ObservableField<String> = ObservableField<String>("")
-    val searchQuery: ObservableField<String>
-        get() = _searchQuery
+        private val _searchQuery: ObservableField<String> = ObservableField<String>("")
+        val searchQuery: ObservableField<String>
+            get() = _searchQuery
 
-    private val searchProcessor: BehaviorProcessor<String> = BehaviorProcessor.createDefault("")
+        private val searchProcessor: BehaviorProcessor<String> = BehaviorProcessor.createDefault("")
 
-    init {
-        @OptIn(ExperimentalCoroutinesApi::class)
-        _customers = searchProcessor.distinctUntilChanged()
-            .doOnNext { Timber.d("Customer search query {$it} ") }.switchMap { query ->
-                if (query.isBlank()) {
-                    customerRepository.customers
-                } else {
-                    customerRepository.searchCustomers(query)
-                }.map { pagingData ->
-                    pagingData.map(CustomerUiModelMappers::fromDomain)
-                }.cachedIn(viewModelScope)
-            }
+        init {
+            @OptIn(ExperimentalCoroutinesApi::class)
+            _customers =
+                searchProcessor.distinctUntilChanged()
+                    .doOnNext { Timber.d("Customer search query {$it} ") }.switchMap { query ->
+                        if (query.isBlank()) {
+                            customerRepository.customers
+                        } else {
+                            customerRepository.searchCustomers(query)
+                        }.map { pagingData ->
+                            pagingData.map(CustomerUiModelMappers::fromDomain)
+                        }.cachedIn(viewModelScope)
+                    }
 
-        observeSearchQuery()
+            observeSearchQuery()
+        }
+
+        private fun observeSearchQuery() {
+            _searchQuery.addOnPropertyChangedCallback(
+                object : Observable.OnPropertyChangedCallback() {
+                    override fun onPropertyChanged(
+                        sender: Observable?,
+                        propertyId: Int,
+                    ) {
+                        @Suppress("UNCHECKED_CAST")
+                        val query: String? =
+                            (sender as ObservableField<String>).get()
+                        searchProcessor.onNext(query ?: "")
+                    }
+                },
+            )
+        }
     }
-
-    private fun observeSearchQuery() {
-        _searchQuery.addOnPropertyChangedCallback(
-            object : Observable.OnPropertyChangedCallback() {
-                override fun onPropertyChanged(
-                    sender: Observable?,
-                    propertyId: Int,
-                ) {
-                    @Suppress("UNCHECKED_CAST")
-                    val query: String? =
-                        (sender as ObservableField<String>).get()
-                    searchProcessor.onNext(query ?: "")
-                }
-            },
-        )
-    }
-}

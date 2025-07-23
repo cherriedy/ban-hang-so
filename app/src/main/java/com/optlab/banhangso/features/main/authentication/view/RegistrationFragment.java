@@ -64,8 +64,8 @@ public class RegistrationFragment extends Fragment {
   }
 
   private void observeViewModel() {
-    viewModel.getIsLoading().observe(getViewLifecycleOwner(), this::handleLoadingState);
-    viewModel.getErrorMessageResId().observe(getViewLifecycleOwner(), this::handleErrorMessage);
+    viewModel.isLoading().observe(getViewLifecycleOwner(), this::handleLoadingState);
+    viewModel.getMessageResId().observe(getViewLifecycleOwner(), this::handleErrorMessage);
     viewModel.getSignUpResult().observe(getViewLifecycleOwner(), this::handleSignUpResult);
   }
 

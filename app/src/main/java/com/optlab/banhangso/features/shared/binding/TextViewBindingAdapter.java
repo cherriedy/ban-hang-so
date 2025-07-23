@@ -59,12 +59,12 @@ public class TextViewBindingAdapter {
         new TextWatcher() {
           @Override
           public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-              // No action needed before text change.
+            // No action needed before text change.
           }
 
           @Override
           public void afterTextChanged(Editable s) {
-              // No action needed after text change.
+            // No action needed after text change.
           }
 
           @Override

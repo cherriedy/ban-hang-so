@@ -1,4 +1,4 @@
-package com.optlab.banhangso.features.main.transaction.adapters;
+package com.optlab.banhangso.features.shared.views.filters.payment;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -13,11 +13,11 @@ public class PaymentFilterListAdapter
     extends RecyclerView.Adapter<PaymentFilterListAdapter.ViewHolder> {
 
   @NonNull private final List<Payment> payments = Payment.getMethods();
-  @NonNull private final Consumer<String> consumer;
+  @NonNull private final Consumer<Payment> consumer;
 
   private int selectedPosition = RecyclerView.NO_POSITION;
 
-  public PaymentFilterListAdapter(@NonNull Consumer<String> consumer) {
+  public PaymentFilterListAdapter(@NonNull Consumer<Payment> consumer) {
     this.consumer = consumer;
   }
 
@@ -33,7 +33,15 @@ public class PaymentFilterListAdapter
     holder.bind(payments.get(position));
   }
 
-  private void setSelectedPosition(int newPosition) {
+  public void setSelectedPosition(@NonNull Payment payment) {
+    int paymentPosition = payments.indexOf(payment);
+    // If the position is -1, it means the payment method is not found in the list.
+    // If the payment method is not found, we do not change the selected position.
+    if (paymentPosition == -1) return;
+    setSelectedPosition(paymentPosition);
+  }
+
+  public void setSelectedPosition(int newPosition) {
     if (newPosition == selectedPosition) {
       selectedPosition = RecyclerView.NO_POSITION;
       notifyItemChanged(newPosition);
@@ -77,7 +85,8 @@ public class PaymentFilterListAdapter
           .setOnClickListener(
               v -> {
                 setSelectedPosition(currentPosition);
-                consumer.accept(payment.getValue());
+                // Notify the consumer with the selected payment method or null if unselected.
+                consumer.accept(checked ? null : payment);
               });
     }
   }

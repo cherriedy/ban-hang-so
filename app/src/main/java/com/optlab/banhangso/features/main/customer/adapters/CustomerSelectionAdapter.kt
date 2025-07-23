@@ -14,10 +14,12 @@ import com.optlab.banhangso.features.main.customer.models.CustomerUiModel
 
 class CustomerSelectionAdapter :
     PagingDataAdapter<CustomerUiModel, CustomerSelectionAdapter.ViewHolder>(DiffCallback()) {
-
     var selectionTracker: SelectionTracker<String>? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): ViewHolder {
         val binding =
             ListItemCustomerSelectionBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -27,7 +29,10 @@ class CustomerSelectionAdapter :
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int,
+    ) {
         getItem(position)?.let { customer: CustomerUiModel ->
             holder.bind(customer, selectionTracker?.isSelected(customer.id) == true)
         }
@@ -37,8 +42,10 @@ class CustomerSelectionAdapter :
 
     inner class ViewHolder(private val binding: ListItemCustomerSelectionBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(customer: CustomerUiModel, isSelected: Boolean) {
+        fun bind(
+            customer: CustomerUiModel,
+            isSelected: Boolean,
+        ) {
             binding.customer = customer
 
             // Set the checkbox state based on selection
@@ -57,7 +64,9 @@ class CustomerSelectionAdapter :
                 override fun getSelectionKey(): String? =
                     if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                         getItem(bindingAdapterPosition)?.id
-                    } else null
+                    } else {
+                        null
+                    }
             }
     }
 
@@ -81,8 +90,10 @@ class CustomerSelectionAdapter :
     }
 
     private class DiffCallback : DiffUtil.ItemCallback<CustomerUiModel>() {
-        override fun areItemsTheSame(oldItem: CustomerUiModel, newItem: CustomerUiModel): Boolean =
-            oldItem.id == newItem.id
+        override fun areItemsTheSame(
+            oldItem: CustomerUiModel,
+            newItem: CustomerUiModel,
+        ): Boolean = oldItem.id == newItem.id
 
         override fun areContentsTheSame(
             oldItem: CustomerUiModel,

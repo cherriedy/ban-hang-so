@@ -13,7 +13,13 @@ import lombok.experimental.UtilityClass;
 import timber.log.Timber;
 
 @UtilityClass
-public class LoadStateErrorUtil {
+public class LoadStateUtils {
+
+  public static boolean isLoading(@NonNull CombinedLoadStates loadStates) {
+    return loadStates.getSource().getRefresh() instanceof LoadState.Loading
+        || loadStates.getSource().getAppend() instanceof LoadState.Loading
+        || loadStates.getSource().getPrepend() instanceof LoadState.Loading;
+  }
 
   public static void handleLoadStateError(
       @NonNull Context context, @NonNull CombinedLoadStates loadStates) {
@@ -47,6 +53,13 @@ public class LoadStateErrorUtil {
             connectException.getMessage());
 
         messageResId = R.string.error_network;
+      } else if (throwable instanceof IllegalStateException) {
+        Timber.e(
+            throwable,
+            "There was an illegal state error loading transactions: %s",
+            throwable.getMessage());
+
+        messageResId = R.string.error_unknown;
       }
 
       if (messageResId != -1) {

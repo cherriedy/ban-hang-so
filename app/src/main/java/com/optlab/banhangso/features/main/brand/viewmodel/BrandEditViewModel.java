@@ -3,13 +3,11 @@ package com.optlab.banhangso.features.main.brand.viewmodel;
 import static com.optlab.banhangso.features.main.brand.Constants.ERROR_NAME;
 
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.databinding.Observable;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.optlab.banhangso.R;
 import com.optlab.banhangso.features.main.brand.BrandValidator;
 import com.optlab.banhangso.features.main.brand.models.BrandUiModel;
@@ -19,15 +17,12 @@ import com.optlab.banhangso.models.application.AppError;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.Brand;
 import com.optlab.banhangso.repositories.interfaces.BrandRepository;
-
-import java.util.Objects;
-
-import javax.inject.Inject;
-
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import java.util.Objects;
+import javax.inject.Inject;
 import timber.log.Timber;
 
 @HiltViewModel

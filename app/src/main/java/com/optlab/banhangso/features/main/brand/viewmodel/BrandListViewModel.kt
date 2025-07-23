@@ -23,90 +23,94 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class BrandListViewModel @Inject constructor(private val brandRepository: BrandRepository) :
-  RxViewModel() {
+class BrandListViewModel
+    @Inject
+    constructor(private val brandRepository: BrandRepository) :
+    RxViewModel() {
+        private val _searchQuery: ObservableField<String> = ObservableField()
+        val searchQuery: ObservableField<String>
+            get() = _searchQuery
 
-  private val _searchQuery: ObservableField<String> = ObservableField()
-  val searchQuery: ObservableField<String>
-    get() = _searchQuery
+        private val _searchProcessor: BehaviorProcessor<String> = BehaviorProcessor.createDefault("")
 
-  private val _searchProcessor: BehaviorProcessor<String> = BehaviorProcessor.createDefault("")
+        @Suppress("OPT_IN_USAGE")
+        private val _brands: Flowable<PagingData<BrandUiModel>> =
+            _searchProcessor
+                .distinctUntilChanged()
+                .doOnNext { Timber.d("Brand search query $it") }
+                .switchMap { query ->
+                    if (query.isBlank()) {
+                        brandRepository.brands
+                    } else {
+                        brandRepository.searchBrands(query)
+                    }
+                }
+                .map { pagingData -> pagingData.map(BrandUiModelMapper::fromDomain) }
+                .cachedIn(viewModelScope)
 
-  @Suppress("OPT_IN_USAGE")
-  private val _brands: Flowable<PagingData<BrandUiModel>> =
-    _searchProcessor
-      .distinctUntilChanged()
-      .doOnNext { Timber.d("Brand search query $it") }
-      .switchMap { query ->
-        if (query.isBlank()) {
-          brandRepository.brands
-        } else {
-          brandRepository.searchBrands(query)
-        }
-      }
-      .map { pagingData -> pagingData.map(BrandUiModelMapper::fromDomain) }
-      .cachedIn(viewModelScope)
+        val brands: Flowable<PagingData<BrandUiModel>>
+            get() = _brands
 
-  val brands: Flowable<PagingData<BrandUiModel>>
-    get() = _brands
+        private val _deletionCompleted: MutableLiveData<Boolean> = MutableLiveData()
+        val deletionCompleted
+            get() = _deletionCompleted
 
-  private val _deletionCompleted: MutableLiveData<Boolean> = MutableLiveData()
-  val deletionCompleted
-    get() = _deletionCompleted
-
-  init {
-    _searchQuery.addOnPropertyChangedCallback(
-      object : Observable.OnPropertyChangedCallback() {
-        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-          @Suppress("UNCHECKED_CAST") val query: String? = (sender as ObservableField<String>).get()
-          _searchProcessor.onNext(query ?: "")
-        }
-      }
-    )
-  }
-
-  fun deleteBrand(brandId: String) {
-    val disposable =
-      brandRepository
-        .deleteBrand(brandId)
-        .subscribeOn(Schedulers.io())
-        .doOnSubscribe {
-          isLoading.postValue(true)
-          deletionCompleted.postValue(false)
-        }
-        .observeOn(AndroidSchedulers.mainThread())
-        .doFinally {
-          isLoading.value = false
-          deletionCompleted.value = true
-        }
-        .subscribe(this::onDeleteBrandSuccess, this::onDeleteBrandError)
-
-    disposables.add(disposable)
-  }
-
-  private fun onDeleteBrandSuccess(result: Result<Void>) {
-    messageResId.value =
-      when (result) {
-        is Result.Success<Void> -> {
-          R.string.notify_delete_brand_success
+        init {
+            _searchQuery.addOnPropertyChangedCallback(
+                object : Observable.OnPropertyChangedCallback() {
+                    override fun onPropertyChanged(
+                        sender: Observable?,
+                        propertyId: Int,
+                    ) {
+                        @Suppress("UNCHECKED_CAST")
+                        val query: String? = (sender as ObservableField<String>).get()
+                        _searchProcessor.onNext(query ?: "")
+                    }
+                },
+            )
         }
 
-        is Result.Failure<Void> -> {
-          result.error.let {
-            when (it) {
-              is AppError.ForbiddenError -> R.string.error_forbidden
-              is AppError.NetServiceError -> R.string.error_network
-              is AppError.NotFoundError -> R.string.error_brand_not_found
-              else -> R.string.error_unknown
-            }
-          }
+        fun deleteBrand(brandId: String) {
+            val disposable =
+                brandRepository
+                    .deleteBrand(brandId)
+                    .subscribeOn(Schedulers.io())
+                    .doOnSubscribe {
+                        isLoading.postValue(true)
+                        deletionCompleted.postValue(false)
+                    }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doFinally {
+                        isLoading.value = false
+                        deletionCompleted.value = true
+                    }
+                    .subscribe(this::onDeleteBrandSuccess, this::onDeleteBrandError)
+
+            disposables.add(disposable)
         }
-      }
-  }
 
-  private fun onDeleteBrandError(throwable: Throwable) {
-    messageResId.value = R.string.error_unknown
-    Timber.e(throwable, "There was an error deleting the brand: %s", throwable.message)
-  }
-}
+        private fun onDeleteBrandSuccess(result: Result<Void>) {
+            messageResId.value =
+                when (result) {
+                    is Result.Success<Void> -> {
+                        R.string.notify_delete_brand_success
+                    }
 
+                    is Result.Failure<Void> -> {
+                        result.error.let {
+                            when (it) {
+                                is AppError.ForbiddenError -> R.string.error_forbidden
+                                is AppError.NetServiceError -> R.string.error_network
+                                is AppError.NotFoundError -> R.string.error_brand_not_found
+                                else -> R.string.error_unknown
+                            }
+                        }
+                    }
+                }
+        }
+
+        private fun onDeleteBrandError(throwable: Throwable) {
+            messageResId.value = R.string.error_unknown
+            Timber.e(throwable, "There was an error deleting the brand: %s", throwable.message)
+        }
+    }

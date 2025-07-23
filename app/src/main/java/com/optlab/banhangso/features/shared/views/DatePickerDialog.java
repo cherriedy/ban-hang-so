@@ -24,24 +24,58 @@ public class DatePickerDialog extends DialogFragment
   public static final String RESULT = "DATE_PICKER_RESULT";
   public static final String MAX_DATE = "DATE_PICKER_MAX_DATE";
 
+  private static final String DEFAULT_DATE = "DATE_PICKER_DEFAULT_DATE";
+
+  public static class Builder {
+
+    private String requestKey;
+    private String resultKey;
+    private String maxDate;
+    private String defaultDate;
+
+    public Builder requestKet(@NonNull String requestKey) {
+      this.requestKey = requestKey;
+      return this;
+    }
+
+    public Builder resultKey(@NonNull String resultKey) {
+      this.resultKey = resultKey;
+      return this;
+    }
+
+    public Builder maxDate(@NonNull String maxDate) {
+      this.maxDate = maxDate;
+      return this;
+    }
+
+    public Builder defaultDate(@NonNull String defaultDate) {
+      this.defaultDate = defaultDate;
+      return this;
+    }
+
+    public DatePickerDialog build() {
+      Bundle args = new Bundle();
+      if (requestKey != null) args.putString(REQUEST, requestKey);
+      if (resultKey != null) args.putString(RESULT, resultKey);
+      if (maxDate != null) args.putString(MAX_DATE, maxDate);
+      if (defaultDate != null) args.putString(DEFAULT_DATE, defaultDate);
+
+      // Create a new instance of DatePickerDialog and set the arguments.
+      DatePickerDialog datePickerDialog = new DatePickerDialog();
+      datePickerDialog.setArguments(args);
+      return datePickerDialog;
+    }
+  }
+
   @NonNull public static DatePickerDialog newInstance(@NonNull String request, @NonNull String result) {
-    Bundle args = new Bundle();
-    args.putString(REQUEST, request);
-    args.putString(RESULT, result);
-    DatePickerDialog datePickerDialog = new DatePickerDialog();
-    datePickerDialog.setArguments(args);
-    return datePickerDialog;
+    // Using the Builder pattern to create a DatePickerDialog instance.
+    return new Builder().requestKet(request).resultKey(result).build();
   }
 
   @NonNull public static DatePickerDialog newInstance(
       @NonNull String request, @NonNull String result, @NonNull String maxDate) {
-    Bundle args = new Bundle();
-    args.putString(REQUEST, request);
-    args.putString(RESULT, result);
-    args.putString(MAX_DATE, maxDate);
-    DatePickerDialog datePickerDialog = new DatePickerDialog();
-    datePickerDialog.setArguments(args);
-    return datePickerDialog;
+    // Using the Builder pattern to create a DatePickerDialog instance with max date.
+    return new Builder().requestKet(request).resultKey(result).maxDate(maxDate).build();
   }
 
   @NonNull @Override
