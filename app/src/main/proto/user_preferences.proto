@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_package = "com.optlab.banhangso.datastore";
+option java_multiple_files = true;
+
+message UserProto {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string phone = 4;
+  string avatar = 5;
+}
+
+message RoleStoreProto {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string image_url = 4;
+  string phone_number = 5;
+  string role = 6;
+}
+
+message UserPreferences {
+  UserProto user = 1;
+  RoleStoreProto store = 2;
+  bool is_authenticated = 3;
+  bool is_store_selected = 4;
+  bool layout_mode_is_grid = 5;
+}
