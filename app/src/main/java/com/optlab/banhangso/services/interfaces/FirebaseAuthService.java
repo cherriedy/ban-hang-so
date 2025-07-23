@@ -8,7 +8,9 @@ import io.reactivex.rxjava3.core.Single;
 public interface FirebaseAuthService {
   Single<String> logInWithEmailAndPassword(@NonNull String email, @NonNull String password);
 
-  Observable<Boolean> isAuthenticated();
+  Observable<Boolean> isAuthenticatedObservable();
+
+  boolean isAuthenticated();
 
   Completable signOut();
 }

@@ -31,21 +31,23 @@ public class FirebaseAuthServiceImpl implements FirebaseAuthService {
   }
 
   @Override
-  public Observable<Boolean> isAuthenticated() {
+  public Observable<Boolean> isAuthenticatedObservable() {
     return Observable.create(
         emitter -> {
           FirebaseAuth.AuthStateListener authStateListener =
-              firebaseAuth -> {
-                boolean isAuthenticated = firebaseAuth.getCurrentUser() != null;
-                if (!emitter.isDisposed()) {
-                  emitter.onNext(isAuthenticated);
-                }
-              };
+              firebaseAuth -> emitter.onNext(firebaseAuth.getCurrentUser() != null);
 
+          // Set the listener to the FirebaseAuth instance.
           firebaseAuth.addAuthStateListener(authStateListener);
 
+          // Set cancellable to remove the listener when the observable is disposed.
           emitter.setCancellable(() -> firebaseAuth.removeAuthStateListener(authStateListener));
         });
+  }
+
+  @Override
+  public boolean isAuthenticated() {
+    return firebaseAuth.getCurrentUser() != null;
   }
 
   @Override
