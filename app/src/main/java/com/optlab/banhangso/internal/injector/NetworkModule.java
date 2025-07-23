@@ -3,7 +3,6 @@ package com.optlab.banhangso.internal.injector;
 import static com.optlab.banhangso.internal.Config.DEFAULT_TIMEOUT;
 
 import androidx.annotation.NonNull;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.optlab.banhangso.internal.network.DateTypeAdapter;
@@ -18,20 +17,16 @@ import com.optlab.banhangso.services.interfaces.ProductService;
 import com.optlab.banhangso.services.interfaces.ReportService;
 import com.optlab.banhangso.services.interfaces.StaffService;
 import com.optlab.banhangso.services.interfaces.StoreService;
-
-import org.jetbrains.annotations.Contract;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import javax.inject.Singleton;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.jetbrains.annotations.Contract;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -78,7 +73,6 @@ public abstract class NetworkModule {
     return new Retrofit.Builder()
         .client(okHttpClient)
         .baseUrl("https://ban-hang-so-api.onrender.com")
-        .baseUrl("http://10.0.2.2:8000")
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         .build();

@@ -4,10 +4,8 @@ import androidx.annotation.NonNull;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.optlab.banhangso.services.FirebaseAuthServiceImpl;
-import com.optlab.banhangso.services.FirebaseStoreServiceImpl;
 import com.optlab.banhangso.services.FirebaseUserServiceImpl;
 import com.optlab.banhangso.services.interfaces.FirebaseAuthService;
-import com.optlab.banhangso.services.interfaces.FirebaseStoreService;
 import com.optlab.banhangso.services.interfaces.FirebaseUserService;
 import dagger.Module;
 import dagger.Provides;
@@ -32,13 +30,6 @@ public abstract class FirebaseModule {
   @Singleton
   public static FirebaseAuth provideFirebaseAuth() {
     return FirebaseAuth.getInstance();
-  }
-
-  @NonNull @Contract(value = "_ -> new", pure = true)
-  @Provides
-  @Singleton
-  public static FirebaseStoreService provideFirebaseStoreService(FirebaseFirestore firestore) {
-    return new FirebaseStoreServiceImpl(firestore);
   }
 
   @NonNull @Contract(value = "_ -> new", pure = true)

@@ -5,6 +5,8 @@ import androidx.annotation.NonNull;
 import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler;
 import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandlerImpl;
 import com.optlab.banhangso.internal.utilities.uploaders.qualifiers.ProductImageUploader;
+import com.optlab.banhangso.repositories.interfaces.preferences.AppPreferencesKt;
+import com.optlab.banhangso.repositories.perferences.AppPreferencesKtImpl;
 import com.optlab.banhangso.services.ImageUploader;
 import com.optlab.banhangso.services.interfaces.ProductService;
 import dagger.Module;
@@ -13,10 +15,13 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import javax.inject.Singleton;
+import org.jetbrains.annotations.Contract;
 
 @Module
 @InstallIn(SingletonComponent.class)
 public abstract class ApplicationModule {
+
+  private ApplicationModule() {}
 
   @NonNull @Provides
   @Singleton
@@ -30,5 +35,12 @@ public abstract class ApplicationModule {
   public static ImageUploader provideProductImageUploader(
       @ApplicationContext Context context, ProductService productService) {
     return new ImageUploader(context, productService);
+  }
+
+  @NonNull @Contract("_ -> new")
+  @Provides
+  @Singleton
+  public static AppPreferencesKt provideAppPreferencesKt(@ApplicationContext Context context) {
+    return new AppPreferencesKtImpl(context);
   }
 }
