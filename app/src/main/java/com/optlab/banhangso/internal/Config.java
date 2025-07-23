@@ -25,8 +25,8 @@ public class Config {
 
   public static final String YEAR_MONTH_FORMAT = "yyyy-MM";
 
-  public static final String OWNER = "OWNER";
-  public static final String STAFF = "STAFF";
+  public static final String OWNER = "owner";
+  public static final String STAFF = "staffs";
 
   public static final String DEFAULT_LANGUAGE = "vi";
   public static final String DEFAULT_COUNTRY = "VN";
