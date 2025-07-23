@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.optlab.banhangso.BuildConfig;
 import lombok.experimental.UtilityClass;
 import timber.log.Timber;
@@ -43,8 +44,14 @@ public class Logging {
     protected void log(
         int priority, @Nullable String tag, @NonNull String message, @Nullable Throwable t) {
       if (isLoggable(priority)) {
-        if (priority == Log.ERROR && t != null) {
-          // CRASH LIBRARY
+        // Send errors and warnings to Firebase Crashlytics
+        if (priority == Log.ERROR || priority == Log.WARN) {
+          String logMessage = (tag != null ? tag + ": " : "") + message;
+          FirebaseCrashlytics.getInstance().log(logMessage);
+
+          if (t != null) {
+            FirebaseCrashlytics.getInstance().recordException(t);
+          }
         }
 
         if (message.length() < MAX_LOG_LENGTH) {
