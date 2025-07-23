@@ -11,7 +11,6 @@ import com.optlab.banhangso.models.application.Interval.Date.YESTERDAY
 @ConsistentCopyVisibility
 data class Interval private constructor(private val _name: Int, private val _value: String) :
     BaseFilter<String>(_name, _value) {
-
         enum class Date {
             TODAY,
             YESTERDAY,
@@ -34,5 +33,11 @@ data class Interval private constructor(private val _name: Int, private val _val
             @JvmStatic
             val intervals: List<Interval>
                 get() = _intervals.values.toList()
+
+            @JvmStatic
+            fun getDate(interval: Interval): Date = _intervals.entries.first { it.value == interval }.key
+
+            @JvmStatic
+            fun getInterval(date: Date): Interval = _intervals.entries.first { it.key == date }.value
         }
     }

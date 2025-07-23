@@ -4,8 +4,7 @@ import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 data class RoleStore(
-    @SerializedName("role")
-    val role: String? = null,
+    @SerializedName("role") val role: String? = null,
 ) : Store() {
     constructor(
         role: String? = null,
@@ -34,8 +33,7 @@ data class RoleStore(
         this.updatedAt = store.updatedAt
     }
 
-    val isEmpty: Boolean
-        get() = super.isEmpty(this) && role?.isBlank() != false
+    override fun isEmpty(): Boolean = super.isEmpty() && role.isNullOrEmpty()
 
     companion object {
         @JvmStatic
@@ -51,4 +49,6 @@ data class RoleStore(
             )
         }
     }
+
+    override fun toString(): String = "RoleStore(role=$role, ${super.toString()})"
 }

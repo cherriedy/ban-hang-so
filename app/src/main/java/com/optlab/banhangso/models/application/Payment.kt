@@ -6,9 +6,8 @@ import com.optlab.banhangso.models.application.Payment.Method.MOBILE_BANKING
 
 @ConsistentCopyVisibility
 data class Payment
-    private constructor(private val _name: Int, private val _value: String,  val image: Int) :
+    private constructor(private val _name: Int, private val _value: String, val image: Int) :
     BaseFilter<String>(_name, _value) {
-
         enum class Method {
             CASH,
             MOBILE_BANKING,

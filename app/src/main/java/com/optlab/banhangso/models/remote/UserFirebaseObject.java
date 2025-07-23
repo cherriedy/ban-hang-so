@@ -1,8 +1,5 @@
 package com.optlab.banhangso.models.remote;
 
-import com.google.firebase.firestore.Exclude;
-import com.google.firebase.firestore.IgnoreExtraProperties;
-import com.google.firebase.firestore.ServerTimestamp;
 import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@IgnoreExtraProperties
 public class UserFirebaseObject {
 
   private String id;
@@ -33,15 +29,12 @@ public class UserFirebaseObject {
   @SerializedName("stores")
   private List<Store> stores;
 
-  @ServerTimestamp
   @SerializedName("createdAt")
   private Date createdAt;
 
-  @ServerTimestamp
   @SerializedName("updatedAt")
   private Date updatedAt;
 
-  @Exclude
   public String getId() {
     return id;
   }

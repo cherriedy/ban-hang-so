@@ -1,6 +1,5 @@
 package com.optlab.banhangso.models.remote;
 
-import com.google.firebase.firestore.ServerTimestamp;
 import com.google.gson.annotations.SerializedName;
 import com.optlab.banhangso.models.domain.Brand;
 import com.optlab.banhangso.models.domain.Category;
@@ -59,11 +58,9 @@ public class ProductFirebaseObject {
   @SerializedName("note")
   private String note;
 
-  @ServerTimestamp
   @SerializedName("createdAt")
   private Date createdAt;
 
-  @ServerTimestamp
   @SerializedName("updatedAt")
   private Date updatedAt;
 }
