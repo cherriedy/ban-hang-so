@@ -4,7 +4,7 @@ import static com.optlab.banhangso.internal.Config.ITEMS_PER_PAGE;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.remote.TransactionSummaryFirebaseObject;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.TransactionService;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -14,7 +14,7 @@ public class TransactionSearchPagingSource extends BaseTransactionPagingSource {
   @NonNull private final String query;
 
   public TransactionSearchPagingSource(
-      PreferencesRepository preferencesRepository,
+      PreferencesRepositoryKt preferencesRepository,
       TransactionService transactionService,
       @NonNull String query) {
     super(preferencesRepository, transactionService);

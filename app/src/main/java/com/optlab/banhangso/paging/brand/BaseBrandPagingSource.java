@@ -6,7 +6,7 @@ import com.optlab.banhangso.models.remote.BrandFirebaseObject;
 import com.optlab.banhangso.models.remote.responses.BrandResponse;
 import com.optlab.banhangso.models.remote.responses.base.Response;
 import com.optlab.banhangso.paging.BasePagingSource;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.interfaces.BrandService;
 import java.util.List;
 import timber.log.Timber;
@@ -16,7 +16,7 @@ public abstract class BaseBrandPagingSource extends BasePagingSource<BrandFireba
   protected final BrandService brandService;
 
   protected BaseBrandPagingSource(
-      PreferencesRepository preferencesRepository, BrandService brandService) {
+      PreferencesRepositoryKt preferencesRepository, BrandService brandService) {
     super(preferencesRepository);
     this.brandService = brandService;
   }

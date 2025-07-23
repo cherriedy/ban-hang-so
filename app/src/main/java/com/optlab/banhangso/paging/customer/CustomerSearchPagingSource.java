@@ -4,7 +4,7 @@ import static com.optlab.banhangso.internal.Config.ITEMS_PER_PAGE;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.remote.CustomerFirebaseObject;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.interfaces.CustomerService;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -14,7 +14,9 @@ public class CustomerSearchPagingSource extends BaseCustomerPagingSource {
   private final String query;
 
   public CustomerSearchPagingSource(
-      PreferencesRepository preferencesRepository, CustomerService customerService, String query) {
+      PreferencesRepositoryKt preferencesRepository,
+      CustomerService customerService,
+      String query) {
     super(preferencesRepository, customerService);
     this.query = query;
   }

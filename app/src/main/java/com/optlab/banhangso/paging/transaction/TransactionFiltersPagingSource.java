@@ -5,7 +5,7 @@ import static com.optlab.banhangso.internal.Config.ITEMS_PER_PAGE;
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.application.FilterParams;
 import com.optlab.banhangso.models.remote.TransactionSummaryFirebaseObject;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.TransactionService;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -16,7 +16,7 @@ public class TransactionFiltersPagingSource extends BaseTransactionPagingSource 
   private final FilterParams filterParams;
 
   public TransactionFiltersPagingSource(
-      PreferencesRepository preferencesRepository,
+      PreferencesRepositoryKt preferencesRepository,
       TransactionService transactionService,
       FilterParams filterParams) {
     super(preferencesRepository, transactionService);

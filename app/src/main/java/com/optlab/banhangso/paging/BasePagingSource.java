@@ -4,10 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.paging.PagingState;
 import androidx.paging.rxjava3.RxPagingSource;
-import com.optlab.banhangso.models.domain.store.RoleStore;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import io.reactivex.rxjava3.core.Single;
-import java.util.Objects;
 
 /**
  * Base class for implementing a PagingSource that handles common functionality such as retrieving
@@ -19,22 +17,40 @@ import java.util.Objects;
  */
 public abstract class BasePagingSource<V> extends RxPagingSource<Integer, V> {
 
-  private final PreferencesRepository preferencesRepository;
+  protected final PreferencesRepositoryKt preferencesRepository;
 
-  protected BasePagingSource(PreferencesRepository preferencesRepository) {
+  protected BasePagingSource(PreferencesRepositoryKt preferencesRepository) {
     this.preferencesRepository = preferencesRepository;
   }
 
   protected Single<String> getStoreId() {
     return preferencesRepository
-        .getStore()
-        .defaultIfEmpty(RoleStore.empty())
-        .flatMap(
+        .getStoreRx()
+        .filter(store -> !store.isEmpty()) // Filter out empty stores
+        .take(1) // Take the first non-empty store
+        .singleOrError()
+        .map(
             store -> {
-              if (store == null || store.isEmpty()) {
-                return Single.error(new IllegalStateException("There is no store available"));
+              if (store.isEmpty()) {
+                throw new IllegalStateException("There is no store available");
               }
-              return Single.just(Objects.requireNonNull(store.getId()));
+              return store.getId();
+            });
+  }
+
+  protected Single<String> getUserId() {
+    return preferencesRepository
+        .getUserRx()
+        .filter(user -> !user.isEmpty())
+        .take(1)
+        .singleOrError()
+        .map(
+            user -> {
+              if (user.isEmpty()) {
+                throw new IllegalStateException("There is no user available");
+              } else {
+                return user.getId();
+              }
             });
   }
 

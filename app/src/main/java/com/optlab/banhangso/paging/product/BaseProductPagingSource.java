@@ -1,27 +1,31 @@
 package com.optlab.banhangso.paging.product;
 
 import androidx.annotation.NonNull;
+
 import com.optlab.banhangso.models.exceptions.ApiResponseException;
 import com.optlab.banhangso.models.remote.ProductFirebaseObject;
 import com.optlab.banhangso.models.remote.responses.ProductResponse;
 import com.optlab.banhangso.models.remote.responses.base.Response;
 import com.optlab.banhangso.paging.BasePagingSource;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.interfaces.ProductService;
-import java.util.List;
+
 import org.jetbrains.annotations.Contract;
+
+import java.util.List;
+
 import timber.log.Timber;
 
 public abstract class BaseProductPagingSource extends BasePagingSource<ProductFirebaseObject> {
 
   protected final ProductService productService;
-  protected final PreferencesRepository preferencesRepository;
+  protected final PreferencesRepositoryKt preferencesRepositoryKt;
 
-  public BaseProductPagingSource(
-      PreferencesRepository preferencesRepository, ProductService productService) {
-    super(preferencesRepository);
+  protected BaseProductPagingSource(
+          PreferencesRepositoryKt preferencesRepositoryKt, ProductService productService) {
+    super(preferencesRepositoryKt);
     this.productService = productService;
-    this.preferencesRepository = preferencesRepository;
+    this.preferencesRepositoryKt = preferencesRepositoryKt;
   }
 
   @NonNull @Contract("_ -> new")

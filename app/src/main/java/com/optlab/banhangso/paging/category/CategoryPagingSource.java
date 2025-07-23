@@ -4,7 +4,7 @@ import static com.optlab.banhangso.internal.Config.ITEMS_PER_PAGE;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.remote.CategoryFirebaseObject;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.interfaces.CategoryService;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class CategoryPagingSource extends BaseCategoryPagingSource {
 
   public CategoryPagingSource(
-      PreferencesRepository preferencesRepository, CategoryService categoryService) {
+      PreferencesRepositoryKt preferencesRepository, CategoryService categoryService) {
     super(preferencesRepository, categoryService);
   }
 

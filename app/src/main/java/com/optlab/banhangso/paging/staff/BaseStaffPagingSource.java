@@ -6,7 +6,7 @@ import com.optlab.banhangso.models.remote.StaffFirebaseObject;
 import com.optlab.banhangso.models.remote.responses.StaffResponse;
 import com.optlab.banhangso.models.remote.responses.base.Response;
 import com.optlab.banhangso.paging.BasePagingSource;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.interfaces.StaffService;
 import java.util.List;
 import org.jetbrains.annotations.Contract;
@@ -15,13 +15,13 @@ import timber.log.Timber;
 public abstract class BaseStaffPagingSource extends BasePagingSource<StaffFirebaseObject> {
 
   protected final StaffService staffService;
-  protected final PreferencesRepository preferencesRepository;
+  protected final PreferencesRepositoryKt preferencesRepositoryKt;
 
   protected BaseStaffPagingSource(
-      PreferencesRepository preferencesRepository, StaffService staffService) {
-    super(preferencesRepository);
+          PreferencesRepositoryKt preferencesRepositoryKt, StaffService staffService) {
+    super(preferencesRepositoryKt);
     this.staffService = staffService;
-    this.preferencesRepository = preferencesRepository;
+    this.preferencesRepositoryKt = preferencesRepositoryKt;
   }
 
   @NonNull @Contract("_ -> new")

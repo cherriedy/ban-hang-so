@@ -4,14 +4,15 @@ import static com.optlab.banhangso.internal.Config.ITEMS_PER_PAGE;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.remote.StaffFirebaseObject;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.interfaces.StaffService;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class StaffPagingSource extends BaseStaffPagingSource {
 
-  public StaffPagingSource(PreferencesRepository preferencesRepository, StaffService staffService) {
+  public StaffPagingSource(
+      PreferencesRepositoryKt preferencesRepository, StaffService staffService) {
     super(preferencesRepository, staffService);
   }
 

@@ -6,7 +6,7 @@ import com.optlab.banhangso.models.remote.TransactionSummaryFirebaseObject;
 import com.optlab.banhangso.models.remote.responses.TransactionResponse;
 import com.optlab.banhangso.models.remote.responses.base.Response;
 import com.optlab.banhangso.paging.BasePagingSource;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.TransactionService;
 import java.util.List;
 import timber.log.Timber;
@@ -17,7 +17,7 @@ public abstract class BaseTransactionPagingSource
   protected final TransactionService transactionService;
 
   protected BaseTransactionPagingSource(
-      PreferencesRepository preferencesRepository, TransactionService transactionService) {
+      PreferencesRepositoryKt preferencesRepository, TransactionService transactionService) {
     super(preferencesRepository);
     this.transactionService = transactionService;
   }

@@ -4,14 +4,15 @@ import static com.optlab.banhangso.internal.Config.ITEMS_PER_PAGE;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.remote.BrandFirebaseObject;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.interfaces.BrandService;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class BrandPagingSource extends BaseBrandPagingSource {
 
-  public BrandPagingSource(PreferencesRepository preferencesRepository, BrandService brandService) {
+  public BrandPagingSource(
+      PreferencesRepositoryKt preferencesRepository, BrandService brandService) {
     super(preferencesRepository, brandService);
   }
 

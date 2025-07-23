@@ -6,7 +6,7 @@ import com.optlab.banhangso.models.remote.ProductSaleFirebaseObject;
 import com.optlab.banhangso.models.remote.responses.ProductSaleResponse;
 import com.optlab.banhangso.models.remote.responses.base.Response;
 import com.optlab.banhangso.paging.BasePagingSource;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.interfaces.ProductSaleService;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ public abstract class BaseProductSalePagingSource
   protected final ProductSaleService productSaleService;
 
   protected BaseProductSalePagingSource(
-      PreferencesRepository preferencesRepository, ProductSaleService productSaleService) {
+      PreferencesRepositoryKt preferencesRepository, ProductSaleService productSaleService) {
     super(preferencesRepository);
     this.productSaleService = productSaleService;
   }

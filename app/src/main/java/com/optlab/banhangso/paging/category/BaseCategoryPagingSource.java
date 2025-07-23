@@ -6,7 +6,7 @@ import com.optlab.banhangso.models.remote.CategoryFirebaseObject;
 import com.optlab.banhangso.models.remote.responses.CategoryResponse;
 import com.optlab.banhangso.models.remote.responses.base.Response;
 import com.optlab.banhangso.paging.BasePagingSource;
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository;
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt;
 import com.optlab.banhangso.services.interfaces.CategoryService;
 import java.util.List;
 import org.jetbrains.annotations.Contract;
@@ -17,7 +17,7 @@ public abstract class BaseCategoryPagingSource extends BasePagingSource<Category
   public final CategoryService categoryService;
 
   protected BaseCategoryPagingSource(
-      PreferencesRepository preferencesRepository, CategoryService categoryService) {
+      PreferencesRepositoryKt preferencesRepository, CategoryService categoryService) {
     super(preferencesRepository);
     this.categoryService = categoryService;
   }
