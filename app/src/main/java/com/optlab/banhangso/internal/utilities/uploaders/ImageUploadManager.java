@@ -75,7 +75,7 @@ public class ImageUploadManager {
 
           @Override
           public void onCompleted(List<String> urls) {
-              // Ignore this callback as we handle success in onSuccess.
+            // Ignore this callback as we handle success in onSuccess.
           }
         });
   }
