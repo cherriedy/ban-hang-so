@@ -5,9 +5,9 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     alias(libs.plugins.google.gms.google.services)
-
-    kotlin("plugin.lombok") version "1.8.10"
-    id("io.freefair.lombok") version "8.14"
+    kotlin("plugin.serialization") version "1.9.0"
+    id("com.google.protobuf") version "0.9.4"
+    alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
@@ -19,7 +19,7 @@ android {
         minSdk = 30
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0-alpha1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -30,6 +30,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -44,10 +45,33 @@ android {
         buildConfig = true
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+    kotlinOptions { jvmTarget = "17" }
+
     buildToolsVersion = "35.0.0"
+}
+
+protobuf {
+    protoc { artifact = "com.google.protobuf:protoc:3.21.7" }
+
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") { option("lite") }
+                create("kotlin") { option("lite") }
+            }
+        }
+    }
+}
+
+configurations {
+    all {
+        // Force using a specific version of protobuf
+        resolutionStrategy {
+            force("com.google.protobuf:protobuf-javalite:3.21.7")
+            // Exclude specific incompatible versions
+            exclude(group = "com.google.protobuf", module = "protobuf-java")
+        }
+    }
 }
 
 dependencies {
@@ -64,6 +88,8 @@ dependencies {
     implementation(libs.navigation.ui)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.lifecycle.livedata.ktx.v291)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.firebase.crashlytics)
 
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
@@ -75,6 +101,9 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.rxjava3)
 
+    // DataStore with RxJava3 support
+    implementation(libs.androidx.datastore.rxjava3)
+
     // AutoDispose for RxJava lifecycle handling
     implementation(libs.autodispose.core)
     implementation(libs.autodispose.android)
@@ -84,8 +113,6 @@ dependencies {
     // RxJava3 (RxAndroid)
     implementation(libs.rxandroid)
     implementation(libs.rxjava)
-    implementation(libs.firebase.functions)
-    ksp(libs.androidx.room.compiler)
 
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.fragment)
@@ -108,6 +135,8 @@ dependencies {
     implementation(libs.lottie)
     implementation(libs.circleimageview)
     implementation(libs.shimmer)
+//    implementation(libs.androidchart)
+    implementation(libs.mpandroidchart)
 
     // QR Code Scanner
     implementation(libs.zxing.android.embedded)
@@ -125,4 +154,14 @@ dependencies {
     implementation(libs.okhttp3.logging.interceptor)
     implementation(libs.okhttp3.integration)
 
+    // DataStore
+    implementation("androidx.datastore:datastore:1.0.0") {
+        exclude(group = "com.google.protobuf", module = "protobuf-java")
+    }
+    implementation("androidx.datastore:datastore-core:1.0.0") {
+        exclude(group = "com.google.protobuf", module = "protobuf-java")
+    }
+
+    implementation(libs.protobuf.javalite)
+    implementation(libs.protobuf.kotlin.lite)
 }

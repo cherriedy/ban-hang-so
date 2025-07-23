@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.spotless) apply false
     id("com.google.dagger.hilt.android") version "2.56.1" apply false
     id("com.google.devtools.ksp") version "2.1.20-1.0.32" apply false
+    alias(libs.plugins.google.firebase.crashlytics) apply false
 }
 
 buildscript {
@@ -37,6 +38,7 @@ subprojects {
         kotlin {
             target("**/*.kt", "**/*.kts")
             ktlint(libs.versions.ktlint.get())
+                .setEditorConfigPath("${rootProject.projectDir}/.editorconfig")
             trimTrailingWhitespace()
             endWithNewline()
         }
