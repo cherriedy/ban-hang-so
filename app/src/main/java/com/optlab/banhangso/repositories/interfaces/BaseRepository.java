@@ -1,22 +1,22 @@
 package com.optlab.banhangso.repositories.interfaces;
 
 import android.util.Pair;
-import com.optlab.banhangso.models.domain.User;
-import com.optlab.banhangso.models.domain.store.RoleStore;
 import io.reactivex.rxjava3.core.Single;
 import org.jetbrains.annotations.NotNull;
 
 public interface BaseRepository {
 
-  @NotNull PreferencesRepository getPreferencesRepository();
+  @NotNull PreferencesRepositoryKt getPreferencesRepositoryKt();
 
   @NotNull default Single<String> getStoreId() {
-    return getPreferencesRepository()
-        .getStore()
-        .switchIfEmpty(Single.just(RoleStore.empty()))
+    return getPreferencesRepositoryKt()
+        .getStoreRx()
+        .filter(store -> !store.isEmpty()) // Filter out empty stores
+        .take(1) // Take the first non-empty store
+        .singleOrError()
         .map(
             store -> {
-              if (store == null || store.isEmpty()) {
+              if (store.isEmpty()) {
                 throw new IllegalStateException("Store is not set in preferences");
               } else {
                 return store.getId();
@@ -25,12 +25,14 @@ public interface BaseRepository {
   }
 
   @NotNull default Single<String> getUserId() {
-    return getPreferencesRepository()
-        .getUser()
-        .switchIfEmpty(Single.just(User.empty()))
+    return getPreferencesRepositoryKt()
+        .getUserRx()
+        .filter(user -> !user.isEmpty()) // Filter out empty users
+        .take(1) // Take the first non-empty user
+        .singleOrError()
         .map(
             user -> {
-              if (user == null || user.isEmpty()) {
+              if (user.isEmpty()) {
                 throw new IllegalStateException("User is not set in preferences");
               } else {
                 return user.getId();

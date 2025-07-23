@@ -1,7 +1,6 @@
 package com.optlab.banhangso.repositories.interfaces;
 
 import androidx.annotation.NonNull;
-import com.optlab.banhangso.models.application.SortOption;
 import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.domain.store.RoleStore;
 import io.reactivex.rxjava3.core.Completable;
@@ -14,31 +13,6 @@ import io.reactivex.rxjava3.core.Single;
  * AppPreferences with RxJava types for asynchronous and reactive preference handling.
  */
 public interface PreferencesRepository {
-  /**
-   * Sets a sort option in the preferences.
-   *
-   * @param sortOption The sort option to save
-   * @param key The preference key to use
-   * @return Completable that completes when the operation is finished
-   */
-  Completable setSortOption(SortOption<? extends Enum<?>> sortOption, String key);
-
-  /**
-   * Gets a sort option from the preferences.
-   *
-   * @param key The preference key to retrieve
-   * @return Single that emits the stored sort option, or errors if not found
-   */
-  Single<SortOption<?>> getSortOption(String key);
-
-  /**
-   * Observes a sort option from the preferences for continuous updates.
-   *
-   * @param key The preference key to observe
-   * @return Observable that emits the stored sort option whenever it changes
-   */
-  Observable<SortOption<?>> observeSortOption(String key);
-
   /**
    * Sets the layout mode for products.
    *

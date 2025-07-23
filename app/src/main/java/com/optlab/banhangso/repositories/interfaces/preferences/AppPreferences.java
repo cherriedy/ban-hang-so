@@ -3,7 +3,6 @@ package com.optlab.banhangso.repositories.interfaces.preferences;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.optlab.banhangso.models.application.SortOption;
 import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.domain.store.RoleStore;
 
@@ -31,22 +30,6 @@ public interface AppPreferences {
    */
   void unregisterPreferencesChangeListener(
       SharedPreferences.OnSharedPreferenceChangeListener listener);
-
-  /**
-   * Sets a sort option in the preferences.
-   *
-   * @param sortOption The sort option to save
-   * @param key The preference key to use
-   */
-  void setSortOption(SortOption<? extends Enum<?>> sortOption, String key);
-
-  /**
-   * Gets a sort option from the preferences.
-   *
-   * @param key The preference key to retrieve
-   * @return The stored sort option, or null if not found
-   */
-  SortOption<?> getSortOption(String key);
 
   /**
    * Sets the layout mode for products.

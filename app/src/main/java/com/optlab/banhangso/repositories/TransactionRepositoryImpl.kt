@@ -16,7 +16,7 @@ import com.optlab.banhangso.models.remote.mappers.TransactionSummaryFirebaseObje
 import com.optlab.banhangso.paging.transaction.TransactionFiltersPagingSource
 import com.optlab.banhangso.paging.transaction.TransactionSearchPagingSource
 import com.optlab.banhangso.repositories.interfaces.PaginationRepository
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt
 import com.optlab.banhangso.repositories.interfaces.TransactionRepository
 import com.optlab.banhangso.services.TransactionService
 import io.reactivex.rxjava3.core.Flowable
@@ -24,16 +24,16 @@ import io.reactivex.rxjava3.core.Single
 import timber.log.Timber
 
 class TransactionRepositoryImpl(
-    private val preferencesRepository: PreferencesRepository,
+    private val preferencesRepositoryKt: PreferencesRepositoryKt,
     private val transactionService: TransactionService,
     private val errorHandler: ErrorHandler,
 ) : TransactionRepository, PaginationRepository {
-    override fun getPreferencesRepository(): PreferencesRepository = preferencesRepository
+    override fun getPreferencesRepositoryKt(): PreferencesRepositoryKt = preferencesRepositoryKt
 
     override fun getTransactions(filterParams: FilterParams): Flowable<PagingData<TransactionSummary>> =
         Pager(pagingConfig) {
             TransactionFiltersPagingSource(
-                preferencesRepository,
+                preferencesRepositoryKt,
                 transactionService,
                 filterParams,
             )
@@ -43,7 +43,7 @@ class TransactionRepositoryImpl(
 
     override fun searchTransactions(query: String): Flowable<PagingData<TransactionSummary>> =
         Pager(pagingConfig) {
-            TransactionSearchPagingSource(preferencesRepository, transactionService, query)
+            TransactionSearchPagingSource(preferencesRepositoryKt, transactionService, query)
         }
             .flowable
             .map { pagingData -> pagingData.map(TransactionSummaryFirebaseObjectMapper::toDomain) }

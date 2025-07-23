@@ -13,7 +13,7 @@ import com.optlab.banhangso.paging.customer.CustomerPagingSource
 import com.optlab.banhangso.paging.customer.CustomerSearchPagingSource
 import com.optlab.banhangso.repositories.interfaces.CustomerRepository
 import com.optlab.banhangso.repositories.interfaces.PaginationRepository
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt
 import com.optlab.banhangso.services.interfaces.CustomerService
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
@@ -21,14 +21,14 @@ import io.reactivex.rxjava3.core.Single
 class CustomerRepositoryImpl(
     private val customerService: CustomerService,
     private val errorHandler: ErrorHandler,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferencesRepositoryKt: PreferencesRepositoryKt,
 ) : CustomerRepository, PaginationRepository {
+    override fun getPreferencesRepositoryKt(): PreferencesRepositoryKt = preferencesRepositoryKt
 
-    override fun getPreferencesRepository(): PreferencesRepository = preferencesRepository
-
-    override fun getCustomers(): Flowable<PagingData<Customer>> = Pager(pagingConfig) {
-        CustomerPagingSource(preferencesRepository, customerService)
-    }.flowable.map { pagingData -> pagingData.map(CustomerFirebaseObjectMapper::toDomain) }
+    override fun getCustomers(): Flowable<PagingData<Customer>> =
+        Pager(pagingConfig) {
+            CustomerPagingSource(preferencesRepositoryKt, customerService)
+        }.flowable.map { pagingData -> pagingData.map(CustomerFirebaseObjectMapper::toDomain) }
 
     override fun getCustomer(customerId: String): Single<Result<Customer>> {
         return storeId.flatMap { storeId ->
@@ -50,28 +50,27 @@ class CustomerRepositoryImpl(
 
     override fun searchCustomers(query: String): Flowable<PagingData<Customer>> =
         Pager(pagingConfig) {
-            CustomerSearchPagingSource(preferencesRepository, customerService, query)
+            CustomerSearchPagingSource(preferencesRepositoryKt, customerService, query)
         }.flowable.map { pagingData -> pagingData.map(CustomerFirebaseObjectMapper::toDomain) }
 
-    override fun updateCustomer(
-        customer: Customer,
-    ): Single<Result<Void>> = storeId.flatMap { storeId ->
-        CustomerFirebaseObjectMapper.fromDomain(customer).let { customerFirebaseObject ->
-            customerService.updateCustomer(
-                customer.id,
-                storeId,
-                customerFirebaseObject,
-            )
-        }
-    }.map { response ->
-        if (response.isSuccess) {
-            Result.Success<Void>(null) as Result<Void>
-        } else {
-            ApiResponseException(response.message, response.code).let {
-                Result.Failure<Void>(errorHandler.getError(it))
+    override fun updateCustomer(customer: Customer): Single<Result<Void>> =
+        storeId.flatMap { storeId ->
+            CustomerFirebaseObjectMapper.fromDomain(customer).let { customerFirebaseObject ->
+                customerService.updateCustomer(
+                    customer.id,
+                    storeId,
+                    customerFirebaseObject,
+                )
             }
-        }
-    }.onErrorReturn { Result.Failure(errorHandler.getError(it)) }
+        }.map { response ->
+            if (response.isSuccess) {
+                Result.Success<Void>(null) as Result<Void>
+            } else {
+                ApiResponseException(response.message, response.code).let {
+                    Result.Failure<Void>(errorHandler.getError(it))
+                }
+            }
+        }.onErrorReturn { Result.Failure(errorHandler.getError(it)) }
 
     override fun deleteCustomer(customerId: String): Single<Result<Void>> {
         return storeId.flatMap { storeId ->

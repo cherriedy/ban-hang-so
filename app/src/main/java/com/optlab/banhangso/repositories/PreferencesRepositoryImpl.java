@@ -43,10 +43,6 @@ public class PreferencesRepositoryImpl implements PreferencesRepository {
           Subject<?> subject = subjectMap.get(key);
           if (subject != null) {
             switch (key) {
-              case AppPreferences.KEY_PRODUCT_SORT_OPTION,
-                      AppPreferences.KEY_BRAND_SORT_OPTION,
-                      AppPreferences.KEY_CATEGORY_SORT_OPTION ->
-                  emitSortOption(key);
               case AppPreferences.KEY_PRODUCT_LAYOUT_MODE -> emitLayoutMode();
               case AppPreferences.KEY_CURRENT_STORE -> emitStore();
               case AppPreferences.KEY_CURRENT_USER -> emitUser();
@@ -55,28 +51,6 @@ public class PreferencesRepositoryImpl implements PreferencesRepository {
         };
 
     appPreferences.registerPreferencesChangeListener(onSharedPreferenceChangeListener);
-  }
-
-  @Override
-  public Completable setSortOption(SortOption<? extends Enum<?>> sortOption, String key) {
-    return Completable.fromAction(() -> appPreferences.setSortOption(sortOption, key));
-  }
-
-  @Override
-  public Single<SortOption<?>> getSortOption(String key) {
-    return Single.fromCallable(
-        () -> {
-          SortOption<?> sortOption = appPreferences.getSortOption(key);
-          if (sortOption == null) {
-            throw new IllegalStateException("Sort option not found for key: " + key);
-          }
-          return sortOption;
-        });
-  }
-
-  @Override
-  public Observable<SortOption<?>> observeSortOption(String key) {
-    return getOrCreateSortOptionSubject(key, () -> appPreferences.getSortOption(key));
   }
 
   @Override
@@ -154,18 +128,6 @@ public class PreferencesRepositoryImpl implements PreferencesRepository {
   @Override
   public Observable<User> observeUser() {
     return getOrCreateSubject(AppPreferences.KEY_CURRENT_USER, appPreferences::getUser);
-  }
-
-  /** Helper to emit an updated sort option to its subject. */
-  @SuppressWarnings("unchecked")
-  private void emitSortOption(String key) {
-    Subject<SortOption<?>> subject = (Subject<SortOption<?>>) subjectMap.get(key);
-    if (subject != null && !subject.hasComplete()) {
-      SortOption<?> value = appPreferences.getSortOption(key);
-      if (value != null) {
-        subject.onNext(value);
-      }
-    }
   }
 
   /** Helper to emit an updated layout mode to its subject. */

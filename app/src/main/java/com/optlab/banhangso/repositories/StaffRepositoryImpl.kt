@@ -12,7 +12,7 @@ import com.optlab.banhangso.models.remote.mappers.StaffFirebaseObjectMapper
 import com.optlab.banhangso.paging.staff.StaffPagingSource
 import com.optlab.banhangso.paging.staff.StaffSearchPagingSource
 import com.optlab.banhangso.repositories.interfaces.PaginationRepository
-import com.optlab.banhangso.repositories.interfaces.PreferencesRepository
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt
 import com.optlab.banhangso.repositories.interfaces.StaffRepository
 import com.optlab.banhangso.services.interfaces.StaffService
 import io.reactivex.rxjava3.core.Flowable
@@ -21,17 +21,19 @@ import io.reactivex.rxjava3.core.Single
 class StaffRepositoryImpl(
     private val staffService: StaffService,
     private val errorHandler: ErrorHandler,
-    private val preferencesRepository: PreferencesRepository,
+    private val preferencesRepositoryKt: PreferencesRepositoryKt,
 ) : StaffRepository, PaginationRepository {
-    override fun getPreferencesRepository(): PreferencesRepository = preferencesRepository
+    override fun getPreferencesRepositoryKt(): PreferencesRepositoryKt = preferencesRepositoryKt
 
-    override fun getStaffs(): Flowable<PagingData<Staff>> = Pager(pagingConfig) {
-        StaffPagingSource(preferencesRepository, staffService)
-    }.flowable.map { pagingData -> pagingData.map(StaffFirebaseObjectMapper::toDomain) }
+    override fun getStaffs(): Flowable<PagingData<Staff>> =
+        Pager(pagingConfig) {
+            StaffPagingSource(preferencesRepositoryKt, staffService)
+        }.flowable.map { pagingData -> pagingData.map(StaffFirebaseObjectMapper::toDomain) }
 
-    override fun searchStaffs(query: String): Flowable<PagingData<Staff>> = Pager(pagingConfig) {
-        StaffSearchPagingSource(preferencesRepository, staffService, query)
-    }.flowable.map { pagingData -> pagingData.map(StaffFirebaseObjectMapper::toDomain) }
+    override fun searchStaffs(query: String): Flowable<PagingData<Staff>> =
+        Pager(pagingConfig) {
+            StaffSearchPagingSource(preferencesRepositoryKt, staffService, query)
+        }.flowable.map { pagingData -> pagingData.map(StaffFirebaseObjectMapper::toDomain) }
 
     override fun getStaff(staffId: String): Single<Result<Staff>> =
         storeId.flatMap {
@@ -48,21 +50,22 @@ class StaffRepositoryImpl(
             }
         }.onErrorReturn { Result.Failure(errorHandler.getError(it)) }
 
-    override fun updateStaff(staff: Staff): Single<Result<Staff>> = storeId.flatMap { storeId ->
-        StaffFirebaseObjectMapper.fromDomain(staff).let { staffFirebaseObject ->
-            staffService.updateStaff(staff.id, storeId, staffFirebaseObject)
-        }
-    }.map { response ->
-        if (response.isSuccess) {
-            response.data.item.let {
-                Result.Success(StaffFirebaseObjectMapper.toDomain(it))
+    override fun updateStaff(staff: Staff): Single<Result<Staff>> =
+        storeId.flatMap { storeId ->
+            StaffFirebaseObjectMapper.fromDomain(staff).let { staffFirebaseObject ->
+                staffService.updateStaff(staff.id, storeId, staffFirebaseObject)
             }
-        } else {
-            ApiResponseException(response.message, response.code).let {
-                Result.Failure(errorHandler.getError(it))
+        }.map { response ->
+            if (response.isSuccess) {
+                response.data.item.let {
+                    Result.Success(StaffFirebaseObjectMapper.toDomain(it))
+                }
+            } else {
+                ApiResponseException(response.message, response.code).let {
+                    Result.Failure(errorHandler.getError(it))
+                }
             }
-        }
-    }.onErrorReturn { Result.Failure(errorHandler.getError(it)) }
+        }.onErrorReturn { Result.Failure(errorHandler.getError(it)) }
 
     override fun createStaff(staff: Staff): Single<Result<Void>> {
         return storeId.flatMap { storeId ->
@@ -80,16 +83,17 @@ class StaffRepositoryImpl(
         }.onErrorReturn { Result.Failure(errorHandler.getError(it)) }
     }
 
-    override fun deleteStaff(staffId: String): Single<Result<Void>> = storeId.flatMap { storeId ->
-        staffService.deleteStaff(staffId, storeId)
-    }.map { response ->
-        if (response.isSuccess) {
-            @Suppress("UNCHECKED_CAST")
-            Result.Success(null) as Result<Void>
-        } else {
-            ApiResponseException(response.message, response.code).let {
-                Result.Failure(errorHandler.getError(it))
+    override fun deleteStaff(staffId: String): Single<Result<Void>> =
+        storeId.flatMap { storeId ->
+            staffService.deleteStaff(staffId, storeId)
+        }.map { response ->
+            if (response.isSuccess) {
+                @Suppress("UNCHECKED_CAST")
+                Result.Success(null) as Result<Void>
+            } else {
+                ApiResponseException(response.message, response.code).let {
+                    Result.Failure(errorHandler.getError(it))
+                }
             }
-        }
-    }.onErrorReturn { Result.Failure(errorHandler.getError(it)) }
+        }.onErrorReturn { Result.Failure(errorHandler.getError(it)) }
 }

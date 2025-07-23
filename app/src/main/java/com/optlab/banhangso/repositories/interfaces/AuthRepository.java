@@ -2,7 +2,6 @@ package com.optlab.banhangso.repositories.interfaces;
 
 import androidx.annotation.NonNull;
 import com.optlab.banhangso.models.application.Result;
-import com.optlab.banhangso.models.domain.User;
 import com.optlab.banhangso.models.remote.requestes.SignUpRequest;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
@@ -13,11 +12,9 @@ public interface AuthRepository {
 
   Single<Result<Void>> signUpWithEmailAndPassword(@NonNull SignUpRequest signUpRequest);
 
-  Observable<Boolean> isAuthenticated();
+  Observable<Boolean> isAuthenticatedObservable();
 
-  Single<Result<User>> getUser();
-
-  Completable setUser(@NonNull User user);
+  boolean isAuthenticated();
 
   Completable signOut();
 }

@@ -14,10 +14,11 @@ interface PaginationRepository {
      *
      */
     val pagingConfig: PagingConfig
-        get() = PagingConfig(
-            pageSize = ITEMS_PER_PAGE,
-            prefetchDistance = ITEMS_PER_PAGE,
-            enablePlaceholders = false,
-            initialLoadSize = ITEMS_PER_PAGE * 3,
-        )
+        get() =
+            PagingConfig(
+                pageSize = ITEMS_PER_PAGE,
+                prefetchDistance = ITEMS_PER_PAGE,
+                enablePlaceholders = false,
+                initialLoadSize = ITEMS_PER_PAGE * 3,
+            )
 }

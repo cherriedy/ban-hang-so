@@ -1,98 +1,98 @@
-package com.optlab.banhangso.repositories;
+package com.optlab.banhangso.repositories
 
-import androidx.annotation.NonNull;
-import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler;
-import com.optlab.banhangso.models.application.Result;
-import com.optlab.banhangso.models.domain.store.RoleStore;
-import com.optlab.banhangso.models.domain.store.Store;
-import com.optlab.banhangso.models.exceptions.ApiResponseException;
-import com.optlab.banhangso.models.remote.RoleStoreFirebaseObject;
-import com.optlab.banhangso.models.remote.StoreFirebaseObject;
-import com.optlab.banhangso.models.remote.mappers.RoleStoreFirebaseObjectMapper;
-import com.optlab.banhangso.models.remote.mappers.StoreFirebaseObjectMapper;
-import com.optlab.banhangso.repositories.interfaces.StoreRepository;
-import com.optlab.banhangso.services.interfaces.FirebaseStoreService;
-import com.optlab.banhangso.services.interfaces.StoreService;
-import io.reactivex.rxjava3.core.Single;
-import java.util.List;
-import timber.log.Timber;
+import androidx.paging.Pager
+import androidx.paging.PagingData
+import androidx.paging.map
+import androidx.paging.rxjava3.flowable
+import com.optlab.banhangso.internal.utilities.errorhandler.ErrorHandler
+import com.optlab.banhangso.models.application.Result
+import com.optlab.banhangso.models.domain.store.RoleStore
+import com.optlab.banhangso.models.domain.store.Store
+import com.optlab.banhangso.models.exceptions.ApiResponseException
+import com.optlab.banhangso.models.remote.mappers.RoleStoreFirebaseObjectMapper
+import com.optlab.banhangso.models.remote.mappers.StoreFirebaseObjectMapper
+import com.optlab.banhangso.paging.store.RoleStorePagingSource
+import com.optlab.banhangso.repositories.interfaces.PaginationRepository
+import com.optlab.banhangso.repositories.interfaces.PreferencesRepositoryKt
+import com.optlab.banhangso.repositories.interfaces.StoreRepository
+import com.optlab.banhangso.services.interfaces.StoreService
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Single
 
-public class StoreRepositoryImpl implements StoreRepository {
+class StoreRepositoryImpl(
+    private val preferencesRepositoryKt: PreferencesRepositoryKt,
+    private val storeService: StoreService,
+    private val errorHandler: ErrorHandler,
+) : StoreRepository, PaginationRepository {
+    override fun getPreferencesRepositoryKt(): PreferencesRepositoryKt = preferencesRepositoryKt
 
-  private final FirebaseStoreService firebaseStoreService;
-  private final StoreService storeService;
-  private final ErrorHandler errorHandler;
+    override fun getUserStores(): Flowable<PagingData<RoleStore>> =
+        Pager(pagingConfig) { RoleStorePagingSource(preferencesRepositoryKt, storeService) }
+            .flowable
+            .map { pagingData -> pagingData.map(RoleStoreFirebaseObjectMapper::toDomain) }
 
-  public StoreRepositoryImpl(
-      FirebaseStoreService firebaseStoreService,
-      StoreService storeService,
-      ErrorHandler errorHandler) {
-    this.firebaseStoreService = firebaseStoreService;
-    this.storeService = storeService;
-    this.errorHandler = errorHandler;
-  }
+    override fun getStore(): Single<Result<Store>> =
+        storeId.flatMap { storeId ->
+            storeService
+                .getUserStore(storeId)
+                .map { response ->
+                    if (response.isFailure) {
+                        ApiResponseException(response.message, response.code).let {
+                            Result.Failure(errorHandler.getError(it))
+                        }
+                    } else {
+                        StoreFirebaseObjectMapper.toDomain(response.data.item).let {
+                            Result.Success(it)
+                        }
+                    }
+                }
+                .onErrorReturn { Result.Failure(errorHandler.getError(it)) }
+        }
 
-  @NonNull @Override
-  public Single<Result<List<RoleStore>>> getUserStores(@NonNull String userId) {
-    return storeService
-        .getUserStores(userId)
-        .doOnSubscribe(unused -> Timber.d("Starting to fetch stores..."))
-        .flatMap(
-            responseObject -> {
-              if (responseObject.isSuccess()) {
-                List<RoleStoreFirebaseObject> roleStoreFirebaseObjects =
-                    responseObject.data().stores();
+    override fun setStore(store: Store): Single<Result<Void>> =
+        StoreFirebaseObjectMapper.fromDomain(store)
+            .let {
+                storeService.setStore(it).map { response ->
+                    if (response.isFailure) {
+                        ApiResponseException(response.message, response.code).let {
+                            Result.Failure(errorHandler.getError(it))
+                        }
+                    } else {
+                        Result.Success<Void>(null)
+                    }
+                }
+            }
+            .onErrorReturn { Result.Failure(errorHandler.getError(it)) }
 
-                List<RoleStore> roleStores =
-                    RoleStoreFirebaseObjectMapper.toDomains(roleStoreFirebaseObjects);
-                Timber.d("Fetched %d stores for user %s", roleStores.size(), userId);
-                return Single.just(new Result.Success<>(roleStores));
-              } else {
-                Throwable throwable =
-                    new ApiResponseException(responseObject.message(), responseObject.code());
-                return Single.just(
-                    new Result.Failure<List<RoleStore>>(errorHandler.getError(throwable)));
-              }
-            })
-        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
-  }
+    override fun updateStore(store: Store): Single<Result<Void>> =
+        storeId.flatMap { storeId ->
+            StoreFirebaseObjectMapper.fromDomain(store).let { storeFirebaseObject ->
+                storeService
+                    .updateStore(storeId, storeFirebaseObject)
+                    .map { response ->
+                        if (response.isFailure) {
+                            ApiResponseException(response.message, response.code).let {
+                                Result.Failure(errorHandler.getError(it))
+                            }
+                        } else {
+                            Result.Success<Void>(null)
+                        }
+                    }
+                    .onErrorReturn { Result.Failure(errorHandler.getError(it)) }
+            }
+        }
 
-  @Override
-  public Single<Result<Store>> getStore(@NonNull String storeId) {
-    return firebaseStoreService
-        .getStore(storeId)
-        .flatMap(
-            firebaseStoreObject -> {
-              Store store = StoreFirebaseObjectMapper.toDomain(firebaseStoreObject);
-              return Single.just((Result<Store>) new Result.Success<>(store));
-            })
-        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
-  }
-
-  @NonNull @Override
-  public Single<Result<String>> setStore(@NonNull String userId, @NonNull Store store) {
-    StoreFirebaseObject storeFirebaseObject = StoreFirebaseObjectMapper.fromDomain(store);
-    return storeService
-        .setStore(userId, storeFirebaseObject)
-        .flatMap(
-            responseObject -> {
-              if (responseObject.isSuccess()) {
-                String storeId = responseObject.data().storeId();
-                return Single.just(new Result.Success<>(storeId));
-              } else {
-                Throwable throwable =
-                    new ApiResponseException(responseObject.message(), responseObject.code());
-                return Single.just(new Result.Failure<String>(errorHandler.getError(throwable)));
-              }
-            })
-        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
-  }
-
-  @NonNull @Override
-  public Single<Result<Void>> deleteStore(@NonNull String storeId) {
-    return firebaseStoreService
-        .deleteStore(storeId)
-        .andThen(Single.just((Result<Void>) new Result.Success<Void>(null)))
-        .onErrorReturn(throwable -> new Result.Failure<>(errorHandler.getError(throwable)));
-  }
+    override fun deleteStore(storeId: String): Single<Result<Void>> =
+        storeService
+            .deleteStore(storeId)
+            .map { response ->
+                if (response.isFailure) {
+                    ApiResponseException(response.message, response.code).let {
+                        Result.Failure(errorHandler.getError(it))
+                    }
+                } else {
+                    Result.Success<Void>(null)
+                }
+            }
+            .onErrorReturn { Result.Failure(errorHandler.getError(it)) }
 }

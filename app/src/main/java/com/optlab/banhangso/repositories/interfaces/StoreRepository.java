@@ -1,23 +1,22 @@
 package com.optlab.banhangso.repositories.interfaces;
 
 import androidx.annotation.NonNull;
+import androidx.paging.PagingData;
 import com.optlab.banhangso.models.application.Result;
 import com.optlab.banhangso.models.domain.store.RoleStore;
 import com.optlab.banhangso.models.domain.store.Store;
+import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
-import java.util.List;
 
-/**
- * Interface for Store Repository operations Provides methods to interact with store data from both
- * local database and remote sources
- */
-public interface StoreRepository {
+public interface StoreRepository extends BaseRepository {
 
-  @NonNull Single<Result<List<RoleStore>>> getUserStores(@NonNull String userId);
+  @NonNull Flowable<PagingData<RoleStore>> getUserStores();
 
-  Single<Result<Store>> getStore(@NonNull String storeId);
+  @NonNull Single<Result<Store>> getStore();
 
-  @NonNull Single<Result<String>> setStore(@NonNull String userId, @NonNull Store store);
+  @NonNull Single<Result<Void>> setStore(@NonNull Store store);
+
+  @NonNull Single<Result<Void>> updateStore(@NonNull Store store);
 
   @NonNull Single<Result<Void>> deleteStore(@NonNull String storeId);
 }
